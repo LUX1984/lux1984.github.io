@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Конвертер и очистка .SRT субтитров онлайн + создание .SRT из видео</title>
+  <meta name="description" content="Бесплатный браузерный инструмент очистки .SRT/.VTT от таймкодов и сдвига времени, а также автогенерация .SRT из видео в Telegram." />
+  <link rel="canonical" href="https://lux1984.github.io/srt-konverter-onlain/" />
+  <meta property="og:title" content="Конвертер и очистка .SRT субтитров онлайн + создание .SRT из видео" />
+  <meta property="og:description" content="Бесплатный браузерный инструмент очистки .SRT/.VTT от таймкодов и сдвига времени, а также автогенерация .SRT из видео в Telegram." />
+  <meta property="og:url" content="https://lux1984.github.io/srt-konverter-onlain/" />
+  <meta property="og:type" content="website" />
+  <style>
+:root{--bg:#090d16;--card:#111827;--border:rgba(255,255,255,.09);--text:#f1f5f9;--muted:#94a3b8;--accent:#38bdf8;--gold:#facc15;--green:#34d399;--btn:#2563eb}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:radial-gradient(circle at top,#172554 0%,var(--bg) 55%);color:var(--text);line-height:1.6}
+.wrap{max-width:880px;margin:0 auto;padding:36px 20px 64px}
+nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;font-size:14px;color:var(--muted);flex-wrap:wrap;gap:12px}
+nav a{color:var(--accent);text-decoration:none}
+.badge{display:inline-block;background:rgba(56,189,248,.14);color:var(--accent);padding:5px 12px;border-radius:999px;font-size:13px;font-weight:600}
+h1{font-size:clamp(26px,4.6vw,40px);line-height:1.15;margin:14px 0}
+h2{font-size:22px;margin:32px 0 12px;color:#e2e8f0}
+p.lead{font-size:18px;color:#cbd5e1;margin-bottom:24px}
+.cta-row{display:flex;flex-wrap:wrap;gap:12px;margin:20px 0 32px}
+.cta{display:inline-block;background:var(--btn);color:#fff;text-decoration:none;font-weight:700;padding:13px 22px;border-radius:12px;font-size:16px}
+.cta.sec{background:var(--card);border:1px solid var(--border);color:var(--text)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin:20px 0}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px}
+.card h3{margin:0 0 8px;font-size:17px;color:var(--gold)}
+.card p,.card li{font-size:14px;color:#cbd5e1;margin:0}
+.tool-box{background:#0f172a;border:1px solid rgba(56,189,248,.35);border-radius:16px;padding:20px;margin:28px 0}
+.tool-box textarea,.tool-box input,.tool-box button{font-family:inherit;font-size:14px}
+textarea,input[type=number],input[type=text]{width:100%;background:#020617;color:var(--text);border:1px solid var(--border);border-radius:10px;padding:10px;margin:6px 0}
+button.tbtn{background:var(--accent);color:#090d16;border:0;border-radius:10px;padding:9px 16px;font-weight:700;cursor:pointer;margin-right:8px;margin-top:6px}
+.circle-stage{width:260px;height:260px;border-radius:50%;overflow:hidden;border:3px solid var(--accent);margin:14px auto;background:#020617;display:flex;align-items:center;justify-content:center;color:var(--muted);text-align:center}
+.circle-stage video{width:100%;height:100%;object-fit:cover}
+.faq details{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 16px;margin:10px 0}
+.faq summary{cursor:pointer;font-weight:600}
+footer{margin-top:44px;padding-top:20px;border-top:1px solid var(--border);font-size:13px;color:var(--muted)}
+footer a{color:var(--accent);text-decoration:none}
+</style>
+  <script type="application/ld+json">[{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "Конвертер и очистка .SRT субтитров онлайн + создание .SRT из видео", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Telegram, Web", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "url": "https://lux1984.github.io/srt-konverter-onlain/"}, {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Загружается ли мой файл .SRT на сервер?", "acceptedAnswer": {"@type": "Answer", "text": "Нет, браузерный инструмент выше работает целиком локально на JavaScript."}}, {"@type": "Question", "name": "Можно ли сразу вшить субтитры в MP4?", "acceptedAnswer": {"@type": "Answer", "text": "Да, @railway_robot делает и видео с вшитыми субтитрами, и отдельный .SRT файл."}}]}]</script>
+</head>
+<body>
+  <main class="wrap">
+    <nav>
+      <a href="https://lux1984.github.io/">Все инструменты ↑</a>
+      <span>@railway_robot · Open Source</span>
+    </nav>
+    <span class="badge">Бесплатный старт · Без рекламы и подписок</span>
+    <h1>Конвертер и очистка .SRT субтитров онлайн + создание .SRT из видео</h1>
+    <p class="lead">Бесплатный браузерный инструмент очистки .SRT/.VTT от таймкодов и сдвига времени, а также автогенерация .SRT из видео в Telegram.</p>
+    <div class="cta-row">
+      <a class="cta" href="https://t.me/railway_robot?start=seo_ru_srt">Создать .SRT из любого видео (@railway_robot)</a>
+      <a class="cta sec" href="https://github.com/LUX1984/auto-reels-captions-cli">GitHub Open-Source CLI →</a>
+    </div>
+    
+<div class="tool-box">
+  <h3>📄 Очиститель .SRT / .VTT субтитров в текст и сдвиг таймингов</h3>
+  <textarea id="srtIn" rows="6" placeholder="1&#10;00:00:00,200 --> 00:00:02,100&#10;Вставь содержимое .SRT или .VTT файла..."></textarea>
+  <button class="tbtn" onclick="cleanSrt()">Убрать таймкоды (в текст)</button>
+  <button class="tbtn" onclick="shiftSrt(1)">Сдвинуть +1 сек</button>
+  <button class="tbtn" onclick="shiftSrt(-1)">Сдвинуть -1 сек</button>
+  <textarea id="srtOut" rows="5" readonly placeholder="Результат появится здесь..."></textarea>
+</div>
+<script>
+function cleanSrt(){
+  const raw = document.getElementById('srtIn').value;
+  const lines = raw.split(/\r?\n/).filter(l => !/^\d+$/.test(l.trim()) && !/-->/.test(l) && !/^WEBVTT/i.test(l.trim()));
+  document.getElementById('srtOut').value = lines.filter(Boolean).join(' ').replace(/<[^>]+>/g,'');
+}
+function shiftSrt(sec){
+  const raw = document.getElementById('srtIn').value;
+  const toMs = t => {const m=t.match(/(\d+):(\d+):(\d+)[,.](\d+)/); return m?(+m[1]*3600+ +m[2]*60+ +m[3])*1000+ +m[4]:0;};
+  const fmt = ms => {ms=Math.max(0,ms); const h=Math.floor(ms/3600000),m=Math.floor((ms%3600000)/60000),s=Math.floor((ms%60000)/1000),x=ms%1000;
+    return [String(h).padStart(2,'0'),String(m).padStart(2,'0'),String(s).padStart(2,'0')].join(':')+','+String(x).padStart(3,'0');};
+  document.getElementById('srtOut').value = raw.replace(/(\d{2}:\d{2}:\d{2}[,.]\d{3})\s*-->\s*(\d{2}:\d{2}:\d{2}[,.]\d{3})/g, (_,a,b)=>fmt(toMs(a)+sec*1000)+' --> '+fmt(toMs(b)+sec*1000));
+}
+</script>
+
+    <section class="grid"><div class="card"><h3>Мгновенная чистка таймингов в браузере</h3><p>Вставь любой .SRT или .VTT выше — инструмент удалит номера блоков, стрелки и HTML-теги локально.</p></div>
+<div class="card"><h3>Сдвиг таймкодов на ±N секунд</h3><p>Подгоняй рассинхронившиеся субтитры на 1 клик вверх или вниз.</p></div>
+<div class="card"><h3>Автогенерация .SRT по аудиодорожке</h3><p>Загрузи ролик в @railway_robot и нажми «Скачать .SRT» под готовым видео.</p></div></section>
+    <section class="faq">
+      <h2>Частые вопросы</h2>
+      <details><summary>Загружается ли мой файл .SRT на сервер?</summary><p>Нет, браузерный инструмент выше работает целиком локально на JavaScript.</p></details>
+<details><summary>Можно ли сразу вшить субтитры в MP4?</summary><p>Да, @railway_robot делает и видео с вшитыми субтитрами, и отдельный .SRT файл.</p></details>
+    </section>
+    <footer>
+      <a href="https://lux1984.github.io/">Каталог всех ботов и утилит</a> ·
+      <a href="https://t.me/railway_robot?start=seo_footer">@railway_robot</a> ·
+      <a href="https://t.me/Good_4robot?start=seo_footer">@Good_4robot</a> ·
+      <a href="https://t.me/Drat7robot?start=seo_footer">@Drat7robot</a>
+    </footer>
+  </main>
+</body>
+</html>
