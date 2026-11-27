@@ -351,6 +351,41 @@
       <button class="sm-btn" id="streakBtn" onclick="handleStreakClick()">Забрать день 1</button>
     </div>
 
+    <!-- CHANNEL SUBSCRIBE QUEST (shown after warm-up via /channel toggle) -->
+    <div class="mini-box" id="chanQuestCard" style="display:none;margin-bottom:10px;border-color:rgba(56,189,248,.45);background:linear-gradient(145deg,rgba(14,165,233,.15),rgba(17,24,48,.88))">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+        <strong>📢 <span id="chanQuestTitle">GiftBox Live</span></strong>
+        <span style="font-size:11.5px;font-weight:900;color:#7dd3fc">+15 💎 +40 ✨</span>
+      </div>
+      <div style="font-size:11.5px;color:var(--muted);margin:4px 0 8px" id="chanQuestSub">Подпишись на живую ленту дропов и выводов — забери бонус!</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+        <button class="sm-btn sec" onclick="openChannelLink()" id="chanGoBtn">📣 Открыть канал</button>
+        <button class="sm-btn" style="background:linear-gradient(135deg,#0ea5e9,#2563eb)" onclick="claimChannelSub()" id="chanCheckBtn">✅ Проверить</button>
+      </div>
+    </div>
+
+    <!-- ACTIVE WEEKLY GIVEAWAY -->
+    <div class="mini-box" id="gwCard" style="display:none;margin-bottom:10px;border-color:rgba(250,204,21,.5);background:linear-gradient(145deg,rgba(234,179,8,.16),rgba(17,24,48,.88))">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+        <strong id="gwTitle">🎉 Розыгрыш 3×25⭐ (75 ⭐)</strong>
+        <span id="gwTimeLeft" style="font-size:11px;font-weight:800;color:var(--gold)">...</span>
+      </div>
+      <div style="font-size:11.5px;color:var(--muted);margin:4px 0 8px" id="gwSub">Участников: 0 · +1 билет за друга</div>
+      <button class="sm-btn" style="background:linear-gradient(135deg,#f59e0b,#d97706)" id="gwBtn" onclick="joinGiveaway()">🎉 Участвовать в 1 клик</button>
+    </div>
+
+    <!-- PROMO CODE BOX -->
+    <div class="mini-box" id="promoBox" style="margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <strong data-i18n="promo_h">🎟 Промокод из канала</strong>
+        <span style="font-size:10.5px;color:var(--muted)" data-i18n="promo_sub">Лимитированные дропы</span>
+      </div>
+      <div style="display:flex;gap:6px">
+        <input id="promoInput" type="text" placeholder="STARS20" maxlength="32" style="flex:1;min-width:0;padding:8px 10px;border-radius:10px;border:1px solid var(--border);background:rgba(15,23,42,.75);color:#fff;font-weight:800;text-transform:uppercase;font-size:12.5px">
+        <button class="sm-btn" style="width:auto;padding:8px 14px" onclick="redeemPromo()" data-i18n="promo_btn">Активировать</button>
+      </div>
+    </div>
+
     <div class="sec-h">
       <span data-i18n="inside_h">📦 Настоящие подарки в боксе</span>
       <span style="font-size:10.5px;text-transform:none" data-i18n="tap_anim">Тапни для 3D-анимации</span>
@@ -408,6 +443,7 @@
       <p style="font-size:11.5px;color:var(--muted);margin:5px 0" data-i18n="ref_d">Другу +35 ✨ сразу, а после 1-й оплаты — +25 💎 каждому + 10% в 💎 со всех его покупок!</p>
       <div style="font-size:12px;margin-bottom:8px"><span data-i18n="ref_cnt">Приглашено:</span> <strong id="refCnt">0</strong></div>
       <button class="btn green" style="width:100%" onclick="shareInvite()" data-i18n="invite_btn">📤 Пригласить друга</button>
+      <button class="btn sec" id="colChanBtn" style="display:none;width:100%;margin-top:6px" onclick="openChannelLink()">📢 Канал дропов GiftBox Live</button>
     </div>
 
     <div class="mini-box" id="partnerCard" style="display:none;margin-bottom:10px;border-color:rgba(250,204,21,.45);background:linear-gradient(145deg,rgba(245,158,11,.14),rgba(17,24,48,.85))">
@@ -516,6 +552,7 @@ const I18N = {
     alb_h:'📕 Альбом Подарков (Бонус +5% ♻️)',ref_h:'👥 Пригласи друзей',
     ref_d:'Другу +35 ✨ сразу, а после 1-й оплаты — +25 💎 каждому + 10% в 💎 со всех покупок!',
     ref_cnt:'Приглашено:',invite_btn:'📤 Пригласить друга',cards_h:'🃏 Карточки коллекции (★1..★6)',
+    promo_h:'🎟 Промокод из канала',promo_sub:'Лимитированные дропы',promo_btn:'Активировать',
     lb_h:'🏆 Сезонный рейтинг',t_boxes:'Боксы',t_inv:'Инвентарь',t_shop:'Магазин',t_col:'Альбом'
   },
   en:{
@@ -531,6 +568,7 @@ const I18N = {
     alb_h:'📕 Gift Album (+5% ♻️ Bonus)',ref_h:'👥 Invite Friends',
     ref_d:'+35 ✨ on join, then +25 💎 each + 10% kickback after friend pays!',
     ref_cnt:'Invited:',invite_btn:'📤 Share Invite',cards_h:'🃏 Collector Cards (★1..★6)',
+    promo_h:'🎟 Channel Promo Code',promo_sub:'Limited drops',promo_btn:'Redeem',
     lb_h:'🏆 Season Top',t_boxes:'Boxes',t_inv:'Inventory',t_shop:'Shop',t_col:'Album'
   }
 };
@@ -602,6 +640,13 @@ async function apiCall(path, method='GET', body=null){
 }
 
 async function bootstrap(){
+  const pQuery = new URLSearchParams(location.search).get('promo');
+  const sp = (tg && tg.initDataUnsafe && tg.initDataUnsafe.start_param) || '';
+  const initPromo = pQuery || (sp.startsWith('promo_') ? sp.slice(6) : '');
+  if (initPromo) {
+    const inp = document.getElementById('promoInput');
+    if (inp) inp.value = initPromo.toUpperCase();
+  }
   if (!API_BASE) {
     try {
       const cfg = await (await fetch('./config.json?t=' + Date.now())).json();
@@ -705,6 +750,50 @@ function renderAll(){
         : (LANG==='ru' ? `💫 Вывести от 50 ⭐ (осталось ${(50-pBal).toFixed(1)} ⭐)` : `💫 Min 50 ⭐ (${(50-pBal).toFixed(1)} ⭐ left)`);
     } else {
       pCard.style.display = 'none';
+    }
+
+    const ch = STATE && STATE.channel ? STATE.channel : null;
+    const chCard = document.getElementById('chanQuestCard');
+    const colChBtn = document.getElementById('colChanBtn');
+    if (ch && ch.tma_enabled && ch.url) {
+      if (colChBtn) {
+        colChBtn.style.display = 'block';
+        colChBtn.textContent = `📢 ${ch.title || 'GiftBox Live'}`;
+      }
+      if (!u.channel_sub_claimed) {
+        chCard.style.display = 'block';
+        document.getElementById('chanQuestTitle').textContent = ch.title || 'GiftBox Live';
+        document.getElementById('chanQuestSub').textContent = LANG==='ru'
+          ? 'Подпишись на живую ленту дропов и выводов — забери бонус!'
+          : 'Subscribe to the live drops feed & claim your bonus!';
+        document.getElementById('chanGoBtn').textContent = LANG==='ru' ? '📣 Открыть канал' : '📣 Open Channel';
+        document.getElementById('chanCheckBtn').textContent = LANG==='ru' ? '✅ Проверить' : '✅ Check Sub';
+      } else {
+        chCard.style.display = 'none';
+      }
+    } else {
+      chCard.style.display = 'none';
+      if (colChBtn) colChBtn.style.display = 'none';
+    }
+
+    const gw = STATE && STATE.active_giveaway ? STATE.active_giveaway : null;
+    const gwCard = document.getElementById('gwCard');
+    if (gw) {
+      gwCard.style.display = 'block';
+      document.getElementById('gwTitle').textContent = LANG==='ru'
+        ? `🎉 Розыгрыш ${gw.prize_count}×25⭐ (${gw.prize_count*25} ⭐)`
+        : `🎉 Giveaway ${gw.prize_count}×25⭐ (${gw.prize_count*25} ⭐)`;
+      document.getElementById('gwSub').textContent = LANG==='ru'
+        ? `Участников: ${gw.participants} · +1 билет за каждого друга`
+        : `Entries: ${gw.participants} · +1 ticket per invited friend`;
+      const gwBtn = document.getElementById('gwBtn');
+      gwBtn.textContent = gw.joined
+        ? (LANG==='ru' ? `✅ Ты в игре (билетов: ${gw.my_tickets}) · Обновить` : `✅ Entered (tickets: ${gw.my_tickets}) · Refresh`)
+        : (LANG==='ru' ? '🎉 Участвовать в 1 клик' : '🎉 Enter in 1 Tap');
+      const remS = Math.max(0, gw.ends_at - Math.floor(Date.now()/1000));
+      document.getElementById('gwTimeLeft').textContent = `${Math.floor(remS/3600)}ч ${Math.floor((remS%3600)/60)}м`;
+    } else {
+      gwCard.style.display = 'none';
     }
     document.getElementById('welcomeBanner').style.display = u.welcome_spun ? 'none' : 'flex';
     document.getElementById('tiltBanner').style.display = u.tilt_remaining_sec > 0 ? 'flex' : 'none';
@@ -1143,6 +1232,39 @@ async function requestPartnerPayout(){
     STATE = res; renderAll();
     showToast(LANG==='ru'?`🤝 Заявка #${res.payout_id} на ${res.amount_stars} ⭐ отправлена!`:`🤝 Payout #${res.payout_id} (${res.amount_stars} ⭐) requested!`);
   } catch(e){ showToast(e.message || 'Payout error'); }
+}
+function openChannelLink(){
+  const url = (STATE && STATE.channel && STATE.channel.url) || 'https://t.me/StarsLootBoxBot';
+  if (tg && tg.openTelegramLink) tg.openTelegramLink(url);
+  else window.open(url, '_blank');
+}
+async function claimChannelSub(){
+  try {
+    const res = await apiCall('/api/claim_channel_sub','POST',{});
+    STATE = res; renderAll();
+    showToast(`📢 +${res.reward.crystals} 💎 · +${res.reward.shards} ✨!`);
+  } catch(e){
+    showToast((LANG==='ru'?e.message_ru:e.message_en) || e.message || 'Subscribe first');
+  }
+}
+async function redeemPromo(){
+  const inp = document.getElementById('promoInput');
+  const code = (inp ? inp.value : '').trim();
+  if (!code) { showToast(LANG==='ru'?'Введи промокод':'Enter promo code'); return; }
+  try {
+    const res = await apiCall('/api/redeem_promo','POST',{code});
+    STATE = res; if(inp) inp.value = ''; renderAll();
+    showToast(`🎟 ${res.reward.code}: +${res.reward.crystals} 💎${res.reward.shards?` · +${res.reward.shards} ✨`:''}!`);
+  } catch(e){ showToast(e.message || 'Promo error'); }
+}
+async function joinGiveaway(){
+  try {
+    const res = await apiCall('/api/join_giveaway','POST',{});
+    STATE = res; renderAll();
+    showToast(LANG==='ru'?`🎉 Ты в розыгрыше! Билетов: ${res.giveaway_entry.tickets}`:`🎉 Entered giveaway! Tickets: ${res.giveaway_entry.tickets}`);
+  } catch(e){
+    showToast((LANG==='ru'?e.message_ru:e.message_en) || e.message || 'Giveaway error');
+  }
 }
 
 setInterval(()=>{
