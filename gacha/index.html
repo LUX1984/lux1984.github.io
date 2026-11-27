@@ -450,7 +450,7 @@
 const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
 if (tg) { try { tg.ready(); tg.expand(); } catch(e){} }
 
-let API_BASE = new URLSearchParams(location.search).get('api') || '';
+let API_BASE = new URLSearchParams(location.search).get('api') || 'https://151-241-234-55.sslip.io';
 let STATE = null;
 let CATALOG = null;
 let CUR_BOX = 'star_box';
