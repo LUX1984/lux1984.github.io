@@ -30,7 +30,7 @@
 
     .ticker-wrap{
       margin:0 -12px 10px;background:rgba(7,10,20,.92);border-bottom:1px solid var(--border);
-      overflow:hidden;white-space:nowrap;padding:6px 0;backdrop-filter:blur(10px);
+      overflow:hidden;white-space:nowrap;padding:6px 0;backdrop-filter:blur(10px);cursor:pointer;
     }
     .ticker-track{display:inline-flex;gap:10px;padding-left:100%;animation:ticker 32s linear infinite}
     @keyframes ticker{0%{transform:translate3d(0,0,0)}100%{transform:translate3d(-100%,0,0)}}
@@ -120,13 +120,15 @@
     .reel-shell::before{left:0;background:linear-gradient(90deg,#05070e,transparent)}
     .reel-shell::after{right:0;background:linear-gradient(-90deg,#05070e,transparent)}
     .reel-beam{
-      position:absolute;left:50%;top:0;bottom:0;width:3px;transform:translateX(-50%);z-index:6;pointer-events:none;
+      position:absolute;left:50%;top:0;bottom:0;width:2px;transform:translateX(-50%);z-index:1;opacity:.25;pointer-events:none;
       background:linear-gradient(180deg,#facc15,#fde047,#f97316);
-      box-shadow:0 0 14px rgba(250,204,21,.95),0 0 28px rgba(250,204,21,.45);
     }
-    .reel-beam::before{content:"▼";position:absolute;top:1px;left:50%;transform:translateX(-50%);color:#facc15;font-size:12px}
-    .reel-beam::after{content:"▲";position:absolute;bottom:1px;left:50%;transform:translateX(-50%);color:#facc15;font-size:12px}
-    .reel-track{display:flex;gap:8px;will-change:transform}
+    .reel-ptr-top,.reel-ptr-bot{
+      position:absolute;left:50%;transform:translateX(-50%);z-index:7;pointer-events:none;
+      color:#facc15;font-size:12px;line-height:1;text-shadow:0 0 10px rgba(250,204,21,.95);
+    }
+    .reel-ptr-top{top:2px}.reel-ptr-bot{bottom:2px}
+    .reel-track{display:flex;gap:8px;will-change:transform;position:relative;z-index:2}
     .tile{
       flex:0 0 98px;height:118px;border-radius:14px;padding:7px 5px;
       background:linear-gradient(180deg,rgba(30,41,59,.68),rgba(9,13,24,.94));
@@ -218,19 +220,19 @@
     .lb-row{display:flex;justify-content:space-between;padding:8px 4px;border-bottom:1px solid var(--border);font-size:12.5px}
 
     .bnav{
-      position:fixed;bottom:10px;left:12px;right:12px;background:var(--glass2);backdrop-filter:blur(16px);
+      position:fixed;bottom:10px;left:10px;right:10px;background:var(--glass2);backdrop-filter:blur(16px);
       border:1px solid var(--border);border-top-color:var(--spec);border-radius:18px;
-      display:grid;grid-template-columns:repeat(4,1fr);z-index:25;padding:4px 2px;
+      display:grid;grid-template-columns:repeat(5,1fr);z-index:25;padding:4px 2px;
       box-shadow:0 12px 30px rgba(0,0,0,.55);
     }
     .bnav button{
-      position:relative;background:none;border:0;color:var(--muted);padding:6px 4px;font-size:10.5px;
-      font-weight:700;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;
+      position:relative;background:none;border:0;color:var(--muted);padding:6px 2px;font-size:9.5px;
+      font-weight:700;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;white-space:nowrap;
     }
     .bnav button.active{color:var(--accent)}
-    .bnav svg{width:20px;height:20px}
+    .bnav svg{width:19px;height:19px}
     .nav-badge{
-      position:absolute;top:2px;right:20%;background:var(--gold);color:#090d16;font-size:9px;
+      position:absolute;top:2px;right:14%;background:var(--gold);color:#090d16;font-size:8.5px;
       font-weight:900;padding:1px 5px;border-radius:999px;display:none;
     }
 
@@ -264,7 +266,7 @@
   </style>
 </head>
 <body class="theme-star_box">
-  <div class="ticker-wrap"><div class="ticker-track" id="ticker"></div></div>
+  <div class="ticker-wrap" onclick="handleTickerClick()"><div class="ticker-track" id="ticker"></div></div>
   <div class="demo-bar" id="demoNotice"></div>
 
   <div class="hdr">
@@ -308,16 +310,18 @@
         <div class="hero-sub" id="heroDesc">Подарки 15–100⭐</div>
         <div class="fomo-pill" id="fomoBar">⏳ <span id="fomoTimer">14d 00:00:00</span></div>
         <div class="pity-row">
-          <span>🎯 Soft/Hard Pity</span>
+          <span data-i18n="pity_lbl">🎯 Гарант редкого приза</span>
           <strong id="pityTxt">0 / 85</strong>
         </div>
         <div class="pity-bar"><div class="pity-fill" id="pityFill" style="width:0%"></div></div>
-        <div class="mini-pity-txt" id="miniPityTxt">🎁 Подарок гарантирован ≤ 5 спинов</div>
+        <div class="mini-pity-txt" id="miniPityTxt">🎁 Подарок гарантирован ≤ 5 спин.</div>
         <div class="guar-pill" id="guarBadge" data-i18n="guar_on">🔥 100% ГАРАНТ ГЛАВНОГО ПРИЗА</div>
       </div>
     </div>
 
     <div class="reel-shell" id="reelShell">
+      <div class="reel-ptr-top">▼</div>
+      <div class="reel-ptr-bot">▲</div>
       <div class="reel-beam"></div>
       <div class="reel-track" id="reelTrack"></div>
     </div>
@@ -328,29 +332,45 @@
       <button class="fast-btn" id="fastBtn" onclick="toggleFast()">⚡</button>
     </div>
 
-    <div class="util-grid">
-      <div class="mini-box">
-        <strong data-i18n="daily_h">🎡 Бонус 12ч</strong>
-        <div style="color:var(--muted);margin:3px 0" id="dailyDesc">+6 💎 (до 50) +20 ✨</div>
-        <button class="sm-btn" style="background:linear-gradient(135deg,#10b981,#059669)" id="dailyBtn" onclick="claimDaily()" data-i18n="claim_btn">Забрать</button>
-      </div>
-      <div class="mini-box">
-        <strong data-i18n="shards_h">✨ Обмен осколков</strong>
-        <div id="shardsSub" style="color:var(--muted);margin:3px 0">0 / 300 ✨ → 100 💎</div>
-        <button class="sm-btn" id="shardsBtn" onclick="exchangeShards()" data-i18n="exch_btn">Обменять 300 ✨</button>
+    <div class="sec-h">
+      <span data-i18n="inside_h">📦 Настоящие подарки в боксе</span>
+      <span style="font-size:10.5px;text-transform:none" data-i18n="tap_anim">Тапни для 3D-анимации</span>
+    </div>
+    <div class="loot-grid" id="lootGrid"></div>
+  </section>
+
+  <!-- TAB 2: INVENTORY, 1->1 WHEEL & 5->1 CONTRACT -->
+  <section class="panel" id="panel-inv">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <strong data-i18n="inv_h">🎒 Подарки в инвентаре</strong>
+      <button class="info-btn" id="sell15Btn" style="display:none" onclick="salvageAll15()" data-i18n="sell15_all">♻️ Продать все 15⭐</button>
+    </div>
+    <div class="inv-grid" id="invGrid"></div>
+
+    <div class="mini-box" style="margin-top:14px">
+      <strong data-i18n="up1_h">🎯 Колесо Апгрейда 1 → 1</strong>
+      <div style="display:flex;align-items:center;gap:12px;margin-top:8px">
+        <div id="up1GaugeWrap" style="flex:0 0 64px"></div>
+        <div>
+          <p style="font-size:11.5px;color:var(--muted);margin:0 0 4px" data-i18n="up1_d">Поставь 1 дешёвый подарок и крутани на подарок выше! Неудача даёт +25 ✨.</p>
+          <div id="up1Box" style="font-size:11.5px;color:#cbd5e1">Выберите подарок в инвентаре кнопкой «🎯 Апгрейд»</div>
+        </div>
       </div>
     </div>
 
-    <!-- 7-Day Streak -->
-    <div class="mini-box" style="margin-bottom:10px">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <strong data-i18n="streak_h">🔥 Серия 7 дней</strong>
-        <span id="streakLabel" style="font-size:11px;color:var(--gold)">День 0/7</span>
+    <div class="mini-box" style="margin-top:10px">
+      <strong data-i18n="contract_h">⚡ Контракт Апгрейда 5 → 1</strong>
+      <p style="font-size:11.5px;color:var(--muted);margin:5px 0 8px" data-i18n="contract_d">Обменяй 5 подарков одного ранга с шансом на джекпот до 500⭐!</p>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px">
+        <button class="sm-btn" onclick="runContract(15)" id="c15Btn">5×15⭐ → 50/100⭐</button>
+        <button class="sm-btn" onclick="runContract(25)" id="c25Btn">5×25⭐ → до 200⭐</button>
+        <button class="sm-btn" onclick="runContract(50)" id="c50Btn">5×50⭐ → до 500⭐</button>
       </div>
-      <div class="streak-strip" id="streakStrip"></div>
-      <button class="sm-btn" id="streakBtn" onclick="handleStreakClick()">Забрать день 1</button>
     </div>
+  </section>
 
+  <!-- TAB 3: BONUSES, PROMOS, GIVEAWAY, STREAK & REFERRALS -->
+  <section class="panel" id="panel-bonuses">
     <!-- CHANNEL SUBSCRIBE QUEST (shown after warm-up via /channel toggle) -->
     <div class="mini-box" id="chanQuestCard" style="display:none;margin-bottom:10px;border-color:rgba(56,189,248,.45);background:linear-gradient(145deg,rgba(14,165,233,.15),rgba(17,24,48,.88))">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
@@ -381,61 +401,32 @@
         <span style="font-size:10.5px;color:var(--muted)" data-i18n="promo_sub">Лимитированные дропы</span>
       </div>
       <div style="display:flex;gap:6px">
-        <input id="promoInput" type="text" placeholder="STARS20" maxlength="32" style="flex:1;min-width:0;padding:8px 10px;border-radius:10px;border:1px solid var(--border);background:rgba(15,23,42,.75);color:#fff;font-weight:800;text-transform:uppercase;font-size:12.5px">
-        <button class="sm-btn" style="width:auto;padding:8px 14px" onclick="redeemPromo()" data-i18n="promo_btn">Активировать</button>
+        <input id="promoInput" type="text" placeholder="START45" maxlength="32" style="flex:1;min-width:0;padding:8px 10px;border-radius:10px;border:1px solid var(--border);background:rgba(15,23,42,.75);color:#fff;font-weight:800;text-transform:uppercase;font-size:12.5px">
+        <button class="sm-btn" style="width:auto;margin-top:0;padding:8px 14px" onclick="redeemPromo()" data-i18n="promo_btn">Активировать</button>
       </div>
     </div>
 
-    <div class="sec-h">
-      <span data-i18n="inside_h">📦 Настоящие подарки в боксе</span>
-      <span style="font-size:10.5px;text-transform:none" data-i18n="tap_anim">Тапни для 3D-анимации</span>
-    </div>
-    <div class="loot-grid" id="lootGrid"></div>
-  </section>
-
-  <!-- TAB 2: INVENTORY, 1->1 WHEEL & 5->1 CONTRACT -->
-  <section class="panel" id="panel-inv">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-      <strong data-i18n="inv_h">🎒 Подарки в инвентаре</strong>
-      <button class="info-btn" onclick="salvageAll15()" data-i18n="sell15_all">♻️ Продать все 15⭐</button>
-    </div>
-    <div class="inv-grid" id="invGrid"></div>
-
-    <div class="mini-box" style="margin-top:14px">
-      <strong data-i18n="up1_h">🎯 Колесо Апгрейда 1 → 1</strong>
-      <p style="font-size:11.5px;color:var(--muted);margin:4px 0 8px" data-i18n="up1_d">Поставь 1 дешёвый подарок и крутани на подарок выше! Неудача даёт +25 ✨.</p>
-      <div id="up1Box" style="font-size:12px;color:var(--muted)">Выберите подарок в инвентаре кнопкой «🎯 Апгрейд»</div>
-    </div>
-
-    <div class="mini-box" style="margin-top:10px">
-      <strong data-i18n="contract_h">⚡ Контракт Апгрейда 5 → 1</strong>
-      <p style="font-size:11.5px;color:var(--muted);margin:5px 0 8px" data-i18n="contract_d">Обменяй 5 подарков одного ранга с шансом на джекпот до 500⭐!</p>
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px">
-        <button class="sm-btn" onclick="runContract(15)" id="c15Btn">5×15⭐ → 50/100⭐</button>
-        <button class="sm-btn" onclick="runContract(25)" id="c25Btn">5×25⭐ → до 200⭐</button>
-        <button class="sm-btn" onclick="runContract(50)" id="c50Btn">5×50⭐ → до 500⭐</button>
+    <div class="util-grid">
+      <div class="mini-box">
+        <strong data-i18n="daily_h">🎡 Бонус 12ч</strong>
+        <div style="color:var(--muted);margin:3px 0" id="dailyDesc">+6 💎 и +20 ✨</div>
+        <button class="sm-btn" style="background:linear-gradient(135deg,#10b981,#059669)" id="dailyBtn" onclick="claimDaily()" data-i18n="claim_btn">Забрать</button>
+      </div>
+      <div class="mini-box">
+        <strong data-i18n="shards_h">✨ Обмен осколков</strong>
+        <div id="shardsSub" style="color:var(--muted);margin:3px 0">0 / 300 ✨ → 100 💎</div>
+        <button class="sm-btn" id="shardsBtn" onclick="exchangeShards()" data-i18n="exch_btn">Обменять 300 ✨</button>
       </div>
     </div>
-  </section>
 
-  <!-- TAB 3: STARS SHOP -->
-  <section class="panel" id="panel-shop">
-    <div style="margin-bottom:10px">
-      <strong data-i18n="shop_h">💎 Магазин Кристаллов (Telegram Stars)</strong>
-      <div style="font-size:12px;color:var(--muted)" data-i18n="shop_d">Честный курс от 10.26 до 14.44 💎 за ⭐. Моментально в 1 тап.</div>
-    </div>
-    <div class="pack-grid" id="packGrid"></div>
-  </section>
-
-  <!-- TAB 4: ALBUM, CARDS, LEADERBOARD & REFERRALS -->
-  <section class="panel" id="panel-col">
+    <!-- 7-Day Streak -->
     <div class="mini-box" style="margin-bottom:10px">
       <div style="display:flex;justify-content:space-between;align-items:center">
-        <strong data-i18n="alb_h">📕 Альбом Подарков (Бонус +5% ♻️)</strong>
-        <span id="albCnt" style="color:var(--gold);font-weight:900">0 / 11</span>
+        <strong data-i18n="streak_h">🔥 Серия 7 дней</strong>
+        <span id="streakLabel" style="font-size:11px;color:var(--gold)">День 0/7</span>
       </div>
-      <div style="font-size:11px;color:var(--muted);margin:4px 0 8px" id="albSub">Собери 4 разных подарка в истории и получай 85% вместо 80% при продаже!</div>
-      <div class="loot-grid" id="albumGrid"></div>
+      <div class="streak-strip" id="streakStrip"></div>
+      <button class="sm-btn" id="streakBtn" onclick="handleStreakClick()">Забрать день 1</button>
     </div>
 
     <div class="mini-box" style="margin-bottom:10px">
@@ -467,13 +458,37 @@
       </div>
       <button class="btn" id="pPayBtn" style="width:100%" onclick="requestPartnerPayout()">💫 Вывести от 50 ⭐</button>
     </div>
+  </section>
+
+  <!-- TAB 4: STARS SHOP -->
+  <section class="panel" id="panel-shop">
+    <div style="margin-bottom:10px">
+      <strong data-i18n="shop_h">💎 Магазин Кристаллов (Telegram Stars)</strong>
+      <div style="font-size:12px;color:var(--muted)" data-i18n="shop_d">Выгодный курс от 10.20 до 11.32 💎 за ⭐. Моментально в 1 тап.</div>
+    </div>
+    <div class="pack-grid" id="packGrid"></div>
+  </section>
+
+  <!-- TAB 5: ALBUM, COLLECTOR CARDS & LEADERBOARD -->
+  <section class="panel" id="panel-col">
+    <div class="mini-box" style="margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <strong data-i18n="alb_h">📕 Альбом Подарков (Бонус +5% ♻️)</strong>
+        <span id="albCnt" style="color:var(--gold);font-weight:900">0 / 11</span>
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin:4px 0 8px" id="albSub">Собери 4 разных подарка в истории и получай 85% вместо 80% при продаже!</div>
+      <div class="loot-grid" id="albumGrid"></div>
+    </div>
 
     <div class="mini-box" style="margin-bottom:10px">
-      <strong data-i18n="cards_h">🃏 Карточки коллекции (★1..★6)</strong>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:6px">
+        <strong data-i18n="cards_h">🃏 Карточки коллекции (★1..★6)</strong>
+        <span id="cardBonusBadge" style="color:var(--green);font-weight:800;font-size:11px">+0% к ✨</span>
+      </div>
       <div class="inv-grid" id="cardsGrid"></div>
     </div>
 
-    <div class="mini-box">
+    <div class="mini-box" id="lbBox" style="display:none">
       <strong data-i18n="lb_h">🏆 Сезонный рейтинг</strong>
       <div id="lbList" style="margin-top:6px"></div>
     </div>
@@ -488,6 +503,11 @@
       <span class="nav-badge" id="invBadge">0</span>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 7h12l1 13H5L6 7z"/><path d="M9 7V5a3 3 0 0 1 6 0v2"/></svg>
       <span data-i18n="t_inv">Инвентарь</span>
+    </button>
+    <button id="nav-bonuses" onclick="goTab('bonuses')">
+      <span class="nav-badge" id="bonusBadge">!</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8"/><rect x="2" y="7" width="20" height="5" rx="1"/><path d="M12 22V7M12 7H7.5a2.5 2.5 0 1 1 0-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 1 0 0-5C13 2 12 7 12 7z"/></svg>
+      <span data-i18n="t_bonuses">Бонусы</span>
     </button>
     <button id="nav-shop" onclick="goTab('shop')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
@@ -522,57 +542,71 @@ let HERO_LOTTIE = null;
 let HERO_KEY = '';
 let LANG = ((tg && tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.language_code) || navigator.language || 'ru').toLowerCase().startsWith('ru') ? 'ru' : 'en';
 
-const GIFT_KEYS = ['heart_15','bear_15','gift_25','rose_25','cake_50','bouquet_50','rocket_50','champagne_50','trophy_100','ring_100','diamond_100'];
+const ALBUM_KEYS = ['heart_15','bear_15','gift_25','rose_25','cake_50','bouquet_50','rocket_50','champagne_50','trophy_100','ring_100','diamond_100'];
+const LOTTIE_SET = new Set(ALBUM_KEYS);
+const GIFT_KEYS = ALBUM_KEYS.concat(['set_romance_150','set_champions_300','tg_premium_3m']);
 const DEFAULT_GIFTS = {
-  diamond_100:{key:'diamond_100',name_ru:'Голубой бриллиант',name_en:'Blue Diamond',stars:100,rarity:'legendary'},
-  trophy_100:{key:'trophy_100',name_ru:'Золотой кубок',name_en:'Golden Trophy',stars:100,rarity:'legendary'},
-  ring_100:{key:'ring_100',name_ru:'Кольцо с бриллиантом',name_en:'Diamond Ring',stars:100,rarity:'legendary'},
-  rocket_50:{key:'rocket_50',name_ru:'Звёздная ракета',name_en:'Star Rocket',stars:50,rarity:'mythic'},
-  cake_50:{key:'cake_50',name_ru:'Праздничный торт',name_en:'Birthday Cake',stars:50,rarity:'mythic'},
-  bouquet_50:{key:'bouquet_50',name_ru:'Букет цветов',name_en:'Flower Bouquet',stars:50,rarity:'mythic'},
+  tg_premium_3m:{key:'tg_premium_3m',name_ru:'Premium 3 мес.',name_en:'Premium 3M',stars:1000,rarity:'legendary',premium_months:3},
+  set_champions_300:{key:'set_champions_300',name_ru:'Триумф 3×🏆',name_en:'Triple Trophy',stars:300,rarity:'legendary'},
+  set_romance_150:{key:'set_romance_150',name_ru:'Романтик-сет',name_en:'Romance Set',stars:150,rarity:'legendary'},
+  diamond_100:{key:'diamond_100',name_ru:'Бриллиант',name_en:'Diamond',stars:100,rarity:'legendary'},
+  trophy_100:{key:'trophy_100',name_ru:'Кубок',name_en:'Trophy',stars:100,rarity:'legendary'},
+  ring_100:{key:'ring_100',name_ru:'Кольцо',name_en:'Diamond Ring',stars:100,rarity:'legendary'},
+  rocket_50:{key:'rocket_50',name_ru:'Ракета',name_en:'Rocket',stars:50,rarity:'mythic'},
+  cake_50:{key:'cake_50',name_ru:'Торт',name_en:'Cake',stars:50,rarity:'mythic'},
+  bouquet_50:{key:'bouquet_50',name_ru:'Букет',name_en:'Bouquet',stars:50,rarity:'mythic'},
   champagne_50:{key:'champagne_50',name_ru:'Шампанское',name_en:'Champagne',stars:50,rarity:'mythic'},
-  gift_25:{key:'gift_25',name_ru:'Подарочная коробка',name_en:'Gift Box',stars:25,rarity:'epic'},
-  rose_25:{key:'rose_25',name_ru:'Красная роза',name_en:'Red Rose',stars:25,rarity:'epic'},
-  heart_15:{key:'heart_15',name_ru:'Сердце с лентой',name_en:'Ribbon Heart',stars:15,rarity:'rare'},
-  bear_15:{key:'bear_15',name_ru:'Плюшевый мишка',name_en:'Plush Bear',stars:15,rarity:'rare'}
+  gift_25:{key:'gift_25',name_ru:'Коробка',name_en:'Gift Box',stars:25,rarity:'epic'},
+  rose_25:{key:'rose_25',name_ru:'Роза',name_en:'Red Rose',stars:25,rarity:'epic'},
+  heart_15:{key:'heart_15',name_ru:'Сердце',name_en:'Heart',stars:15,rarity:'rare'},
+  bear_15:{key:'bear_15',name_ru:'Мишка',name_en:'Plush Bear',stars:15,rarity:'rare'}
 };
-const EMOJI_TO_GIFT = {'💝':'heart_15','🧸':'bear_15','🎁':'gift_25','🌹':'rose_25','🎂':'cake_50','💐':'bouquet_50','🚀':'rocket_50','🍾':'champagne_50','🏆':'trophy_100','💍':'ring_100','💎':'diamond_100'};
+const EMOJI_TO_GIFT = {'💝':'heart_15','🧸':'bear_15','🎁':'gift_25','🌹':'rose_25','🎂':'cake_50','💐':'bouquet_50','🚀':'rocket_50','🍾':'champagne_50','🏆':'trophy_100','💍':'ring_100','💎':'diamond_100','🌟':'tg_premium_3m'};
 
 const I18N = {
   ru:{
     w_title:'🎁 Приветственный Бокс (Бесплатно!)',w_sub:'Нажми, чтобы открыть 1-й бокс и забрать стартовый бонус 💎+✨',
     tilt_h:'🔥 Шанс докрута: 15 ⭐ → 175 💎',tilt_sub:'До гаранта близко! Исчезнет через',
-    odds_btn:'Шансы',guar_on:'🔥 100% ГАРАНТ ГЛАВНОГО ПРИЗА',daily_h:'🎡 Бонус 12ч',claim_btn:'Забрать',
+    pity_lbl:'🎯 Гарант редкого приза',odds_btn:'Шансы',guar_on:'🔥 100% ГАРАНТ ГЛАВНОГО ПРИЗА',daily_h:'🎡 Бонус 12ч',claim_btn:'Забрать',
     shards_h:'✨ Осколки',exch_btn:'Обменять 300 ✨',streak_h:'🔥 Серия 7 дней',
-    inside_h:'📦 Настоящие подарки в боксе',tap_anim:'Тапни для анимации',
+    inside_h:'📦 Настоящие подарки в боксе',tap_anim:'Тапни для 3D',
     inv_h:'🎒 Подарки в инвентаре',sell15_all:'♻️ Продать все 15⭐',
     up1_h:'🎯 Колесо Апгрейда 1 → 1',up1_d:'Поставь 1 подарок и крутани на подарок выше! Неудача даёт +25 ✨.',
     contract_h:'⚡ Контракт 5 → 1',contract_d:'Обменяй 5 подарков одного ранга с шансом до 500⭐!',
-    shop_h:'💎 Магазин Кристаллов (Telegram Stars)',shop_d:'Честный курс от 10.2 до 11.3 💎 за ⭐ + акции 10x. Моментально в 1 тап.',
+    shop_h:'💎 Магазин Кристаллов (Telegram Stars)',shop_d:'Выгодный курс от 10.20 до 11.32 💎 за ⭐. Моментально в 1 тап.',
     alb_h:'📕 Альбом Подарков (Бонус +5% ♻️)',ref_h:'👥 Пригласи друзей',
     ref_d:'Другу +35 ✨ сразу, а после 1-й оплаты — +25 💎 каждому + 10% в 💎 со всех покупок!',
     ref_cnt:'Приглашено:',invite_btn:'📤 Пригласить друга',cards_h:'🃏 Карточки коллекции (★1..★6)',
     promo_h:'🎟 Промокод из канала',promo_sub:'Лимитированные дропы',promo_btn:'Активировать',
-    lb_h:'🏆 Сезонный рейтинг',t_boxes:'Боксы',t_inv:'Инвентарь',t_shop:'Магазин',t_col:'Альбом'
+    lb_h:'🏆 Сезонный рейтинг',t_boxes:'Боксы',t_inv:'Инвентарь',t_bonuses:'Бонусы',t_shop:'Магазин',t_col:'Альбом'
   },
   en:{
     w_title:'🎁 Free Welcome Box Ready!',w_sub:'Tap to spin your first capsule & claim starter 💎+✨!',
     tilt_h:'🔥 Second Wind: 15 ⭐ → 175 💎',tilt_sub:'Near pity! Expires in',
-    odds_btn:'Odds',guar_on:'🔥 100% FEATURED GUARANTEE',daily_h:'🎡 12h Bonus',claim_btn:'Claim',
+    pity_lbl:'🎯 Rare Prize Guarantee',odds_btn:'Odds',guar_on:'🔥 100% FEATURED GUARANTEE',daily_h:'🎡 12h Bonus',claim_btn:'Claim',
     shards_h:'✨ Shards',exch_btn:'Swap 300 ✨',streak_h:'🔥 7-Day Streak',
-    inside_h:'📦 Real Telegram Gifts Inside',tap_anim:'Tap for 3D preview',
+    inside_h:'📦 Real Telegram Gifts Inside',tap_anim:'Tap for 3D',
     inv_h:'🎒 Stored Gifts',sell15_all:'♻️ Salvage all 15⭐',
     up1_h:'🎯 1 → 1 Upgrade Wheel',up1_d:'Risk 1 gift for a higher-tier gift! Missed spins grant +25 ✨.',
     contract_h:'⚡ Upgrade 5 → 1',contract_d:'Burn 5 gifts for a higher gift up to 500⭐!',
-    shop_h:'💎 Crystal Store (Telegram Stars)',shop_d:'Honest 10.2–11.3 💎/⭐ rates. Instant 1-tap checkout.',
+    shop_h:'💎 Crystal Store (Telegram Stars)',shop_d:'10.20–11.32 💎/⭐ rate ladder. Instant 1-tap credit.',
     alb_h:'📕 Gift Album (+5% ♻️ Bonus)',ref_h:'👥 Invite Friends',
     ref_d:'+35 ✨ on join, then +25 💎 each + 10% kickback after friend pays!',
     ref_cnt:'Invited:',invite_btn:'📤 Share Invite',cards_h:'🃏 Collector Cards (★1..★6)',
     promo_h:'🎟 Channel Promo Code',promo_sub:'Limited drops',promo_btn:'Redeem',
-    lb_h:'🏆 Season Top',t_boxes:'Boxes',t_inv:'Inventory',t_shop:'Shop',t_col:'Album'
+    lb_h:'🏆 Season Top',t_boxes:'Boxes',t_inv:'Inventory',t_bonuses:'Bonuses',t_shop:'Shop',t_col:'Album'
   }
 };
 
+function upgradeWheelSvg(pct, size=62){
+  const r = 24, c = 2 * Math.PI * r, dash = (Math.max(4, Math.min(95, pct)) / 100) * c;
+  return `<svg width="${size}" height="${size}" viewBox="0 0 64 64">
+    <circle cx="32" cy="32" r="${r}" fill="rgba(15,23,42,.8)" stroke="rgba(148,163,184,.25)" stroke-width="6"/>
+    <circle cx="32" cy="32" r="${r}" fill="none" stroke="#10b981" stroke-width="6" stroke-linecap="round"
+      stroke-dasharray="${dash.toFixed(1)} ${c.toFixed(1)}" transform="rotate(-90 32 32)"/>
+    <text x="32" y="36" text-anchor="middle" fill="#f8fafc" font-size="11.5" font-weight="900">${pct}%</text>
+  </svg>`;
+}
 function crystalSvg(rarity, size){
   const pal = rarity === 'uncommon' ? ['#34d399','#059669','#a7f3d0'] : ['#38bdf8','#2563eb','#bae6fd'];
   return `<svg width="${size}" height="${size}" viewBox="0 0 64 64" fill="none">
@@ -583,15 +617,18 @@ function crystalSvg(rarity, size){
 }
 function visualHTML(itemKey, kind, rarity, size){
   if (kind === 'gift' || GIFT_KEYS.includes(itemKey)) {
-    return `<img src="./gifts/${itemKey}.webp" width="${size}" height="${size}" alt="" decoding="async">`;
+    return `<img src="./gifts/${itemKey}.webp" width="${size}" height="${size}" alt="" decoding="async" style="border-radius:12px">`;
+  }
+  if (itemKey && itemKey.startsWith('card_')) {
+    return `<img src="./cards/${itemKey}.webp" width="${size}" height="${size}" alt="" decoding="async" style="border-radius:12px">`;
   }
   return crystalSvg(rarity || 'common', size);
 }
 function mountLottie(container, giftKey){
   if (!container) return null;
   if (container._lottie) { try { container._lottie.destroy(); } catch(e){} container._lottie = null; }
-  container.innerHTML = `<img src="./gifts/${giftKey}.webp" alt="" style="width:100%;height:100%;object-fit:contain">`;
-  if (!window.lottie || !GIFT_KEYS.includes(giftKey)) return null;
+  container.innerHTML = `<img src="./gifts/${giftKey}.webp" alt="" style="width:100%;height:100%;object-fit:contain;border-radius:14px">`;
+  if (!window.lottie || !LOTTIE_SET.has(giftKey)) return null;
   const host = document.createElement('div');
   host.style.cssText = 'width:100%;height:100%';
   const anim = window.lottie.loadAnimation({container:host, renderer:'svg', loop:true, autoplay:true, path:`./gifts/${giftKey}.json`});
@@ -606,10 +643,15 @@ function showToast(msg){
   setTimeout(()=>{ t.style.display='none'; }, 3600);
 }
 function goTab(name){
-  ['boxes','inv','shop','col'].forEach(k=>{
+  ['boxes','inv','bonuses','shop','col'].forEach(k=>{
     document.getElementById('panel-'+k).classList.toggle('active', k===name);
     document.getElementById('nav-'+k).classList.toggle('active', k===name);
   });
+}
+function handleTickerClick(){
+  const ch = STATE && STATE.channel ? STATE.channel : null;
+  if (ch && ch.tma_enabled && ch.url) openChannelLink();
+  else goTab('bonuses');
 }
 function toggleFast(){
   FAST_MODE = !FAST_MODE;
@@ -640,13 +682,22 @@ async function apiCall(path, method='GET', body=null){
 }
 
 async function bootstrap(){
-  const pQuery = new URLSearchParams(location.search).get('promo');
+  const qs = new URLSearchParams(location.search);
+  const pQuery = qs.get('promo');
   const sp = (tg && tg.initDataUnsafe && tg.initDataUnsafe.start_param) || '';
   const initPromo = pQuery || (sp.startsWith('promo_') ? sp.slice(6) : '');
   if (initPromo) {
     const inp = document.getElementById('promoInput');
     if (inp) inp.value = initPromo.toUpperCase();
   }
+  const initBox = qs.get('box') || (sp.startsWith('drop_')||sp.startsWith('jackpot_') ? sp.split('_').slice(1).join('_') : '');
+  if (['star_box','cyber_event','whale_vault'].includes(initBox)) {
+    CUR_BOX = initBox;
+    document.body.className = 'theme-' + CUR_BOX;
+  }
+  const initTab = qs.get('tab') || ((initPromo || sp === 'giveaway') ? 'bonuses' : '');
+  if (['boxes','inv','bonuses','shop','col'].includes(initTab)) goTab(initTab);
+
   if (!API_BASE) {
     try {
       const cfg = await (await fetch('./config.json?t=' + Date.now())).json();
@@ -678,11 +729,9 @@ async function bootstrap(){
 function getBoxShowcaseList(boxKey){
   const gMap = (CATALOG && CATALOG.gifts) || DEFAULT_GIFTS;
   const baseOrder = boxKey === 'whale_vault'
-    ? ['trophy_100','ring_100','diamond_100','champagne_50','rocket_50','bouquet_50','cake_50','gift_25','rose_25','bear_15','heart_15']
-    : boxKey === 'cyber_event'
-      ? ['diamond_100','rocket_50','ring_100','cake_50','champagne_50','gift_25','rose_25','bouquet_50','bear_15','heart_15','trophy_100']
-      : ['diamond_100','rocket_50','gift_25','bear_15','heart_15','rose_25','cake_50','trophy_100','bouquet_50','champagne_50','ring_100'];
-  return baseOrder.filter(k=>gMap[k]).map(k=>gMap[k]);
+    ? ['tg_premium_3m','set_champions_300','set_romance_150','trophy_100','ring_100','diamond_100','cake_50','bouquet_50','rocket_50','champagne_50','gift_25','rose_25']
+    : ['set_romance_150','diamond_100','trophy_100','ring_100','rocket_50','cake_50','bouquet_50','champagne_50','gift_25','rose_25','heart_15','bear_15'];
+  return baseOrder.filter(k=>gMap[k]).map(k=>gMap[k]).sort((a,b)=>(b.stars-a.stars)||(a.key<b.key?-1:1));
 }
 
 function startIdleLoop(){
@@ -805,9 +854,14 @@ function renderAll(){
     } else {
       db.disabled = false; db.textContent = I18N[LANG].claim_btn;
     }
-    const shCapNote = (u.paid_orders_count === 0) ? (LANG==='ru' ? ` (лимит ${u.free_shards_cap||150} ✨ до 1-й покупки)` : ` (free cap ${u.free_shards_cap||150} ✨)`) : '';
-    document.getElementById('shardsSub').textContent = `${u.shards} / 300 ✨ → 100 💎${shCapNote}`;
+    document.getElementById('dailyDesc').textContent = LANG==='ru' ? '+6 💎 и +20 ✨' : '+6 💎 & +20 ✨';
+    document.getElementById('shardsSub').textContent = `${u.shards} / 300 ✨ → 100 💎`;
     document.getElementById('shardsBtn').disabled = u.shards < 300;
+    const bBadge = document.getElementById('bonusBadge');
+    if (bBadge) {
+      const hasBonus = (cd === 0 || u.pass_claimable || (u.streak_cooldown_sec === 0 && u.missed_streak === 0));
+      bBadge.style.display = hasBonus ? 'block' : 'none';
+    }
 
     // 7-Day Streak strip
     const rew = (CATALOG && CATALOG.streak_rewards) || [
@@ -836,12 +890,12 @@ function renderAll(){
     }
 
     // Album
-    const unl = new Set(u.unlocked_gifts || []);
+    const unl = new Set((u.unlocked_gifts || []).filter(k => LOTTIE_SET.has(k)));
     document.getElementById('albCnt').textContent = `${unl.size} / 11`;
     document.getElementById('albSub').textContent = u.album_bonus_active
       ? (LANG==='ru' ? '✅ Бонус активен: продажа подарков даёт 85% в 💎!' : '✅ Bonus active: +85% salvage crystals unlocked!')
       : (LANG==='ru' ? `Открой ещё ${Math.max(0,4-unl.size)} разных подарка → 85% вместо 80% при продаже!` : `Unlock ${Math.max(0,4-unl.size)} more gifts for permanent 85% salvage!`);
-    document.getElementById('albumGrid').innerHTML = GIFT_KEYS.map(k => {
+    document.getElementById('albumGrid').innerHTML = ALBUM_KEYS.map(k => {
       const g = ((CATALOG && CATALOG.gifts) || DEFAULT_GIFTS)[k];
       return `<div class="loot-card ${g.rarity} ${unl.has(k)?'':'locked'}" onclick="previewGift('${k}')">
         <img src="./gifts/${k}.webp" alt="">
@@ -852,9 +906,9 @@ function renderAll(){
   }
 
   const boxes = (CATALOG && CATALOG.boxes) || [
-    {key:'star_box',name_ru:'Звёздная',name_en:'Star Box',desc_ru:'Подарки 15–100⭐, Мини-Pity 5',desc_en:'Gifts 15–100⭐, Mini-Pity 5',badge_ru:'ХИТ',badge_en:'TOP',cost_1:100,cost_10:950,hard_pity:85,soft_pity:70,mini_pity:5,featured_gift:'diamond_100',banner_days:0},
-    {key:'cyber_event',name_ru:'Охота 💎',name_en:'Diamond Hunt',desc_ru:'~52% RTP · 🚀 50⭐ и 💎 100⭐',desc_en:'~52% RTP · 🚀 50⭐ & 💎 100⭐',badge_ru:'14Д',badge_en:'14D',cost_1:220,cost_10:2090,hard_pity:80,soft_pity:65,mini_pity:5,featured_gift:'diamond_100',banner_days:14},
-    {key:'whale_vault',name_ru:'VIP Сейф',name_en:'Royal Vault',desc_ru:'~55% RTP · Мульти-дроп 300⭐',desc_en:'~55% RTP · Up to 300⭐ jackpots',badge_ru:'VIP ~55%',badge_en:'VIP ~55%',cost_1:450,cost_10:4275,hard_pity:60,soft_pity:45,mini_pity:4,featured_gift:'trophy_100',banner_days:0}
+    {key:'star_box',name_ru:'Звёздная',name_en:'Star Box',desc_ru:'Стартовый бокс: подарки 15–150 ⭐ и частый гарант приза',desc_en:'Starter box: 15–150 ⭐ gifts & frequent drops',badge_ru:'ХИТ',badge_en:'POPULAR',cost_1:100,cost_10:950,hard_pity:85,soft_pity:70,mini_pity:6,featured_gift:'diamond_100',banner_days:0},
+    {key:'cyber_event',name_ru:'Охота 💎',name_en:'Diamond Hunt',desc_ru:'Ивент 14 дней: повышенный шанс 🚀 50 ⭐ и 💎 100 ⭐',desc_en:'14d Event: boosted 🚀 50 ⭐ & 💎 100 ⭐',badge_ru:'ИВЕНТ',badge_en:'14D EVENT',cost_1:220,cost_10:2090,hard_pity:80,soft_pity:65,mini_pity:5,featured_gift:'diamond_100',banner_days:14},
+    {key:'whale_vault',name_ru:'Королевский Сейф',name_en:'Royal Vault',desc_ru:'Топ-коллекция: 50–300 ⭐ и джекпот Telegram Premium 3 мес.!',desc_en:'Top collection: 50–300 ⭐ & TG Premium 3M!',badge_ru:'ДО 1 000 ⭐',badge_en:'UP TO 1000⭐',cost_1:450,cost_10:4275,hard_pity:60,soft_pity:45,mini_pity:4,featured_gift:'trophy_100',banner_days:0}
   ];
   const boxIcons = {star_box:'diamond_100', cyber_event:'rocket_50', whale_vault:'trophy_100'};
   document.getElementById('boxGrid').innerHTML = boxes.map(b => {
@@ -871,7 +925,7 @@ function renderAll(){
   document.getElementById('heroTitle').textContent = LANG==='ru' ? box.name_ru : box.name_en;
   document.getElementById('heroDesc').textContent = LANG==='ru' ? box.desc_ru : box.desc_en;
   document.getElementById('spin1Btn').textContent = `🎁 1x (${box.cost_1} 💎)`;
-  document.getElementById('spin10Btn').textContent = `⚡ 10x (${box.cost_10} 💎)`;
+  document.getElementById('spin10Btn').innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="#090d16" style="vertical-align:-2px;margin-right:3px"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>10x (${box.cost_10} 💎)`;
   document.getElementById('fomoBar').style.display = box.banner_days > 0 ? 'inline-flex' : 'none';
   const heroGiftKey = box.featured_gift || 'diamond_100';
   if (HERO_KEY !== heroGiftKey) { HERO_KEY = heroGiftKey; HERO_LOTTIE = mountLottie(document.getElementById('heroLottie'), heroGiftKey); }
@@ -882,6 +936,8 @@ function renderAll(){
   document.getElementById('pityFill').style.width = `${Math.min(100, (pity / box.hard_pity)*100)}%`;
   document.getElementById('miniPityTxt').textContent = LANG==='ru' ? `🎁 Подарок гарантирован ≤ ${miniRem} спин.` : `🎁 Gift guaranteed in ≤ ${miniRem} spins`;
   document.getElementById('guarBadge').style.display = (u && u.guaranteed_featured) ? 'block' : 'none';
+  const gwWrap = document.getElementById('up1GaugeWrap');
+  if (gwWrap) gwWrap.innerHTML = upgradeWheelSvg(37, 60);
 
   const showcase = getBoxShowcaseList(CUR_BOX);
   document.getElementById('lootGrid').innerHTML = showcase.map(g => `
@@ -905,6 +961,8 @@ function renderAll(){
     const stored = inv.filter(x=>x.status==='stored');
     const badge = document.getElementById('invBadge');
     badge.style.display = inv.length ? 'block' : 'none'; badge.textContent = inv.length;
+    const s15Btn = document.getElementById('sell15Btn');
+    if (s15Btn) s15Btn.style.display = stored.some(x=>x.stars===15) ? 'inline-block' : 'none';
     document.getElementById('invGrid').innerHTML = inv.length ? inv.map(it => {
       const nm = LANG==='ru' ? it.name_ru : it.name_en;
       const pend = it.status === 'pending_approval' || it.status === 'pending_delivery';
@@ -923,7 +981,12 @@ function renderAll(){
              ${it.stars<100?`<button class="sm-btn" onclick="openUp1(${it.id},${it.stars},'${nm}')">🎯 ${LANG==='ru'?'Апгрейд':'Upgrade'}</button>`:''}`
         }
       </div>`;
-    }).join('') : `<div style="grid-column:1/-1;color:var(--muted);font-size:13px;text-align:center;padding:20px">${LANG==='ru'?'Инвентарь пуст':'Inventory empty'}</div>`;
+    }).join('') : `<div class="mini-box" style="grid-column:1/-1;text-align:center;padding:22px 14px">
+      <div style="font-size:38px;margin-bottom:6px">🎁</div>
+      <div style="font-size:14px;font-weight:800;margin-bottom:4px">${LANG==='ru'?'Твой инвентарь пока пуст':'Your inventory is empty'}</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:12px">${LANG==='ru'?'Открывай боксы — подарки от 15 до 1 000 ⭐ появятся здесь':'Spin any box — 15–1000 ⭐ gifts will appear here'}</div>
+      <button class="btn" style="width:100%" onclick="goTab('boxes')">🎁 ${LANG==='ru'?'Открыть первый бокс':'Open First Box'}</button>
+    </div>`;
 
     document.getElementById('c15Btn').disabled = stored.filter(x=>x.stars===15).length < 5;
     document.getElementById('c25Btn').disabled = stored.filter(x=>x.stars===25).length < 5;
@@ -948,18 +1011,28 @@ function renderAll(){
   }
 
   if (STATE && STATE.cards) {
+    const cPct = (u && u.card_shard_bonus_pct) || 0;
+    const cbEl = document.getElementById('cardBonusBadge');
+    if (cbEl) cbEl.textContent = LANG==='ru' ? `+${cPct}% к ✨` : `+${cPct}% shards`;
     document.getElementById('cardsGrid').innerHTML = STATE.cards.map(c => `
-      <div class="inv-card ${c.constellation>=6?'legendary':c.rarity}" style="opacity:${c.copies?1:0.5}">
-        ${crystalSvg(c.rarity, 48)}
+      <div class="inv-card ${c.constellation>=6?'legendary':c.rarity}" style="opacity:${c.copies?1:0.55}">
+        <img src="./cards/${c.key}.webp" alt="" style="border-radius:12px">
         <div style="font-size:12px;font-weight:800;margin-top:4px">${LANG==='ru'?c.name_ru:c.name_en}</div>
-        <div style="font-size:11px;color:var(--gold);font-weight:800">★ ${c.constellation} / 6 (${c.copies}x)</div>
+        <div style="font-size:11px;color:var(--gold);font-weight:800">★ ${c.constellation} / 6 (+${c.constellation*2}% ✨)</div>
       </div>`).join('');
   }
-  if (STATE && STATE.leaderboard) {
-    document.getElementById('lbList').innerHTML = STATE.leaderboard.map(r => `
-      <div class="lb-row" style="${r.is_me?'color:var(--gold);font-weight:900':''}">
-        <span>#${r.rank} ${r.name}</span><span>⚡ ${r.power} · 🎰 ${r.spins}</span>
-      </div>`).join('');
+  const lbBox = document.getElementById('lbBox');
+  if (STATE && STATE.leaderboard && lbBox) {
+    const activeLb = STATE.leaderboard.filter(r => r.power > 0);
+    if (activeLb.length >= 5) {
+      lbBox.style.display = 'block';
+      document.getElementById('lbList').innerHTML = STATE.leaderboard.map(r => `
+        <div class="lb-row" style="${r.is_me?'color:var(--gold);font-weight:900':''}">
+          <span>#${r.rank} ${r.name}</span><span>⚡ ${r.power} · 🎰 ${r.spins}</span>
+        </div>`).join('');
+    } else {
+      lbBox.style.display = 'none';
+    }
   }
 }
 
@@ -1071,7 +1144,7 @@ function showWinModal(results){
       ${note5050}${gBtns}
       <button class="btn sec" style="width:100%;margin-top:10px" onclick="closeModal()">OK</button>`;
     if (r.kind === 'gift') MODAL_LOTTIE = mountLottie(document.getElementById('winStage'), r.item_key);
-    else document.getElementById('winStage').innerHTML = crystalSvg(r.rarity, 108);
+    else document.getElementById('winStage').innerHTML = visualHTML(r.item_key, r.kind, r.rarity, 108);
   } else {
     const totalSh = results.reduce((s,x)=>s+x.shards_granted,0);
     const totalCb = results.reduce((s,x)=>s+x.crystals_cashback,0);
@@ -1093,11 +1166,13 @@ function showWinModal(results){
 function openUp1(invId, inStars, nm){
   const targets = [25,50,100].filter(t=>t>inStars);
   const pairs = (CATALOG && CATALOG.upgrade_pairs) || [];
+  const topPair = (pairs.find(x=>x.in===inStars&&x.target===targets[0]) || {}).pct || Math.round((inStars*74)/targets[0]);
   const btns = targets.map(t => {
     const p = (pairs.find(x=>x.in===inStars&&x.target===t) || {}).pct || Math.round((inStars*74)/t);
     return `<button class="btn gold" style="width:100%;margin-top:8px" onclick="runUpgradeOne(${invId},${t})">⚡ ${nm} (${inStars}⭐) → ${t}⭐ · шанс ${p}%</button>`;
   }).join('');
   document.getElementById('modalBody').innerHTML = `<h3>🎯 Колесо Апгрейда</h3>
+    <div style="margin:6px auto">${upgradeWheelSvg(Math.round(topPair), 74)}</div>
     <p style="font-size:12px;color:var(--muted)">При промахе получишь утешительные +25 ✨ осколков</p>
     ${btns}<button class="btn sec" style="width:100%;margin-top:10px" onclick="closeModal()">Отмена</button>`;
   document.getElementById('overlay').classList.add('open');
@@ -1128,10 +1203,11 @@ function openOddsModal(){
   const box = boxes.find(x=>x.key===CUR_BOX) || {name_ru:'Звёздная Капсула',soft_pity:70,hard_pity:85,mini_pity:5};
   document.getElementById('modalBody').innerHTML = `<h3>ℹ️ ${LANG==='ru'?box.name_ru:box.name_en}</h3>
     <p style="font-size:12.5px;color:var(--muted);text-align:left;line-height:1.55">
-      • <b>Мини-Pity:</b> подарок ≥15⭐ минимум раз в <b>${box.mini_pity||5}</b> круток.<br>
-      • <b>Soft/Hard Pity:</b> с ${box.soft_pity}-й шанс на 50⭐/100⭐ растёт, на <b>${box.hard_pity}-й — 100% гарант</b>.<br>
+      • <b>Гарант подарка:</b> минимум 1 подарок ≥15⭐ каждые <b>${box.mini_pity||5}</b> круток.<br>
+      • <b>Главный приз:</b> с ${box.soft_pity}-й крутки шанс на 100⭐+ растёт, на <b>${box.hard_pity}-й — 100% гарант</b>.<br>
       • <b>Альбом (+5% ♻️):</b> собери 4 разных подарка в истории и продавай за 85% вместо 80%.<br>
-      • <b>Вывод:</b> доступен после 1-й покупки Stars и антифрод-проверки.
+      • <b>Карточки:</b> каждый уровень ★ даёт <b>+2% к осколкам ✨</b> навсегда.<br>
+      • <b>Вывод:</b> доступен после 1-й покупки Stars и проверки безопасности (1–24 ч).
     </p>
     <button class="btn sec" style="width:100%" onclick="closeModal()">OK</button>`;
   document.getElementById('overlay').classList.add('open');
@@ -1194,7 +1270,13 @@ async function exchangeShards(){
 async function claimDaily(){
   try {
     const res = await apiCall('/api/daily','POST',{});
-    STATE = res; renderAll(); showToast(`🎡 +${res.reward.crystals} 💎 · +${res.reward.shards} ✨!`);
+    STATE = res; renderAll();
+    const u = res.user;
+    if (u && u.paid_orders_count === 0 && res.reward.crystals === 0 && res.reward.shards === 0) {
+      showToast(`ℹ️ Достигнут потолок бесплатной копилки (${u.free_crystal_cap||50} 💎 / ${u.free_shards_cap||150} ✨). Открой бокс или пополни Stars!`);
+    } else {
+      showToast(`🎡 +${res.reward.crystals} 💎 · +${res.reward.shards} ✨!`);
+    }
   } catch(e){ showToast(e.message || 'Cooldown active'); }
 }
 async function handleStreakClick(){
