@@ -410,6 +410,28 @@
       <button class="btn green" style="width:100%" onclick="shareInvite()" data-i18n="invite_btn">📤 Пригласить друга</button>
     </div>
 
+    <div class="mini-box" id="partnerCard" style="display:none;margin-bottom:10px;border-color:rgba(250,204,21,.45);background:linear-gradient(145deg,rgba(245,158,11,.14),rgba(17,24,48,.85))">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+        <strong id="partnerTitle">🤝 Партнёрский кабинет</strong>
+        <span class="btab-tag" id="partnerPctBadge" style="position:static">25% RevShare ⭐</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:8px 0;text-align:center">
+        <div style="background:rgba(15,23,42,.55);padding:6px;border-radius:10px">
+          <div style="font-size:10px;color:var(--muted)" id="pBalLbl">Доступно</div>
+          <div style="font-size:13px;font-weight:900;color:var(--gold)" id="pBal">0.00 ⭐</div>
+        </div>
+        <div style="background:rgba(15,23,42,.55);padding:6px;border-radius:10px">
+          <div style="font-size:10px;color:var(--muted)" id="pTotLbl">Заработано</div>
+          <div style="font-size:13px;font-weight:900;color:#fff" id="pTot">0.00 ⭐</div>
+        </div>
+        <div style="background:rgba(15,23,42,.55);padding:6px;border-radius:10px">
+          <div style="font-size:10px;color:var(--muted)" id="pPendLbl">В заявке</div>
+          <div style="font-size:13px;font-weight:900;color:#7dd3fc" id="pPend">0 ⭐</div>
+        </div>
+      </div>
+      <button class="btn" id="pPayBtn" style="width:100%" onclick="requestPartnerPayout()">💫 Вывести от 50 ⭐</button>
+    </div>
+
     <div class="mini-box" style="margin-bottom:10px">
       <strong data-i18n="cards_h">🃏 Карточки коллекции (★1..★6)</strong>
       <div class="inv-grid" id="cardsGrid"></div>
@@ -490,7 +512,7 @@ const I18N = {
     inv_h:'🎒 Подарки в инвентаре',sell15_all:'♻️ Продать все 15⭐',
     up1_h:'🎯 Колесо Апгрейда 1 → 1',up1_d:'Поставь 1 подарок и крутани на подарок выше! Неудача даёт +25 ✨.',
     contract_h:'⚡ Контракт 5 → 1',contract_d:'Обменяй 5 подарков одного ранга с шансом до 500⭐!',
-    shop_h:'💎 Магазин Кристаллов (Telegram Stars)',shop_d:'Честный курс от 10.26 до 14.44 💎 за ⭐. Моментально в 1 тап.',
+    shop_h:'💎 Магазин Кристаллов (Telegram Stars)',shop_d:'Честный курс от 10.2 до 11.3 💎 за ⭐ + акции 10x. Моментально в 1 тап.',
     alb_h:'📕 Альбом Подарков (Бонус +5% ♻️)',ref_h:'👥 Пригласи друзей',
     ref_d:'Другу +35 ✨ сразу, а после 1-й оплаты — +25 💎 каждому + 10% в 💎 со всех покупок!',
     ref_cnt:'Приглашено:',invite_btn:'📤 Пригласить друга',cards_h:'🃏 Карточки коллекции (★1..★6)',
@@ -505,7 +527,7 @@ const I18N = {
     inv_h:'🎒 Stored Gifts',sell15_all:'♻️ Salvage all 15⭐',
     up1_h:'🎯 1 → 1 Upgrade Wheel',up1_d:'Risk 1 gift for a higher-tier gift! Missed spins grant +25 ✨.',
     contract_h:'⚡ Upgrade 5 → 1',contract_d:'Burn 5 gifts for a higher gift up to 500⭐!',
-    shop_h:'💎 Crystal Store (Telegram Stars)',shop_d:'Honest 10.26–14.44 💎/⭐ rates. Instant 1-tap checkout.',
+    shop_h:'💎 Crystal Store (Telegram Stars)',shop_d:'Honest 10.2–11.3 💎/⭐ rates. Instant 1-tap checkout.',
     alb_h:'📕 Gift Album (+5% ♻️ Bonus)',ref_h:'👥 Invite Friends',
     ref_d:'+35 ✨ on join, then +25 💎 each + 10% kickback after friend pays!',
     ref_cnt:'Invited:',invite_btn:'📤 Share Invite',cards_h:'🃏 Collector Cards (★1..★6)',
@@ -662,6 +684,28 @@ function renderAll(){
     document.getElementById('balCry').textContent = u.crystals;
     document.getElementById('balSh').textContent = u.shards;
     document.getElementById('refCnt').textContent = u.referrals_count || 0;
+    const pCard = document.getElementById('partnerCard');
+    if (u.is_partner || (u.partner_stars_total || 0) > 0) {
+      pCard.style.display = 'block';
+      const pBal = Number(u.partner_stars_balance || 0);
+      const pTot = Number(u.partner_stars_total || 0);
+      const pPend = Number(u.partner_pending_payout_stars || 0);
+      document.getElementById('partnerTitle').textContent = LANG==='ru' ? '🤝 Партнёрский кабинет' : '🤝 Partner Dashboard';
+      document.getElementById('partnerPctBadge').textContent = `${u.partner_pct || 0}% RevShare ⭐`;
+      document.getElementById('pBalLbl').textContent = LANG==='ru' ? 'Доступно' : 'Available';
+      document.getElementById('pTotLbl').textContent = LANG==='ru' ? 'Заработано' : 'Earned';
+      document.getElementById('pPendLbl').textContent = LANG==='ru' ? 'В заявке' : 'Pending';
+      document.getElementById('pBal').textContent = `${pBal.toFixed(2)} ⭐`;
+      document.getElementById('pTot').textContent = `${pTot.toFixed(2)} ⭐`;
+      document.getElementById('pPend').textContent = `${pPend} ⭐`;
+      const pBtn = document.getElementById('pPayBtn');
+      pBtn.disabled = pBal < 50;
+      pBtn.textContent = pBal >= 50
+        ? (LANG==='ru' ? `💫 Вывести ${Math.floor(pBal)} ⭐` : `💫 Withdraw ${Math.floor(pBal)} ⭐`)
+        : (LANG==='ru' ? `💫 Вывести от 50 ⭐ (осталось ${(50-pBal).toFixed(1)} ⭐)` : `💫 Min 50 ⭐ (${(50-pBal).toFixed(1)} ⭐ left)`);
+    } else {
+      pCard.style.display = 'none';
+    }
     document.getElementById('welcomeBanner').style.display = u.welcome_spun ? 'none' : 'flex';
     document.getElementById('tiltBanner').style.display = u.tilt_remaining_sec > 0 ? 'flex' : 'none';
 
@@ -672,7 +716,8 @@ function renderAll(){
     } else {
       db.disabled = false; db.textContent = I18N[LANG].claim_btn;
     }
-    document.getElementById('shardsSub').textContent = `${u.shards} / 300 ✨ → 100 💎`;
+    const shCapNote = (u.paid_orders_count === 0) ? (LANG==='ru' ? ` (лимит ${u.free_shards_cap||150} ✨ до 1-й покупки)` : ` (free cap ${u.free_shards_cap||150} ✨)`) : '';
+    document.getElementById('shardsSub').textContent = `${u.shards} / 300 ✨ → 100 💎${shCapNote}`;
     document.getElementById('shardsBtn').disabled = u.shards < 300;
 
     // 7-Day Streak strip
@@ -773,13 +818,16 @@ function renderAll(){
     badge.style.display = inv.length ? 'block' : 'none'; badge.textContent = inv.length;
     document.getElementById('invGrid').innerHTML = inv.length ? inv.map(it => {
       const nm = LANG==='ru' ? it.name_ru : it.name_en;
-      const pend = it.status === 'pending_approval';
+      const pend = it.status === 'pending_approval' || it.status === 'pending_delivery';
+      const pendTxt = it.status === 'pending_delivery'
+        ? (LANG==='ru' ? '⏳ В очереди быстрой отправки · скоро в профиле' : '⏳ Queued for express delivery · arriving shortly')
+        : (LANG==='ru' ? '🎉 Крупный выигрыш на проверке безопасности · скоро в профиле' : '🎉 Big win in fast verification · arriving shortly');
       return `<div class="inv-card ${it.rarity}">
         <img src="./gifts/${it.gift_key}.webp" alt="" onclick="previewGift('${it.gift_key}')">
         <div style="font-size:12px;font-weight:800;margin-top:4px">${nm}</div>
         <div style="font-size:12px;color:var(--gold);font-weight:900">${it.stars} ⭐</div>
         ${pend
-          ? `<div style="margin-top:8px;padding:7px 8px;border-radius:10px;background:rgba(56,189,248,.12);border:1px solid rgba(56,189,248,.35);font-size:10.5px;color:#bae6fd;line-height:1.35">${LANG==='ru'?'🛡 Подарок на проверке безопасности · отправим в течение пары часов':'🛡 Security check in progress · arriving within a couple of hours'}</div>`
+          ? `<div style="margin-top:8px;padding:7px 8px;border-radius:10px;background:rgba(56,189,248,.12);border:1px solid rgba(56,189,248,.35);font-size:10.5px;color:#bae6fd;line-height:1.35">${pendTxt}</div>`
           : `<button class="sm-btn" style="background:linear-gradient(135deg,#10b981,#059669)" onclick="claimGift(${it.id})">🎁 ${LANG==='ru'?'В профиль':'Claim'}</button>
              <button class="sm-btn sec" onclick="salvageIds([${it.id}],false,false)">♻️ +${it.salvage_crystals} 💎</button>
              <button class="sm-btn risk" onclick="salvageIds([${it.id}],false,true)">🔥 ${LANG==='ru'?'Риск 2x':'Risk 2x'}</button>
@@ -856,7 +904,7 @@ async function spinBox(count){
     renderAll();
   } catch (err) {
     if (err.code === 'insufficient_crystals') {
-      showToast(LANG==='ru'?'Недостаточно 💎! Возьми Стартовый Буст 9⭐!':'Not enough 💎! Grab 9⭐ Starter Boost!');
+      showToast(LANG==='ru'?'Недостаточно 💎! Возьми Стартовый Буст 19⭐!':'Not enough 💎! Grab 19⭐ Starter Boost!');
       goTab('shop');
     } else showToast(err.message || 'Error');
     SPINNING = false; startIdleLoop();
@@ -1026,11 +1074,11 @@ async function claimGift(invId, close=false){
     if (res.status === 'pending_approval') {
       try{ tg.HapticFeedback&&tg.HapticFeedback.notificationOccurred('success'); }catch(e){}
       if (MODAL_LOTTIE) { try{MODAL_LOTTIE.destroy();}catch(e){} MODAL_LOTTIE = null; }
-      document.getElementById('modalBody').innerHTML = `<div style="font-size:52px;margin-bottom:6px">🛡</div>
-        <h3 style="margin:4px 0;color:#bae6fd">${LANG==='ru'?'Подарок принят к отправке':'Gift Queued for Delivery'}</h3>
-        <p style="font-size:13px;color:#cbd5e1;line-height:1.5;margin:8px 0 14px">${LANG==='ru'?(res.message_ru||'Подарок на проверке безопасности, отправим в течение пары часов.'):(res.message_en||'Gift is undergoing a routine security check — arriving within a couple of hours.')}</p>
-        <div style="font-size:11.5px;color:var(--muted);margin-bottom:14px">${LANG==='ru'?'Статус можно отслеживать во вкладке «Инвентарь».':'Track status anytime in the Inventory tab.'}</div>
-        <button class="btn" style="width:100%" onclick="closeModal()">${LANG==='ru'?'Отлично':'Got it'}</button>`;
+      document.getElementById('modalBody').innerHTML = `<div style="font-size:56px;margin-bottom:6px">🎉</div>
+        <h3 style="margin:4px 0;color:#facc15">${LANG==='ru'?'Крупный выигрыш! Подарок оформлен':'Big Win! Gift Claimed'}</h3>
+        <p style="font-size:13px;color:#e2e8f0;line-height:1.5;margin:8px 0 14px">${LANG==='ru'?(res.message_ru||'🎉 Крупный выигрыш! Подарок проходит быструю проверку безопасности и скоро придёт в твой профиль (обычно 15–60 минут).'):(res.message_en||'🎉 Big Win! Your gift is in a fast security check and will arrive in your profile shortly (usually 15–60 min).')}</p>
+        <div style="font-size:11.5px;color:var(--muted);margin-bottom:14px">${LANG==='ru'?'Статус доставки можно отслеживать во вкладке «Инвентарь».':'Track delivery status anytime in the Inventory tab.'}</div>
+        <button class="btn" style="width:100%" onclick="closeModal()">${LANG==='ru'?'Ура, жду!':'Awesome!'}</button>`;
       document.getElementById('overlay').classList.add('open');
       return;
     }
@@ -1088,6 +1136,13 @@ function shareInvite(){
   const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(`https://t.me/${bot}?start=ref_${uid}`)}&text=${encodeURIComponent('🎁 Забери бесплатный приветственный бокс и официальные Telegram Подарки!')}`;
   if (tg && tg.openTelegramLink) tg.openTelegramLink(shareUrl);
   else window.open(shareUrl, '_blank');
+}
+async function requestPartnerPayout(){
+  try {
+    const res = await apiCall('/api/partner_payout','POST',{});
+    STATE = res; renderAll();
+    showToast(LANG==='ru'?`🤝 Заявка #${res.payout_id} на ${res.amount_stars} ⭐ отправлена!`:`🤝 Payout #${res.payout_id} (${res.amount_stars} ⭐) requested!`);
+  } catch(e){ showToast(e.message || 'Payout error'); }
 }
 
 setInterval(()=>{
