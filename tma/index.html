@@ -1,0 +1,446 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>AI Bots Studio &amp; Stars PRO — @railway_robot · @Good_4robot · @Drat7robot</title>
+  <meta name="description" content="Interactive Telegram Mini App: Reels captions &amp; 640x640 circle previewer, voice /tldr demo, receipt bill splitter calculator &amp; 1-tap Telegram Stars packs.">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    :root{
+      --bg:#0b1020;--card:#131b2e;--card2:#0f1627;--border:rgba(148,163,184,.16);
+      --text:#f8fafc;--muted:#94a3b8;--accent:#38bdf8;--gold:#facc15;--green:#34d399;--btn:#2563eb;
+    }
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    body{
+      margin:0;padding:12px 14px 28px;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+      background:var(--bg);color:var(--text);line-height:1.45;
+    }
+    .topbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
+    .brand{font-weight:800;font-size:15px;letter-spacing:-.01em;display:flex;align-items:center;gap:8px}
+    .pill-badge{font-size:11px;padding:2px 8px;border-radius:999px;background:rgba(56,189,248,.16);color:var(--accent);font-weight:700}
+    .lang-btn{
+      background:var(--card);color:var(--text);border:1px solid var(--border);
+      border-radius:10px;padding:6px 11px;font-size:12px;font-weight:700;cursor:pointer;
+    }
+    .tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+    .tab{
+      background:var(--card);border:1px solid var(--border);border-radius:12px;
+      padding:9px 6px;color:var(--muted);font-size:12.5px;font-weight:700;cursor:pointer;
+      text-align:center;transition:.15s;
+    }
+    .tab.active{
+      background:linear-gradient(135deg,rgba(37,99,235,.3),rgba(56,189,248,.22));
+      border-color:var(--accent);color:#fff;box-shadow:0 0 0 1px rgba(56,189,248,.25);
+    }
+    .panel{display:none}
+    .panel.active{display:block}
+    .hero-card{
+      background:var(--card);border:1px solid var(--border);border-radius:16px;
+      padding:14px;margin-bottom:12px;
+    }
+    .hero-title{font-size:17px;font-weight:800;margin:0 0 4px}
+    .hero-sub{font-size:13px;color:var(--muted);margin:0 0 12px}
+    .cta-main{
+      display:block;width:100%;text-align:center;text-decoration:none;
+      background:var(--btn);color:#fff;font-weight:700;font-size:14px;
+      padding:11px 14px;border-radius:12px;border:0;cursor:pointer;
+    }
+    .section-h{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:14px 2px 8px;font-weight:700}
+    .packs{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-bottom:14px}
+    .pack{
+      position:relative;background:var(--card);border:1px solid var(--border);
+      border-radius:14px;padding:12px 11px;cursor:pointer;text-align:left;color:var(--text);
+      display:flex;flex-direction:column;justify-content:space-between;min-height:112px;
+    }
+    .pack.featured{border-color:rgba(250,204,21,.55);background:linear-gradient(180deg,rgba(250,204,21,.08),var(--card))}
+    .pack-tag{
+      position:absolute;top:-8px;right:10px;background:var(--gold);color:#090d16;
+      font-size:10px;font-weight:800;padding:2px 7px;border-radius:999px;
+    }
+    .pack-tag.blue{background:var(--accent)}
+    .pack-name{font-size:13px;font-weight:700;margin-bottom:3px;padding-right:6px}
+    .pack-desc{font-size:11.5px;color:var(--muted);margin-bottom:8px}
+    .pack-price{
+      display:inline-flex;align-items:center;gap:4px;font-weight:800;font-size:14px;
+      color:var(--gold);
+    }
+    .widget{
+      background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:12px;margin-bottom:12px;
+    }
+    .style-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+    .chip{
+      background:var(--card);border:1px solid var(--border);color:var(--muted);
+      border-radius:999px;padding:5px 10px;font-size:11.5px;font-weight:700;cursor:pointer;
+    }
+    .chip.active{background:var(--accent);color:#090d16;border-color:var(--accent)}
+    .sub-stage{
+      background:radial-gradient(circle at 30% 20%,#1e293b,#020617);border-radius:12px;
+      height:126px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;
+      padding:14px;border:1px solid var(--border);position:relative;overflow:hidden;
+    }
+    .sub-line{font-size:19px;font-weight:900;text-align:center;letter-spacing:.01em;transition:.15s}
+    .sub-line .hi{color:#facc15;text-shadow:0 2px 10px rgba(250,204,21,.45)}
+    .sub-stage.neon .sub-line{color:#e0f2fe;text-shadow:0 0 12px #38bdf8}
+    .sub-stage.neon .hi{color:#34d399;text-shadow:0 0 14px #34d399}
+    .sub-stage.clean .sub-line{font-size:15px;font-weight:600;background:rgba(2,6,23,.72);padding:4px 10px;border-radius:8px;text-transform:none}
+    .sub-stage.tiktok .sub-line{text-transform:uppercase;text-shadow:0 3px 0 #000,-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000}
+    .circle-box{
+      width:146px;height:146px;border-radius:50%;border:3px solid var(--accent);
+      margin:10px auto 6px;overflow:hidden;background:#020617;
+      display:flex;align-items:center;justify-content:center;font-size:11.5px;color:var(--muted);text-align:center;padding:8px;
+    }
+    .circle-box video{width:100%;height:100%;object-fit:cover}
+    input[type=file]{width:100%;font-size:12px;color:var(--muted);margin-top:6px}
+    .voice-out{
+      background:#020617;border:1px solid var(--border);border-radius:10px;padding:10px;
+      font-size:12.5px;color:#e2e8f0;white-space:pre-line;min-height:94px;
+    }
+    .bill-item{
+      display:flex;justify-content:space-between;align-items:center;padding:7px 9px;
+      background:#020617;border:1px solid var(--border);border-radius:9px;margin-bottom:6px;
+      font-size:12.5px;cursor:pointer;
+    }
+    .bill-item.checked{border-color:var(--green);background:rgba(52,211,153,.09)}
+    .bill-summary{
+      display:flex;justify-content:space-between;align-items:center;margin-top:8px;
+      padding-top:8px;border-top:1px solid var(--border);font-size:13px;font-weight:700;
+    }
+    .toast{
+      position:fixed;left:16px;right:16px;bottom:16px;background:#065f46;color:#ecfdf5;
+      border:1px solid #34d399;border-radius:12px;padding:11px 14px;font-size:13px;font-weight:700;
+      text-align:center;display:none;z-index:99;box-shadow:0 10px 25px rgba(0,0,0,.45);
+    }
+    .footer-note{text-align:center;font-size:11.5px;color:var(--muted);margin-top:10px}
+    .footer-note a{color:var(--accent);text-decoration:none}
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand">⚡ Studio &amp; PRO <span class="pill-badge">Telegram Stars</span></div>
+    <button class="lang-btn" id="langBtn" onclick="toggleLang()">EN / RU</button>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" id="tab-sub" onclick="switchBot('sub')">🎬 <span data-i18n="tab_sub">Субтитры</span></button>
+    <button class="tab" id="tab-voice" onclick="switchBot('voice')">🎙 <span data-i18n="tab_voice">Войсы /tldr</span></button>
+    <button class="tab" id="tab-split" onclick="switchBot('split')">🧾 <span data-i18n="tab_split">Чек-сплит</span></button>
+  </div>
+
+  <!-- BOT 1: SUBTITLES & CIRCLES -->
+  <section class="panel active" id="panel-sub">
+    <div class="hero-card">
+      <div class="hero-title">@railway_robot — <span data-i18n="sub_title">Субтитры для Reels и кружочки 640×640</span></div>
+      <p class="hero-sub" data-i18n="sub_desc">1 видео бесплатно + безлимитное демо. Снимите угловую метку и откройте экспорт .SRT без подписки CapCut Pro.</p>
+      <a class="cta-main" href="https://t.me/railway_robot?start=tma_sub" data-i18n="sub_cta">🎬 Открыть @railway_robot</a>
+    </div>
+
+    <div class="section-h" data-i18n="sec_preview">Интерактивное превью стилей и кружка</div>
+    <div class="widget">
+      <div class="style-row">
+        <button class="chip active" onclick="setSubStyle('tiktok',this)">TikTok Bold</button>
+        <button class="chip" onclick="setSubStyle('neon',this)">Neon Karaoke</button>
+        <button class="chip" onclick="setSubStyle('clean',this)">Minimal Clean</button>
+      </div>
+      <div class="sub-stage tiktok" id="subStage">
+        <div class="sub-line" id="subLine">СУБТИТРЫ <span class="hi">ЗА 10 СЕКУНД</span></div>
+      </div>
+      <div class="circle-box" id="circleStage" data-i18n="circle_hint">Выберите MP4/MOV с устройства — локальный тест 640×640 без загрузки на сервер</div>
+      <input type="file" id="circleInput" accept="video/*">
+    </div>
+
+    <div class="section-h" data-i18n="sec_packs">Пакеты Telegram Stars (моментально в 1 тап)</div>
+    <div class="packs" id="packs-sub"></div>
+  </section>
+
+  <!-- BOT 2: VOICE & TLDR -->
+  <section class="panel" id="panel-voice">
+    <div class="hero-card">
+      <div class="hero-title">@Good_4robot — <span data-i18n="voice_title">Чистая расшифровка, спикеры и /tldr</span></div>
+      <p class="hero-sub" data-i18n="voice_desc">1 файл в личке и 8 бесплатных запусков для каждого группового чата. Без слов-паразитов, с разделением спикеров.</p>
+      <a class="cta-main" href="https://t.me/Good_4robot?start=tma_voice" data-i18n="voice_cta">🎙 Открыть @Good_4robot</a>
+    </div>
+
+    <div class="section-h" data-i18n="voice_demo_h">Сравните формат результата</div>
+    <div class="widget">
+      <div class="style-row">
+        <button class="chip active" onclick="setVoiceMode('raw',this)" data-i18n="v_raw">Как слышится</button>
+        <button class="chip" onclick="setVoiceMode('clean',this)" data-i18n="v_clean">Чистый текст</button>
+        <button class="chip" onclick="setVoiceMode('spk',this)" data-i18n="v_spk">Спикеры (PRO)</button>
+        <button class="chip" onclick="setVoiceMode('tldr',this)">/tldr Чат</button>
+      </div>
+      <div class="voice-out" id="voiceOut"></div>
+    </div>
+
+    <div class="section-h" data-i18n="sec_packs">Пакеты Telegram Stars (моментально в 1 тап)</div>
+    <div class="packs" id="packs-voice"></div>
+  </section>
+
+  <!-- BOT 3: BILL SPLIT -->
+  <section class="panel" id="panel-split">
+    <div class="hero-card">
+      <div class="hero-title">@Drat7robot — <span data-i18n="split_title">Сплит чека по фото прямо в чате</span></div>
+      <p class="hero-sub" data-i18n="split_desc">Отправьте фото чека или запустите демо-чек в боте. Друзья отмечают свои позиции кнопками — платит только инициатор от 5⭐.</p>
+      <a class="cta-main" href="https://t.me/Drat7robot?start=tma_split" data-i18n="split_cta">🧾 Открыть @Drat7robot</a>
+    </div>
+
+    <div class="section-h" data-i18n="split_demo_h">Мини-калькулятор своей доли + чаевых</div>
+    <div class="widget">
+      <div id="billList"></div>
+      <div class="style-row" style="margin-top:8px;margin-bottom:0">
+        <button class="chip active" onclick="setTip(0,this)" data-i18n="tip0">Чаевые 0%</button>
+        <button class="chip" onclick="setTip(10,this)">+10%</button>
+        <button class="chip" onclick="setTip(15,this)">+15%</button>
+      </div>
+      <div class="bill-summary">
+        <span data-i18n="my_share">Ваша доля к переводу:</span>
+        <span id="billTotal" style="color:var(--green);font-size:16px">0 ₽</span>
+      </div>
+    </div>
+
+    <div class="section-h" data-i18n="sec_packs">Пакеты Telegram Stars (моментально в 1 тап)</div>
+    <div class="packs" id="packs-split"></div>
+  </section>
+
+  <div class="footer-note">
+    <a href="https://lux1984.github.io/" target="_blank">lux1984.github.io</a> · No auto-renewals · Telegram Stars (XTR)
+  </div>
+  <div class="toast" id="toast"></div>
+
+<script>
+const INVOICES = {"sub": {"pack_5": "https://t.me/$uoPfh2G5SERgAQAAJYFTbGrf0lU", "pack_10": "https://t.me/$Rxtpy2G5SERhAQAACsxmubisFEg", "pack_25": "https://t.me/$J3Z8MmG5SERiAQAARbE9afcMcUs", "pro_30d": "https://t.me/$UwY-IWG5SERjAQAApWvBXVxUfPM"}, "voice": {"pack_5": "https://t.me/$MPFM7ChgSEStAAAAumaaCs4dn0Y", "pack_25": "https://t.me/$MU2neyhgSESuAAAAUcjQl5_lcOQ", "pack_60": "https://t.me/$HRgLgShgSESvAAAA_8TLvLGK8sw", "pro_30d": "https://t.me/$pz78rChgSESwAAAAGKrfmnpXFl0"}, "split": {"pack_5": "https://t.me/$Dd61QCEgUUQXAQAAnZWCRLIeyDg", "pack_10": "https://t.me/$5q8c-iEgUUQYAQAANfomp_gJpW4", "pack_25": "https://t.me/$iZxPkSEgUUQZAQAAmibbB3aL7kM", "pro_30d": "https://t.me/$CfU47CEgUUQaAQAApd3jmYYjvMc"}};
+const PACK_META = {
+  sub: [
+    {key:'pack_5', stars:5, tag_ru:'СТАРТ', tag_en:'STARTER', cls:'blue', name_ru:'3 чистых видео + .SRT', name_en:'3 Clean Videos + .SRT', desc_ru:'Без вотермарки в углу + экспорт субтитров', desc_en:'No watermark + clean .SRT export'},
+    {key:'pack_10', stars:10, name_ru:'10 чистых видео', name_en:'10 Clean Videos', desc_ru:'Субтитры и кружочки до 120 сек', desc_en:'Captions & circles up to 120s'},
+    {key:'pack_25', stars:15, tag_ru:'ВЫГОДНО', tag_en:'BEST VALUE', cls:'', featured:true, name_ru:'25 чистых видео', name_en:'25 Clean Videos', desc_ru:'0.6⭐ за рендер · все стили + .SRT', desc_en:'0.6⭐ per render · all styles + .SRT'},
+    {key:'pro_30d', stars:29, name_ru:'PRO Безлимит 30д', name_en:'PRO Unlimited 30d', desc_ru:'До 3 мин (fair-use 25/день)', desc_en:'Up to 3 min (fair-use 25/day)'}
+  ],
+  voice: [
+    {key:'pack_5', stars:5, tag_ru:'СТАРТ', tag_en:'STARTER', cls:'blue', name_ru:'10 расшифровок', name_en:'10 Transcripts', desc_ru:'Чистый текст + спикеры + .TXT', desc_en:'Clean text + speakers + .TXT'},
+    {key:'pack_25', stars:10, name_ru:'25 расшифровок', name_en:'25 Transcripts', desc_ru:'Войсы, кружочки и /tldr в личке', desc_en:'Voice notes, circles & /tldr'},
+    {key:'pack_60', stars:15, tag_ru:'ВЫГОДНО', tag_en:'BEST VALUE', cls:'', featured:true, name_ru:'60 расшифровок', name_en:'60 Transcripts', desc_ru:'Созвоны с разделением спикеров', desc_en:'Calls with speaker diarization'},
+    {key:'pro_30d', stars:29, name_ru:'PRO Безлимит 30д', name_en:'PRO Unlimited 30d', desc_ru:'Файлы до 30 мин без очереди', desc_en:'Up to 30 min files, priority'}
+  ],
+  split: [
+    {key:'pack_5', stars:5, tag_ru:'СТАРТ', tag_en:'STARTER', cls:'blue', name_ru:'4 разбора чека', name_en:'4 Receipt Scans', desc_ru:'Хватит на выходные с друзьями', desc_en:'Great for a weekend out'},
+    {key:'pack_10', stars:10, name_ru:'10 разборов чека', name_en:'10 Receipt Scans', desc_ru:'Без нижней метки в карточке', desc_en:'Clean share card without footer'},
+    {key:'pack_25', stars:15, tag_ru:'ВЫГОДНО', tag_en:'BEST VALUE', cls:'', featured:true, name_ru:'25 чеков (Trip)', name_en:'25 Receipts Trip', desc_ru:'Отпуск, ужины и общие счета', desc_en:'Trips, dinners & group tabs'},
+    {key:'pro_30d', stars:29, name_ru:'PRO Безлимит 30д', name_en:'PRO Unlimited 30d', desc_ru:'Безлимитное распознавание фото', desc_en:'Unlimited receipt parsing'}
+  ]
+};
+
+const I18N = {
+  ru: {
+    tab_sub:'Субтитры', tab_voice:'Войсы /tldr', tab_split:'Чек-сплит',
+    sub_title:'Субтитры для Reels и кружочки 640×640',
+    sub_desc:'1 видео бесплатно + безлимитное демо. Снимите угловую метку и откройте экспорт .SRT без подписки CapCut Pro.',
+    sub_cta:'🎬 Открыть @railway_robot',
+    sec_preview:'Интерактивное превью стилей и кружка',
+    circle_hint:'Выберите MP4/MOV с устройства — локальный тест 640×640 без загрузки на сервер',
+    sec_packs:'Пакеты Telegram Stars (моментально в 1 тап)',
+    voice_title:'Чистая расшифровка, спикеры и /tldr',
+    voice_desc:'1 файл в личке и 8 бесплатных запусков для каждого группового чата. Без слов-паразитов, с разделением спикеров.',
+    voice_cta:'🎙 Открыть @Good_4robot',
+    voice_demo_h:'Сравните формат результата',
+    v_raw:'Как слышится', v_clean:'Чистый текст', v_spk:'Спикеры (PRO)',
+    split_title:'Сплит чека по фото прямо в чате',
+    split_desc:'Отправьте фото чека или запустите демо-чек в боте. Друзья отмечают свои позиции кнопками — платит только инициатор от 5⭐.',
+    split_cta:'🧾 Открыть @Drat7robot',
+    split_demo_h:'Мини-калькулятор своей доли + чаевых',
+    tip0:'Чаевые 0%', my_share:'Ваша доля к переводу:',
+    paid_toast:'Оплата прошла! Кредиты зачислены в бот.'
+  },
+  en: {
+    tab_sub:'Captions', tab_voice:'Voice /tldr', tab_split:'Bill Split',
+    sub_title:'Reels Captions & 640×640 Circles',
+    sub_desc:'1 free render + unlimited 1-tap demo. Remove corner watermark and unlock .SRT export with no monthly subscription.',
+    sub_cta:'🎬 Open @railway_robot',
+    sec_preview:'Interactive style & 640×640 circle preview',
+    circle_hint:'Pick any local MP4/MOV to preview circular 640×640 framing in your browser',
+    sec_packs:'Telegram Stars Packs (1-tap checkout)',
+    voice_title:'Clean Transcripts, Speakers & /tldr',
+    voice_desc:'1 free DM action + 8 free group chat runs. Removes fillers, structures paragraphs & splits speakers.',
+    voice_cta:'🎙 Open @Good_4robot',
+    voice_demo_h:'Compare output modes',
+    v_raw:'Raw Voice', v_clean:'Clean Text', v_spk:'Speakers (PRO)',
+    split_title:'AI Receipt Splitter inside Group Chats',
+    split_desc:'Snap a bill photo or run the 1-tap demo receipt. Friends tap their dishes for free — only 5⭐ to unlock more scans.',
+    split_cta:'🧾 Open @Drat7robot',
+    split_demo_h:'Quick item + tip calculator',
+    tip0:'Tip 0%', my_share:'Your share to pay:',
+    paid_toast:'Paid! Credits added to your bot.'
+  }
+};
+
+const VOICE_SAMPLES = {
+  ru: {
+    raw:'«Эээ, всем привет, короче... по релизу, ну, завтра в 11:00 созвон с дизайном, а Дима пусть добьёт отчёт до пятницы, ок?»',
+    clean:'📋 Суть:\n• Завтра в 11:00 — созвон с дизайном по релизу.\n• Дима — подготовить отчёт до пятницы.\n\nПолный текст очищен от слов-паразитов.',
+    spk:'👤 Спикер 1: Созвон с дизайном ставим завтра на 11:00?\n👤 Спикер 2: Да, и мой отчёт по метрикам будет готов до пятницы.',
+    tldr:'🔥 Дайджест чата (/tldr):\n• Выбрали пятницу датой релиза.\n• Спорили про макет — победил тёмный вариант.\n• Нерешённый вопрос: кто оплачивает тестовый домен.'
+  },
+  en: {
+    raw:'"Uhh hey team, so basically... for the launch, let us sync with design tomorrow at 11 AM and Sam can wrap the report by Friday, right?"',
+    clean:'📋 Action Items:\n• Design launch sync tomorrow at 11:00 AM.\n• Sam to finalize metrics report by Friday.\n\nFiller words removed automatically.',
+    spk:'👤 Speaker 1: Should we book the design launch sync for 11 AM tomorrow?\n👤 Speaker 2: Yes, and I will wrap the metrics report before Friday.',
+    tldr:'🔥 Group Digest (/tldr):\n• Release locked for Friday.\n• Dark UI variant won 6–2.\n• Open item: domain renewal owner.'
+  }
+};
+
+const BILL_ITEMS = [
+  {id:0, ru:'Пицца Маргарита (пополам)', en:'Margherita Pizza (half)', price:445, checked:true},
+  {id:1, ru:'Том Ям с креветками', en:'Tom Yum Soup', price:690, checked:true},
+  {id:2, ru:'Лимонад маракуйя', en:'Passionfruit Lemonade', price:320, checked:false},
+  {id:3, ru:'Картофель трюфельный (1/3)', en:'Truffle Fries (1/3)', price:180, checked:false}
+];
+
+const tgApp = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+if (tgApp) { try { tgApp.ready(); tgApp.expand(); } catch(e){} }
+
+let curLang = (() => {
+  const tgLang = tgApp && tgApp.initDataUnsafe && tgApp.initDataUnsafe.user && tgApp.initDataUnsafe.user.language_code;
+  const src = (tgLang || navigator.language || 'ru').toLowerCase();
+  return src.startsWith('ru') ? 'ru' : 'en';
+})();
+let curBot = (() => {
+  const p = new URLSearchParams(location.search).get('bot');
+  return ['sub','voice','split'].includes(p) ? p : 'sub';
+})();
+let curVoiceMode = 'raw';
+let curTipPct = 0;
+
+function applyI18n(){
+  const dict = I18N[curLang];
+  document.documentElement.lang = curLang;
+  document.getElementById('langBtn').textContent = curLang === 'ru' ? '🇬🇧 EN' : '🇷🇺 RU';
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const k = el.getAttribute('data-i18n');
+    if (dict[k]) el.textContent = dict[k];
+  });
+  renderPacks();
+  renderVoice();
+  renderBill();
+}
+
+function toggleLang(){
+  curLang = curLang === 'ru' ? 'en' : 'ru';
+  applyI18n();
+}
+
+function switchBot(botKey){
+  curBot = botKey;
+  ['sub','voice','split'].forEach(k => {
+    document.getElementById('tab-' + k).classList.toggle('active', k === botKey);
+    document.getElementById('panel-' + k).classList.toggle('active', k === botKey);
+  });
+}
+
+function renderPacks(){
+  ['sub','voice','split'].forEach(botKey => {
+    const wrap = document.getElementById('packs-' + botKey);
+    wrap.innerHTML = PACK_META[botKey].map(p => {
+      const tag = curLang === 'ru' ? p.tag_ru : p.tag_en;
+      const name = curLang === 'ru' ? p.name_ru : p.name_en;
+      const desc = curLang === 'ru' ? p.desc_ru : p.desc_en;
+      return `<button class="pack ${p.featured ? 'featured' : ''}" onclick="openPack('${botKey}','${p.key}')">
+        ${tag ? `<span class="pack-tag ${p.cls||''}">${tag}</span>` : ''}
+        <div>
+          <div class="pack-name">${name}</div>
+          <div class="pack-desc">${desc}</div>
+        </div>
+        <div class="pack-price">⭐ ${p.stars} Stars</div>
+      </button>`;
+    }).join('');
+  });
+}
+
+function openPack(botKey, packKey){
+  const url = (INVOICES[botKey] || {})[packKey];
+  if (!url) return;
+  if (tgApp && typeof tgApp.openInvoice === 'function') {
+    tgApp.openInvoice(url, (status) => {
+      if (status === 'paid') {
+        try { tgApp.HapticFeedback && tgApp.HapticFeedback.notificationOccurred('success'); } catch(e){}
+        showToast(I18N[curLang].paid_toast);
+      }
+    });
+  } else {
+    window.open(url, '_blank');
+  }
+}
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.display = 'block';
+  setTimeout(() => { t.style.display = 'none'; }, 3800);
+}
+
+const subPhrases = [
+  'СУБТИТРЫ <span class="hi">ЗА 10 СЕКУНД</span>',
+  'КРУЖОЧЕК <span class="hi">640×640</span>',
+  'БЕЗ <span class="hi">ВОТЕРМАРКИ</span>'
+];
+let subIdx = 0;
+setInterval(() => {
+  subIdx = (subIdx + 1) % subPhrases.length;
+  const el = document.getElementById('subLine');
+  if (el) el.innerHTML = subPhrases[subIdx];
+}, 1800);
+
+function setSubStyle(style, btn){
+  const stage = document.getElementById('subStage');
+  stage.className = 'sub-stage ' + style;
+  btn.parentElement.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+document.getElementById('circleInput').addEventListener('change', (e) => {
+  const f = e.target.files && e.target.files[0];
+  if (!f) return;
+  const url = URL.createObjectURL(f);
+  document.getElementById('circleStage').innerHTML = `<video src="${url}" controls autoplay muted loop playsinline></video>`;
+});
+
+function setVoiceMode(mode, btn){
+  curVoiceMode = mode;
+  btn.parentElement.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  renderVoice();
+}
+function renderVoice(){
+  document.getElementById('voiceOut').textContent = VOICE_SAMPLES[curLang][curVoiceMode] || '';
+}
+
+function setTip(pct, btn){
+  curTipPct = pct;
+  btn.parentElement.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  renderBill();
+}
+function toggleBill(id){
+  BILL_ITEMS[id].checked = !BILL_ITEMS[id].checked;
+  renderBill();
+}
+function renderBill(){
+  const wrap = document.getElementById('billList');
+  let sum = 0;
+  wrap.innerHTML = BILL_ITEMS.map(item => {
+    if (item.checked) sum += item.price;
+    const label = curLang === 'ru' ? item.ru : item.en;
+    return `<div class="bill-item ${item.checked ? 'checked' : ''}" onclick="toggleBill(${item.id})">
+      <span>${item.checked ? '✅' : '⬜'} ${label}</span>
+      <strong>${item.price} ₽</strong>
+    </div>`;
+  }).join('');
+  const total = Math.round(sum * (1 + curTipPct / 100));
+  document.getElementById('billTotal').textContent = `${total} ₽`;
+}
+
+switchBot(curBot);
+applyI18n();
+</script>
+</body>
+</html>
