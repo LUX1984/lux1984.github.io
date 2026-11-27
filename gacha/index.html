@@ -254,6 +254,71 @@
     .win-stage img,.win-stage svg{width:126px;height:126px;object-fit:contain}
     .shake{animation:shake .4s ease-in-out infinite}
     @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px) rotate(-4deg)}75%{transform:translateX(8px) rotate(4deg)}}
+    .modal.multi10{max-width:430px;padding:13px 11px;max-height:92vh}
+    .m10-hdr{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
+    .m10-skip{
+      background:rgba(30,41,59,.88);border:1px solid var(--border);color:#cbd5e1;
+      border-radius:10px;padding:5px 10px;font-size:11px;font-weight:800;cursor:pointer;
+    }
+    .mreel-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+    .mreel-card{
+      position:relative;border-radius:12px;overflow:hidden;
+      background:linear-gradient(180deg,rgba(15,23,42,.92),rgba(5,8,18,.98));
+      border:1.5px solid rgba(56,189,248,.22);transition:border-color .22s,box-shadow .22s;
+    }
+    .mreel-card.suspense{border-color:rgba(250,204,21,.75);box-shadow:0 0 16px rgba(250,204,21,.28)}
+    .mreel-card.landed.common{border-color:#64748b}
+    .mreel-card.landed.uncommon{border-color:#34d399;box-shadow:0 0 12px rgba(52,211,153,.22)}
+    .mreel-card.landed.rare{border-color:#38bdf8;box-shadow:0 0 12px rgba(56,189,248,.24)}
+    .mreel-card.landed.epic{border-color:#c084fc;box-shadow:0 0 14px rgba(192,132,252,.28)}
+    .mreel-card.landed.mythic{border-color:#fb7185;box-shadow:0 0 16px rgba(251,113,133,.32)}
+    .mreel-card.landed.legendary{border-color:#facc15;box-shadow:0 0 18px rgba(250,204,21,.40)}
+    .mreel-vp{position:relative;height:58px;overflow:hidden;display:flex;align-items:center}
+    .mreel-vp::before,.mreel-vp::after{content:"";position:absolute;top:0;bottom:0;width:22px;z-index:4;pointer-events:none}
+    .mreel-vp::before{left:0;background:linear-gradient(90deg,#050812,transparent)}
+    .mreel-vp::after{right:0;background:linear-gradient(-90deg,#050812,transparent)}
+    .mreel-num{
+      position:absolute;top:3px;left:4px;z-index:6;background:rgba(2,6,23,.8);
+      border:1px solid rgba(148,163,184,.22);color:#94a3b8;font-size:8.5px;font-weight:900;
+      padding:1px 5px;border-radius:999px;pointer-events:none;
+    }
+    .mreel-badge{
+      position:absolute;top:3px;right:4px;z-index:6;display:none;
+      background:linear-gradient(135deg,#facc15,#f97316);color:#090d16;
+      font-size:8.5px;font-weight:900;padding:1px 5px;border-radius:999px;pointer-events:none;
+    }
+    .mreel-beam{
+      position:absolute;left:50%;top:0;bottom:0;width:1.5px;transform:translateX(-50%);z-index:2;
+      opacity:.42;pointer-events:none;background:linear-gradient(180deg,#facc15,#fde047,#f97316);
+    }
+    .mreel-ptr{
+      position:absolute;left:50%;top:0;transform:translateX(-50%);z-index:7;pointer-events:none;
+      color:#facc15;font-size:8px;line-height:1;text-shadow:0 0 8px rgba(250,204,21,.95);
+    }
+    .mreel-track{display:flex;align-items:center;gap:5px;padding-left:50%;will-change:transform;position:relative;z-index:3}
+    .mtile{
+      flex:0 0 48px;height:50px;border-radius:9px;padding:3px 2px;
+      background:linear-gradient(180deg,rgba(30,41,59,.72),rgba(9,13,24,.95));
+      border:1px solid var(--border);display:flex;flex-direction:column;align-items:center;
+      justify-content:center;gap:1px;overflow:hidden;transition:transform .14s,box-shadow .14s;
+    }
+    .mtile.common{border-color:#475569}
+    .mtile.uncommon{border-color:#34d399;background:radial-gradient(circle at 50% 35%,rgba(52,211,153,.16),rgba(9,13,24,.95))}
+    .mtile.rare{border-color:#38bdf8;background:radial-gradient(circle at 50% 35%,rgba(56,189,248,.18),rgba(9,13,24,.95))}
+    .mtile.epic{border-color:#c084fc;background:radial-gradient(circle at 50% 35%,rgba(192,132,252,.22),rgba(9,13,24,.95))}
+    .mtile.mythic{border-color:#fb7185;background:radial-gradient(circle at 50% 35%,rgba(251,113,133,.24),rgba(9,13,24,.95))}
+    .mtile.legendary{border-color:#facc15;background:radial-gradient(circle at 50% 35%,rgba(250,204,21,.30),rgba(9,13,24,.96))}
+    .mtile.in-beam{transform:scale(1.06);border-color:#facc15;box-shadow:0 0 12px rgba(250,204,21,.45)}
+    .mtile-vis{width:30px;height:30px;display:flex;align-items:center;justify-content:center}
+    .mtile-vis img,.mtile-vis svg{width:30px;height:30px;object-fit:contain;border-radius:6px}
+    .mtile-lbl{font-size:8.5px;font-weight:900;color:var(--gold);line-height:1;white-space:nowrap}
+    .mreel-foot{
+      height:18px;padding:0 6px;display:flex;justify-content:space-between;align-items:center;
+      font-size:9.5px;font-weight:700;background:rgba(2,6,23,.74);border-top:1px solid rgba(148,163,184,.12);
+      color:#94a3b8;white-space:nowrap;overflow:hidden;
+    }
+    .mreel-fnm{overflow:hidden;text-overflow:ellipsis;max-width:72%}
+    .mreel-fst{font-weight:900;color:var(--gold)}
     .toast{
       position:fixed;top:14px;left:14px;right:14px;background:#0f172a;border:1px solid var(--accent);
       border-radius:12px;padding:10px 14px;font-size:12.5px;font-weight:700;z-index:90;display:none;
@@ -540,6 +605,9 @@ let IDLE_LAST_T = 0;
 let MODAL_LOTTIE = null;
 let HERO_LOTTIE = null;
 let HERO_KEY = '';
+let MULTI_SPIN_ACTIVE = false;
+let MULTI_TIMERS = [];
+let MULTI_FINISH_FN = null;
 let LANG = ((tg && tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.language_code) || navigator.language || 'ru').toLowerCase().startsWith('ru') ? 'ru' : 'en';
 
 const ALBUM_KEYS = ['heart_15','bear_15','gift_25','rose_25','cake_50','bouquet_50','rocket_50','champagne_50','trophy_100','ring_100','diamond_100'];
@@ -1061,9 +1129,13 @@ async function spinBox(count){
   try {
     const res = await apiCall('/api/spin', 'POST', {box_key: CUR_BOX, count});
     STATE = res;
-    if (count === 1 && res.results[0].reel) await animateReel(res.results[0]);
-    showWinModal(res.results);
     renderAll();
+    if (count === 1) {
+      if (res.results[0].reel) await animateReel(res.results[0]);
+      showWinModal(res.results);
+    } else {
+      await runMultiSpinModal(res.results);
+    }
   } catch (err) {
     if (err.code === 'insufficient_crystals') {
       showToast(LANG==='ru'?'Недостаточно 💎! Возьми Стартовый Буст 19⭐!':'Not enough 💎! Grab 19⭐ Starter Boost!');
@@ -1073,6 +1145,238 @@ async function spinBox(count){
   } finally {
     document.getElementById('spin1Btn').disabled = false; document.getElementById('spin10Btn').disabled = false;
   }
+}
+
+function clearMultiSpinTimers(){
+  while (MULTI_TIMERS.length) {
+    const id = MULTI_TIMERS.pop();
+    clearTimeout(id);
+    clearInterval(id);
+  }
+}
+
+function buildFallbackReel(r, idx){
+  const showcase = getBoxShowcaseList(CUR_BOX);
+  const cards = [
+    {kind:'card',item_key:'card_star_fox',name_ru:'Звёздная лиса',name_en:'Star Fox',rarity:'common',stars:0},
+    {kind:'card',item_key:'card_cyber_cat',name_ru:'Кибер-кот',name_en:'Cyber Cat',rarity:'uncommon',stars:0}
+  ];
+  const pool = showcase.map(g=>({kind:'gift',item_key:g.key,name_ru:g.name_ru,name_en:g.name_en,rarity:g.rarity,stars:g.stars})).concat(cards);
+  const winIdx = 20 + ((idx * 3) % 8);
+  const len = winIdx + 6;
+  const strip = [];
+  for (let j=0; j<len; j++) strip.push(pool[(j * 5 + idx * 7 + Math.floor(Math.random()*pool.length)) % pool.length]);
+  strip[winIdx] = {kind:r.kind,item_key:r.item_key,name_ru:r.name_ru,name_en:r.name_en,rarity:r.rarity,stars:r.stars};
+  return {strip, winner_index: winIdx, sub_offset: ((idx % 5) - 2) * 0.08};
+}
+
+function skipMultiSpin(){
+  if (typeof MULTI_FINISH_FN === 'function') MULTI_FINISH_FN();
+}
+
+async function reSpin(count){
+  closeModal(true);
+  await spinBox(count);
+}
+
+function runMultiSpinModal(results){
+  return new Promise(resolve => {
+    clearMultiSpinTimers();
+    if (MODAL_LOTTIE) { try{MODAL_LOTTIE.destroy();}catch(e){} MODAL_LOTTIE = null; }
+    MULTI_SPIN_ACTIVE = true;
+    const m = document.getElementById('modalBody');
+    m.classList.add('multi10');
+
+    const total = results.length;
+    const reels = results.map((r, i) => r.reel || buildFallbackReel(r, i));
+    const cardsHtml = results.map((r, i) => {
+      const reel = reels[i];
+      const strip = reel.strip.slice();
+      if (r.fakeout) strip[reel.winner_index] = {kind:'card',item_key:'card_star_fox',name_ru:'Сюрприз',name_en:'Mystery',rarity:'common',stars:0};
+      const tilesHtml = strip.map(t => `<div class="mtile ${t.rarity}">
+        <div class="mtile-vis">${visualHTML(t.item_key, t.kind, t.rarity, 30)}</div>
+        <div class="mtile-lbl">${t.stars ? '⭐'+t.stars : '✨'}</div>
+      </div>`).join('');
+      return `<div class="mreel-card" id="mcard-${i}">
+        <div class="mreel-vp">
+          <span class="mreel-num">#${i+1}</span>
+          <span class="mreel-badge" id="mbadge-${i}"></span>
+          <div class="mreel-ptr">▼</div>
+          <div class="mreel-beam"></div>
+          <div class="mreel-track" id="mtrack-${i}">${tilesHtml}</div>
+        </div>
+        <div class="mreel-foot" id="mfoot-${i}">
+          <span class="mreel-fnm">${LANG==='ru'?'Крутится...':'Spinning...'}</span>
+          <span class="mreel-fst">🎲</span>
+        </div>
+      </div>`;
+    }).join('');
+
+    m.innerHTML = `<div class="m10-hdr">
+      <div style="font-size:13.5px;font-weight:900" id="m10Title">⚡ ${total}x · 0/${total}</div>
+      <button class="m10-skip" id="m10SkipBtn" onclick="skipMultiSpin()">⏭ ${LANG==='ru'?'Пропустить':'Skip'}</button>
+    </div>
+    <div class="mreel-grid">${cardsHtml}</div>
+    <div id="m10Summary" style="margin-top:10px"></div>`;
+    document.getElementById('overlay').classList.add('open');
+
+    const landed = new Array(total).fill(false);
+    let landedCount = 0;
+    let settled = false;
+
+    const boxes = (CATALOG && CATALOG.boxes) || [];
+    const curBox = boxes.find(x=>x.key===CUR_BOX) || {cost_10:950};
+    const cost10 = curBox.cost_10 || 950;
+
+    function showSummary(){
+      if (settled) return;
+      settled = true;
+      clearMultiSpinTimers();
+      MULTI_SPIN_ACTIVE = false;
+      MULTI_FINISH_FN = null;
+      const skipBtn = document.getElementById('m10SkipBtn');
+      if (skipBtn) skipBtn.style.display = 'none';
+
+      const gifts = results.filter(x=>x.kind==='gift');
+      const giftStars = gifts.reduce((s,g)=>s+g.stars, 0);
+      const totalSh = results.reduce((s,x)=>s+(x.shards_granted||0), 0);
+      const totalCb = results.reduce((s,x)=>s+(x.crystals_cashback||0), 0);
+      const giftIds = gifts.flatMap(g=>g.inv_ids || [g.inv_id]).filter(Boolean);
+      const salSum = gifts.reduce((s,g)=>s+(g.salvage_crystals||0), 0);
+      const sumEl = document.getElementById('m10Summary');
+      if (sumEl) {
+        sumEl.innerHTML = `
+          <div style="background:rgba(15,23,42,.75);border:1px solid var(--border);border-radius:12px;padding:8px 10px;font-size:11.5px;margin-bottom:8px;line-height:1.4">
+            🎁 <b>${LANG==='ru'?'Подарков':'Gifts'}: ${gifts.length}</b> (${giftStars} ⭐) · ✨ <b>+${totalSh}</b> · 💎 <b>+${totalCb}</b> ${LANG==='ru'?'кэшбэк':'cashback'}
+          </div>
+          ${giftIds.length ? `
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:7px">
+            <button class="btn gold" style="padding:10px 8px;font-size:12px" onclick="salvageIds([${giftIds.join(',')}],true,false)">♻️ ${LANG==='ru'?'Продать все':'Salvage all'} (+${salSum} 💎)</button>
+            <button class="btn green" style="padding:10px 8px;font-size:12px" onclick="closeModal(true);goTab('inv')">🎒 ${LANG==='ru'?'В инвентарь':'Inventory'} (${gifts.length})</button>
+          </div>` : ''}
+          <div style="display:grid;grid-template-columns:1fr auto;gap:7px">
+            <button class="btn gold" style="padding:10px 12px;font-size:12.5px" onclick="reSpin(10)">⚡ ${LANG==='ru'?'Ещё 10x':'10x Again'} (${cost10} 💎)</button>
+            <button class="btn sec" style="padding:10px 14px;font-size:12.5px" onclick="closeModal(true)">${LANG==='ru'?'Готово':'Done'}</button>
+          </div>`;
+      }
+      try{ tg.HapticFeedback&&tg.HapticFeedback.notificationOccurred('success'); }catch(e){}
+      resolve();
+    }
+
+    function finalizeCard(i, silent=false){
+      if (landed[i]) return;
+      landed[i] = true;
+      landedCount++;
+      const r = results[i];
+      const reel = reels[i];
+      const card = document.getElementById(`mcard-${i}`);
+      const track = document.getElementById(`mtrack-${i}`);
+      const foot = document.getElementById(`mfoot-${i}`);
+      const badge = document.getElementById(`mbadge-${i}`);
+      const titleEl = document.getElementById('m10Title');
+      if (card) { card.classList.remove('suspense'); card.classList.add('landed', r.rarity || 'common'); }
+      if (track) {
+        const winEl = track.children[reel.winner_index];
+        if (winEl) {
+          winEl.classList.remove('shake');
+          if (r.fakeout) {
+            winEl.className = `mtile ${r.rarity} in-beam`;
+            winEl.innerHTML = `<div class="mtile-vis">${visualHTML(r.item_key, r.kind, r.rarity, 30)}</div><div class="mtile-lbl">${r.stars ? '⭐'+r.stars : '✨'}</div>`;
+          } else {
+            winEl.classList.add('in-beam');
+          }
+        }
+      }
+      if (badge && r.stars > 0) {
+        badge.textContent = `⭐ ${r.stars}`;
+        badge.style.display = 'inline-block';
+      }
+      if (foot) {
+        const nm = LANG==='ru' ? r.name_ru : r.name_en;
+        const stTxt = r.stars ? `⭐${r.stars}` : `+${r.shards_granted||0}✨`;
+        foot.style.color = r.kind==='gift' ? '#f8fafc' : '#94a3b8';
+        foot.innerHTML = `<span class="mreel-fnm">${nm}</span><span class="mreel-fst">${stTxt}</span>`;
+      }
+      if (titleEl) titleEl.textContent = `⚡ ${total}x · ${landedCount}/${total}`;
+      if (!silent) {
+        try {
+          if (r.stars >= 50) tg.HapticFeedback&&tg.HapticFeedback.impactOccurred('heavy');
+          else if (r.kind === 'gift') tg.HapticFeedback&&tg.HapticFeedback.impactOccurred('medium');
+          else tg.HapticFeedback&&tg.HapticFeedback.selectionChanged();
+        } catch(e){}
+      }
+      if (landedCount === total) showSummary();
+    }
+
+    MULTI_FINISH_FN = () => {
+      clearMultiSpinTimers();
+      for (let i=0; i<total; i++) {
+        const track = document.getElementById(`mtrack-${i}`);
+        const reel = reels[i];
+        const targetX = -(reel.winner_index * 53 + 24 + (reel.sub_offset || 0) * 38);
+        if (track) {
+          track.style.transition = 'none';
+          track.style.transform = `translate3d(${targetX}px,0,0)`;
+        }
+        finalizeCard(i, true);
+      }
+      showSummary();
+    };
+
+    const initSpecs = reels.map((reel, i) => {
+      const r = results[i];
+      const track = document.getElementById(`mtrack-${i}`);
+      const startX = -(95 + (i % 4) * 16);
+      const targetX = -(reel.winner_index * 53 + 24 + (reel.sub_offset || 0) * 38);
+      const durMs = FAST_MODE
+        ? (1100 + i * 65 + (r.stars >= 50 ? 220 : 0))
+        : (2750 + i * 145 + (i % 3) * 55 + (r.stars >= 50 ? 480 : 0));
+      if (track) {
+        track.style.transition = 'none';
+        track.style.transform = `translate3d(${startX}px,0,0)`;
+      }
+      return {r, reel, track, targetX, durMs, i};
+    });
+
+    let ticks = 0;
+    const maxTicks = FAST_MODE ? 8 : 22;
+    const tickTimer = setInterval(()=>{
+      ticks++;
+      if (ticks <= maxTicks && MULTI_SPIN_ACTIVE) {
+        try{ tg.HapticFeedback&&tg.HapticFeedback.selectionChanged(); }catch(e){}
+      } else {
+        clearInterval(tickTimer);
+      }
+    }, FAST_MODE ? 130 : 175);
+    MULTI_TIMERS.push(tickTimer);
+
+    requestAnimationFrame(()=>{ requestAnimationFrame(()=>{
+      if (!MULTI_SPIN_ACTIVE) return;
+      initSpecs.forEach(({r, reel, track, targetX, durMs, i}) => {
+        if (track) {
+          track.style.transition = `transform ${durMs/1000}s cubic-bezier(0.06, 0.86, 0.14, 1)`;
+          track.style.transform = `translate3d(${targetX}px,0,0)`;
+        }
+        if (r.stars >= 50) {
+          MULTI_TIMERS.push(setTimeout(()=>{
+            const card = document.getElementById(`mcard-${i}`);
+            if (card && !landed[i]) card.classList.add('suspense');
+          }, Math.max(200, durMs - 900)));
+        }
+        MULTI_TIMERS.push(setTimeout(()=>{
+          if (!MULTI_SPIN_ACTIVE || landed[i]) return;
+          if (r.fakeout && track) {
+            const winEl = track.children[reel.winner_index];
+            if (winEl) winEl.classList.add('shake');
+            try{ tg.HapticFeedback&&tg.HapticFeedback.impactOccurred('heavy'); }catch(e){}
+            MULTI_TIMERS.push(setTimeout(()=>finalizeCard(i, false), 460));
+          } else {
+            finalizeCard(i, false);
+          }
+        }, durMs + 60));
+      });
+    });});
+  });
 }
 
 function animateReel(r0){
@@ -1122,6 +1426,7 @@ function animateReel(r0){
 
 function showWinModal(results){
   const m = document.getElementById('modalBody');
+  m.classList.remove('multi10');
   const gifts = results.filter(x=>x.kind==='gift');
   const bot = (CATALOG && CATALOG.bot_username) || 'StarsLootBoxBot';
   const uid = STATE && STATE.user ? STATE.user.user_id : '';
@@ -1164,6 +1469,7 @@ function showWinModal(results){
 }
 
 function openUp1(invId, inStars, nm){
+  document.getElementById('modalBody').classList.remove('multi10');
   const targets = [25,50,100].filter(t=>t>inStars);
   const pairs = (CATALOG && CATALOG.upgrade_pairs) || [];
   const topPair = (pairs.find(x=>x.in===inStars&&x.target===targets[0]) || {}).pct || Math.round((inStars*74)/targets[0]);
@@ -1187,6 +1493,7 @@ async function runUpgradeOne(invId, targetStars){
 }
 
 function previewGift(giftKey){
+  document.getElementById('modalBody').classList.remove('multi10');
   const gMap = (CATALOG && CATALOG.gifts) || DEFAULT_GIFTS;
   const g = gMap[giftKey];
   if (!g) return;
@@ -1199,6 +1506,7 @@ function previewGift(giftKey){
   MODAL_LOTTIE = mountLottie(document.getElementById('prevStage'), giftKey);
 }
 function openOddsModal(){
+  document.getElementById('modalBody').classList.remove('multi10');
   const boxes = (CATALOG && CATALOG.boxes) || [];
   const box = boxes.find(x=>x.key===CUR_BOX) || {name_ru:'Звёздная Капсула',soft_pity:70,hard_pity:85,mini_pity:5};
   document.getElementById('modalBody').innerHTML = `<h3>ℹ️ ${LANG==='ru'?box.name_ru:box.name_en}</h3>
@@ -1212,8 +1520,13 @@ function openOddsModal(){
     <button class="btn sec" style="width:100%" onclick="closeModal()">OK</button>`;
   document.getElementById('overlay').classList.add('open');
 }
-function closeModal(){
+function closeModal(force=false){
+  if (MULTI_SPIN_ACTIVE && !force) { skipMultiSpin(); return; }
+  clearMultiSpinTimers();
+  MULTI_SPIN_ACTIVE = false;
+  MULTI_FINISH_FN = null;
   if (MODAL_LOTTIE) { try{MODAL_LOTTIE.destroy();}catch(e){} MODAL_LOTTIE = null; }
+  document.getElementById('modalBody').classList.remove('multi10');
   document.getElementById('overlay').classList.remove('open');
   SPINNING = false; startIdleLoop();
 }
