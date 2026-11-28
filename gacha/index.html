@@ -3,20 +3,21 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-  <title>GiftBox • Астральный Альбом (Коллекционная Гача)</title>
-  <meta name="description" content="Собери 30 уникальных 3D-хранителей и реликвий! Честный гарант Pity, Созвездия C0–C6 и Отряд Экспедиций.">
+  <title>GiftBox v6 • Коллекционная Гача Telegram NFT</title>
+  <meta name="description" content="Выбивай настоящие коллекционные Telegram NFT (Fragment), прокачивай Созвездия C0–C6 и превращай Искры ✨ в Алмазы 💎!">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
   <style>
     :root{
-      --bg:#060812;--card:rgba(15,21,38,.82);--card2:rgba(10,14,26,.94);
+      --bg:#060812;--card:rgba(15,21,38,.84);--card2:rgba(10,14,26,.95);
       --border:rgba(148,163,184,.18);--spec:rgba(255,255,255,.11);
       --text:#f8fafc;--muted:#94a3b8;
-      --accent:#38bdf8;--gold:#facc15;--epic:#c084fc;--rare:#38bdf8;--green:#34d399;--rose:#fb7185;
-      --a1:rgba(192,132,252,.22);--a2:rgba(56,189,248,.16);
+      --accent:#38bdf8;--gold:#facc15;--epic:#c084fc;--green:#34d399;--rose:#fb7185;
+      --a1:rgba(56,189,248,.22);--a2:rgba(250,204,21,.16);
     }
-    body.theme-rookie{--a1:rgba(52,211,153,.20);--a2:rgba(56,189,248,.18)}
-    body.theme-event{--a1:rgba(250,204,21,.22);--a2:rgba(192,132,252,.22)}
-    body.theme-standard{--a1:rgba(56,189,248,.22);--a2:rgba(99,102,241,.20)}
+    body.theme-star{--a1:rgba(56,189,248,.22);--a2:rgba(192,132,252,.18)}
+    body.theme-empire{--a1:rgba(250,204,21,.24);--a2:rgba(244,63,94,.18)}
+    body.theme-blindbox{--a1:rgba(192,132,252,.26);--a2:rgba(52,211,153,.20)}
     *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
     body{
       margin:0;padding:0 12px 92px;min-height:100vh;
@@ -36,7 +37,7 @@
     .brand{display:flex;align-items:center;gap:8px;min-width:0}
     .brand-ava{
       width:36px;height:36px;border-radius:12px;display:flex;align-items:center;justify-content:center;
-      background:linear-gradient(135deg,#6366f1,#a855f7);font-size:18px;font-weight:900;flex-shrink:0;
+      background:linear-gradient(135deg,#2563eb,#a855f7);font-size:18px;font-weight:900;flex-shrink:0;
       border:1.5px solid rgba(255,255,255,.22);
     }
     .brand-ava.frame-nebula{border:2px solid #a855f7;box-shadow:0 0 12px rgba(168,85,247,.55)}
@@ -59,15 +60,15 @@
     .banner-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px}
     .btab{
       background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:8px 6px;
-      cursor:pointer;text-align:center;transition:.16s;position:relative;color:var(--text);
+      cursor:pointer;text-align:center;transition:.16s;color:var(--text);
     }
-    .btab.active{border-color:var(--gold);background:linear-gradient(180deg,rgba(250,204,21,.15),rgba(15,21,38,.9));box-shadow:0 0 0 1px rgba(250,204,21,.3)}
+    .btab.active{border-color:var(--gold);background:linear-gradient(180deg,rgba(250,204,21,.16),rgba(15,21,38,.92));box-shadow:0 0 0 1px rgba(250,204,21,.3)}
     .btab-t{font-size:11px;font-weight:900;line-height:1.2}
     .btab-b{font-size:9px;font-weight:800;color:var(--gold);margin-top:3px}
     .stage{
       position:relative;border-radius:20px;padding:14px 12px;margin-bottom:10px;overflow:hidden;
       background:linear-gradient(155deg,rgba(20,28,54,.92),rgba(8,12,24,.96));
-      border:1px solid rgba(250,204,21,.25);box-shadow:0 14px 36px rgba(0,0,0,.5);
+      border:1px solid rgba(250,204,21,.28);box-shadow:0 14px 36px rgba(0,0,0,.5);
     }
     .stage-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
     .tag{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:800;padding:3px 8px;border-radius:999px;background:rgba(56,189,248,.16);color:#7dd3fc;border:1px solid rgba(56,189,248,.3)}
@@ -82,8 +83,8 @@
       animation:floatY 3.6s ease-in-out infinite;
     }
     @keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
-    .hero-art img{width:80px;height:80px;object-fit:contain;filter:drop-shadow(0 6px 14px rgba(0,0,0,.6))}
-    .hero-info h2{margin:0 0 4px;font-size:17px;font-weight:900}
+    .hero-art img,.hero-art canvas{width:80px;height:80px;object-fit:contain;filter:drop-shadow(0 6px 14px rgba(0,0,0,.6))}
+    .hero-info h2{margin:0 0 4px;font-size:16.5px;font-weight:900}
     .hero-info p{margin:0;font-size:11.5px;color:var(--muted);line-height:1.35}
     .pity-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
     .pity-box{background:rgba(6,9,20,.75);border:1px solid var(--border);border-radius:12px;padding:7px 9px}
@@ -108,14 +109,9 @@
     .btn-ghost{background:rgba(255,255,255,.07);border:1px solid var(--border);color:var(--text);font-weight:800;flex-direction:row}
     .btn-sm{padding:7px 10px;font-size:11.5px;border-radius:10px;flex-direction:row}
     .sub{font-size:10.5px;opacity:.85;font-weight:700}
-    .ticker{
-      display:flex;gap:8px;overflow-x:auto;padding:6px 2px;scrollbar-width:none;margin-bottom:8px;
-    }
+    .ticker{display:flex;gap:8px;overflow-x:auto;padding:6px 2px;scrollbar-width:none;margin-bottom:8px}
     .ticker::-webkit-scrollbar{display:none}
-    .tchip{
-      flex-shrink:0;font-size:10.5px;background:rgba(250,204,21,.08);border:1px solid rgba(250,204,21,.25);
-      border-radius:999px;padding:4px 9px;color:#fef08a;font-weight:700;
-    }
+    .tchip{flex-shrink:0;font-size:10.5px;background:rgba(250,204,21,.08);border:1px solid rgba(250,204,21,.25);border-radius:999px;padding:4px 9px;color:#fef08a;font-weight:700}
     .sec-h{display:flex;justify-content:space-between;align-items:center;margin:4px 0 8px}
     .sec-h h3{margin:0;font-size:14px;font-weight:900}
     .squad-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:8px 0}
@@ -142,69 +138,34 @@
     .ic-name{font-size:10.5px;font-weight:800;line-height:1.2;margin-top:2px;min-height:25px}
     .ic-pw{font-size:9.5px;color:var(--muted);font-weight:700}
     .filters{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none;margin-bottom:6px}
-    .fbtn{
-      border:1px solid var(--border);background:var(--card2);color:var(--muted);border-radius:999px;
-      padding:5px 10px;font-size:11px;font-weight:800;cursor:pointer;flex-shrink:0;
-    }
+    .fbtn{border:1px solid var(--border);background:var(--card2);color:var(--muted);border-radius:999px;padding:5px 10px;font-size:11px;font-weight:800;cursor:pointer;flex-shrink:0}
     .fbtn.active{background:rgba(56,189,248,.18);border-color:var(--accent);color:#fff}
-    .shop-item{
-      display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px;
-      background:var(--card2);border:1px solid var(--border);border-radius:14px;margin-bottom:8px;
-    }
-    .quest-row{
-      display:flex;justify-content:space-between;align-items:center;gap:8px;padding:9px 10px;
-      background:var(--card2);border:1px solid var(--border);border-radius:13px;margin-bottom:7px;
-    }
-    .bp-row{
-      display:grid;grid-template-columns:42px 1fr 1fr;gap:6px;align-items:center;padding:7px;
-      background:var(--card2);border:1px solid var(--border);border-radius:12px;margin-bottom:6px;
-    }
+    .shop-item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px;background:var(--card2);border:1px solid var(--border);border-radius:14px;margin-bottom:8px}
+    .nft-row{display:flex;justify-content:space-between;align-items:center;gap:9px;padding:10px;background:var(--card2);border:1px solid rgba(192,132,252,.35);border-radius:14px;margin-bottom:8px}
+    .quest-row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:9px 10px;background:var(--card2);border:1px solid var(--border);border-radius:13px;margin-bottom:7px}
+    .bp-row{display:grid;grid-template-columns:42px 1fr 1fr;gap:6px;align-items:center;padding:7px;background:var(--card2);border:1px solid var(--border);border-radius:12px;margin-bottom:6px}
     .bp-cell{font-size:10.5px;padding:5px 6px;border-radius:9px;background:rgba(255,255,255,.04);display:flex;justify-content:space-between;align-items:center;gap:4px}
-    .lb-row{
-      display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;
-      background:var(--card2);border:1px solid var(--border);border-radius:12px;margin-bottom:6px;
-    }
+    .lb-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;background:var(--card2);border:1px solid var(--border);border-radius:12px;margin-bottom:6px}
     .nav{
       position:fixed;bottom:0;left:0;right:0;z-index:50;
       background:rgba(6,9,20,.96);backdrop-filter:blur(16px);border-top:1px solid var(--border);
       display:grid;grid-template-columns:repeat(5,1fr);padding:6px 4px calc(6px + env(safe-area-inset-bottom));
     }
-    .nbtn{
-      background:none;border:none;color:var(--muted);font-size:10px;font-weight:800;
-      display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;padding:4px 2px;
-    }
+    .nbtn{background:none;border:none;color:var(--muted);font-size:10px;font-weight:800;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;padding:4px 2px}
     .nbtn span.ico{font-size:18px;line-height:1.1}
     .nbtn.active{color:var(--gold)}
-    .overlay{
-      position:fixed;inset:0;z-index:80;background:rgba(3,5,14,.84);backdrop-filter:blur(10px);
-      display:none;align-items:center;justify-content:center;padding:14px;
-    }
+    .overlay{position:fixed;inset:0;z-index:80;background:rgba(3,5,14,.84);backdrop-filter:blur(10px);display:none;align-items:center;justify-content:center;padding:14px}
     .overlay.show{display:flex}
-    .modal{
-      width:100%;max-width:440px;max-height:88vh;overflow-y:auto;
-      background:#0b1124;border:1px solid var(--border);border-radius:22px;padding:16px;
-      box-shadow:0 24px 60px rgba(0,0,0,.75);
-    }
+    .modal{width:100%;max-width:440px;max-height:88vh;overflow-y:auto;background:#0b1124;border:1px solid var(--border);border-radius:22px;padding:16px;box-shadow:0 24px 60px rgba(0,0,0,.75)}
     .reveal-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:10px 0}
-    .rev-card{
-      border-radius:14px;padding:8px;text-align:center;background:#111a33;border:1.5px solid var(--border);
-      animation:popIn .35s cubic-bezier(.2,1.25,.4,1) both;
-    }
+    .rev-card{border-radius:14px;padding:8px;text-align:center;background:#111a33;border:1.5px solid var(--border);animation:popIn .35s cubic-bezier(.2,1.25,.4,1) both}
     .rev-card.r5{border-color:#facc15;background:linear-gradient(180deg,rgba(250,204,21,.22),#111a33);box-shadow:0 0 20px rgba(250,204,21,.28)}
     .rev-card.r4{border-color:#c084fc;background:linear-gradient(180deg,rgba(192,132,252,.18),#111a33)}
     .rev-card.r3{border-color:rgba(56,189,248,.35)}
     .rev-card img{width:62px;height:62px;object-fit:contain}
     @keyframes popIn{from{opacity:0;transform:scale(.75) translateY(10px)}to{opacity:1;transform:none}}
-    .meteor{
-      height:150px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
-      border-radius:18px;background:radial-gradient(circle,rgba(250,204,21,.26),rgba(15,23,42,.92));
-      margin:8px 0;font-weight:900;font-size:15px;text-align:center;
-    }
-    .toast{
-      position:fixed;left:50%;bottom:84px;transform:translateX(-50%) translateY(20px);z-index:99;
-      background:#0f172a;border:1px solid var(--accent);color:#fff;padding:9px 15px;border-radius:999px;
-      font-size:12px;font-weight:800;opacity:0;pointer-events:none;transition:.25s;max-width:90vw;text-align:center;
-    }
+    .meteor{height:140px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;border-radius:18px;background:radial-gradient(circle,rgba(250,204,21,.26),rgba(15,23,42,.92));margin:8px 0;font-weight:900;font-size:15px;text-align:center}
+    .toast{position:fixed;left:50%;bottom:84px;transform:translateX(-50%) translateY(20px);z-index:99;background:#0f172a;border:1px solid var(--accent);color:#fff;padding:9px 15px;border-radius:999px;font-size:12px;font-weight:800;opacity:0;pointer-events:none;transition:.25s;max-width:90vw;text-align:center}
     .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
     .input{width:100%;background:var(--card2);border:1px solid var(--border);border-radius:11px;padding:10px;color:#fff;font-size:13px}
     .streak-row{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin:8px 0}
@@ -213,7 +174,7 @@
     .sday.next{border-color:var(--gold);background:rgba(250,204,21,.16);color:#fde047}
   </style>
 </head>
-<body class="theme-event">
+<body class="theme-star">
   <div class="wrap">
     <div class="topbar">
       <div class="brand">
@@ -225,7 +186,7 @@
       </div>
       <div class="pills">
         <div class="pill" onclick="goTab('shop','stars')">💎 <span id="balCrystals">0</span></div>
-        <div class="pill" onclick="goTab('shop','dust')">🔮 <span id="balDust">0</span></div>
+        <div class="pill" onclick="goTab('shop','sparks')">✨ <span id="balSparks">0</span></div>
         <div class="pill pill-add" onclick="goTab('shop','stars')">+💎</div>
         <div class="pill" onclick="toggleLang()" id="langBtn">RU</div>
       </div>
@@ -238,8 +199,8 @@
   <div class="nav">
     <button class="nbtn active" id="nav-wishes" onclick="goTab('wishes')"><span class="ico">✨</span><span id="nl-wishes">Призывы</span></button>
     <button class="nbtn" id="nav-squad" onclick="goTab('squad')"><span class="ico">🚀</span><span id="nl-squad">Отряд</span></button>
-    <button class="nbtn" id="nav-album" onclick="goTab('album')"><span class="ico">📖</span><span id="nl-album">Альбом</span></button>
-    <button class="nbtn" id="nav-shop" onclick="goTab('shop')"><span class="ico">🔮</span><span id="nl-shop">Магазин</span></button>
+    <button class="nbtn" id="nav-nfts" onclick="goTab('nfts')"><span class="ico">🎨</span><span id="nl-nfts">Мои NFT</span></button>
+    <button class="nbtn" id="nav-shop" onclick="goTab('shop')"><span class="ico">🔮</span><span id="nl-shop">Лавка</span></button>
     <button class="nbtn" id="nav-top" onclick="goTab('top')"><span class="ico">🏆</span><span id="nl-top">Топ</span></button>
   </div>
 
@@ -256,11 +217,13 @@ let API_BASE = new URLSearchParams(location.search).get('api') || 'https://201-8
 let STATE = null;
 let CATALOG = null;
 let CUR_TAB = 'wishes';
-let CUR_BANNER = 'rookie_banner';
-let SHOP_SUB = 'dust';
+let CUR_BANNER = 'star_banner';
+let SHOP_SUB = 'sparks';
 let ALBUM_FILTER = 'all';
 let PULLING = false;
 let BOARD = [];
+let HERO_LOTTIE = null;
+let MODAL_LOTTIE = null;
 
 const qp = new URLSearchParams(location.search);
 if (qp.get('tab')) CUR_TAB = qp.get('tab');
@@ -273,10 +236,13 @@ function t(ru,en){return lang()==='en'?en:ru}
 function toast(msg){
   const el=document.getElementById('toast');
   el.textContent=msg; el.classList.add('show');
-  clearTimeout(window._tT); window._tT=setTimeout(()=>el.classList.remove('show'),3000);
+  clearTimeout(window._tT); window._tT=setTimeout(()=>el.classList.remove('show'),3200);
 }
 function openModal(html){document.getElementById('modalBody').innerHTML=html;document.getElementById('overlay').classList.add('show')}
-function closeModal(){document.getElementById('overlay').classList.remove('show')}
+function closeModal(){
+  if(MODAL_LOTTIE){try{MODAL_LOTTIE.destroy()}catch(e){} MODAL_LOTTIE=null;}
+  document.getElementById('overlay').classList.remove('show');
+}
 
 async function api(path, method='GET', body=null){
   const headers={'X-Telegram-Init-Data': tg ? (tg.initData||'') : ''};
@@ -304,19 +270,12 @@ function starBadges(n){return n===5?'★★★★★':(n===4?'★★★★':'★
 
 async function loadAll(){
   try{
-    const cfgRes = await fetch(API_BASE+'/api/config'); // fallback check
-    if(cfgRes.ok){ const cfgJ = await cfgRes.json(); if(cfgJ.catalog) CATALOG=cfgJ.catalog; }
-  }catch(e){}
-  try{
     const ghCfg = await fetch('./config.json?t='+Date.now()).then(r=>r.json()).catch(()=>null);
     if(ghCfg && ghCfg.apiBase) API_BASE=ghCfg.apiBase;
   }catch(e){}
   const me = await api('/api/me');
   STATE = me;
   CATALOG = me.catalog || CATALOG;
-  if(CUR_BANNER==='rookie_banner' && me.banners?.rookie_banner?.remaining_pulls===0){
-    CUR_BANNER='event_banner';
-  }
   renderAll();
   if(qp.get('promo')) setTimeout(()=>{const el=document.getElementById('promoInp'); if(el){el.value=qp.get('promo');}},100);
 }
@@ -336,21 +295,19 @@ async function loadLeaderboard(){
 }
 
 async function toggleLang(){
-  try{
-    const next = lang()==='ru'?'en':'ru';
-    STATE = await api('/api/lang','POST',{lang:next});
-    renderAll();
-  }catch(e){toast(e.message)}
+  try{ STATE = await api('/api/lang','POST',{lang:lang()==='ru'?'en':'ru'}); renderAll(); }
+  catch(e){toast(e.message)}
 }
 
 function renderTop(){
   if(!STATE || !CATALOG) return;
   const u=STATE.user;
   document.getElementById('balCrystals').textContent=u.crystals;
-  document.getElementById('balDust').textContent=u.dust;
+  document.getElementById('balSparks').textContent=u.sparks;
   document.getElementById('langBtn').textContent=lang().toUpperCase();
   document.getElementById('topName').textContent=u.first_name + (u.equipped_title && CATALOG.cosmetics[u.equipped_title] ? ' • '+CATALOG.cosmetics[u.equipped_title].badge : '');
-  document.getElementById('topSub').textContent=`⚡ ${u.power_score} CP · 📖 ${u.unique_count}/30 · #${u.rank}`;
+  const pendingNfts = (STATE.nft_inventory||[]).filter(x=>x.status==='in_collection').length;
+  document.getElementById('topSub').textContent=`⚡ ${u.power_score} CP · 🎨 NFT: ${pendingNfts} · 📖 ${u.unique_count}/35`;
   const ava=document.getElementById('topAva');
   ava.className='brand-ava'+(u.equipped_frame && CATALOG.cosmetics[u.equipped_frame] ? ' '+CATALOG.cosmetics[u.equipped_frame].css : '');
   const sc = u.showcase_item && CATALOG.items[u.showcase_item];
@@ -358,8 +315,8 @@ function renderTop(){
 
   document.getElementById('nl-wishes').textContent=t('Призывы','Wishes');
   document.getElementById('nl-squad').textContent=t('Отряд','Squad');
-  document.getElementById('nl-album').textContent=t('Альбом','Album');
-  document.getElementById('nl-shop').textContent=t('Магазин','Shop');
+  document.getElementById('nl-nfts').textContent=t('Мои NFT','My NFTs');
+  document.getElementById('nl-shop').textContent=t('Лавка','Shop');
   document.getElementById('nl-top').textContent=t('Топ','Rank');
 
   const wb=document.getElementById('welcomeBox');
@@ -368,8 +325,8 @@ function renderTop(){
       <div class="card" style="background:linear-gradient(135deg,rgba(250,204,21,.22),rgba(168,85,247,.22));border-color:rgba(250,204,21,.5)">
         <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
           <div>
-            <div style="font-weight:900;font-size:13.5px;color:#fef08a">${t('🎁 Подарок Коллекционеру!','🎁 Collector Welcome Gift!')}</div>
-            <div style="font-size:11.5px;color:#e2e8f0;margin-top:2px">${t('Забери 4★ Холо-Медведя + 960 💎 + 40 ✨ в Отряд!','Claim guaranteed 4★ Holo Bear + 960 💎 + 40 ✨!')}</div>
+            <div style="font-weight:900;font-size:13.5px;color:#fef08a">${t('🎁 Стартовый подарок Коллекционеру!','🎁 Welcome Gift!')}</div>
+            <div style="font-size:11.5px;color:#e2e8f0;margin-top:2px">${t('Холо-Медведь + 290 💎 (всего 490 💎 — на 1-й призыв!) + 30 ✨','Holo Bear + 290 💎 (490 💎 total!) + 30 ✨')}</div>
           </div>
           <button class="btn btn-gold btn-sm" onclick="claimWelcome()">${t('Забрать','Claim')}</button>
         </div>
@@ -386,54 +343,67 @@ async function claimWelcome(){
     if(wr){
       openModal(`
         <div style="text-align:center">
-          <div class="tag tag-epic">${t('ГАРАНТИРОВАННЫЙ СТАРТОВЫЙ ХРАНИТЕЛЬ','GUARANTEED STARTER GUARDIAN')}</div>
+          <div class="tag tag-gold">${t('СТАРТОВЫЙ ХРАНИТЕЛЬ','STARTER GUARDIAN')}</div>
           <h2 style="margin:10px 0 4px">${esc(itemName(wr))}</h2>
-          <img src="${wr.image_url}" style="width:120px;height:120px;object-fit:contain;margin:6px 0">
-          <div style="font-size:13px;font-weight:800;color:var(--gold)">+960 💎 · +40 ✨ · ${t('Отправлен в Отряд #1!','Auto-deployed to Squad!')}</div>
-          <p style="font-size:11.5px;color:var(--muted)">${t('Теперь у тебя хватает кристаллов на первый 10× призыв Баннера Новичка (-20%)!','You now have enough crystals for a full 10x Rookie Banner pull!')}</p>
+          <img src="${wr.image_url}" style="width:116px;height:116px;object-fit:contain;margin:6px 0">
+          <div style="font-size:13px;font-weight:800;color:var(--gold)">+290 💎 · +30 ✨ · ${t('Отправлен в Отряд #1!','Auto-deployed to Squad!')}</div>
+          <p style="font-size:11.5px;color:var(--muted)">${t('Теперь на счету 490 💎 — крути «Звёздный Призыв» за реальным Telegram NFT или копи Искры ✨!','You now have 490 💎 for a Starlight Wish!')}</p>
           <button class="btn btn-gold" style="width:100%" onclick="closeModal()">${t('К призывам!','Let’s Wish!')}</button>
         </div>`);
     }
   }catch(e){toast(e.message)}
 }
 
+function mountHeroLottie(lottieUrl, fallbackImg){
+  const el=document.getElementById('heroLottie');
+  if(!el) return;
+  if(HERO_LOTTIE){try{HERO_LOTTIE.destroy()}catch(e){} HERO_LOTTIE=null;}
+  if(lottieUrl && window.lottie){
+    el.innerHTML='';
+    try{
+      HERO_LOTTIE = window.lottie.loadAnimation({container:el,renderer:'svg',loop:true,autoplay:true,path:lottieUrl});
+      HERO_LOTTIE.addEventListener('data_failed',()=>{el.innerHTML=`<img src="${fallbackImg}" alt="">`;});
+    }catch(e){ el.innerHTML=`<img src="${fallbackImg}" alt="">`; }
+  } else {
+    el.innerHTML=`<img src="${fallbackImg}" alt="">`;
+  }
+}
+
 function renderWishes(){
   const banners=CATALOG.banners;
-  const available=banners.filter(b=>!(b.key==='rookie_banner' && STATE.banners.rookie_banner.remaining_pulls===0));
-  if(!available.some(b=>b.key===CUR_BANNER)) CUR_BANNER=available[0].key;
   const b=banners.find(x=>x.key===CUR_BANNER) || banners[0];
   document.body.className='theme-'+b.theme;
   const bp=STATE.banners[b.key];
   const featKey = b.featured_5[0] || b.icon_item;
   const featIt = CATALOG.items[featKey];
 
-  const feedHtml = (STATE.feed||[]).slice(0,8).map(f=>`<div class="tchip">${esc(f.emoji)} ${esc(f.masked_name)} → ${esc(lang()==='en'?f.item_name_en:f.item_name_ru)} ★5</div>`).join('');
-  const bTabsHtml = available.map(x=>{
-    const xp=STATE.banners[x.key];
-    const badge = x.key==='rookie_banner' ? `${t('Ост.','Left')} ${xp.remaining_pulls}/20` : (lang()==='en'?x.badge_en:x.badge_ru);
+  const feedHtml = (STATE.feed||[]).slice(0,8).map(f=>`<div class="tchip">${esc(f.emoji)} ${esc(f.masked_name)} → ${esc(lang()==='en'?f.item_name_en:f.item_name_ru)}</div>`).join('');
+  const bTabsHtml = banners.map(x=>{
     return `<button class="btab ${x.key===b.key?'active':''}" onclick="CUR_BANNER='${x.key}';renderAll()">
-      <div class="btab-t">${esc((lang()==='en'?x.name_en:x.name_ru).split(':')[0])}</div>
-      <div class="btab-b">${esc(badge)}</div>
+      <div class="btab-t">${esc((lang()==='en'?x.name_en:x.name_ru).split(' ').slice(0,2).join(' '))}</div>
+      <div class="btab-b">${esc(lang()==='en'?x.badge_en:x.badge_ru)}</div>
     </button>`;
   }).join('');
 
   const p5Pct = Math.min(100, Math.round((bp.pity_5 / b.hard_pity_5)*100));
   const p4Pct = Math.min(100, Math.round((bp.pity_4 / b.hard_pity_4)*100));
   const inSoft = bp.pity_5 >= (b.soft_pity_5 - 1);
-  const g5Badge = b.has_5050 ? (bp.guaranteed_5 ? `<span class="tag tag-gold">🔥 100% ${t('ГАРАНТ ИВЕНТА','GUARANTEED FEATURED')}</span>` : `<span class="tag">⚖️ 50/50</span>`) : `<span class="tag tag-green">🛡 ${esc(lang()==='en'?b.badge_en:b.badge_ru)}</span>`;
-  const timerLine = b.banner_days ? `<span class="tag tag-epic">⏳ ${fmtLeft(CATALOG.banner_end_ts - Date.now()/1000)}</span>` : '';
-  const can10 = b.max_pulls === 0 || (bp.remaining_pulls >= 10);
+  const g5Badge = bp.guaranteed_5 ? `<span class="tag tag-gold">🔥 100% ${t('ГАРАНТ ИВЕНТА','GUARANTEED')}</span>` : `<span class="tag">⚖️ 50/50</span>`;
+  const modeBadge = b.mode==='nft_only' ? `<span class="tag tag-epic">🎁 100% REAL NFT</span>` : `<span class="tag tag-green">🎨 NFT + 3D + ✨</span>`;
+  const timerLine = b.banner_days ? `<span class="tag tag-gold">⏳ ${fmtLeft(CATALOG.banner_end_ts - Date.now()/1000)}</span>` : '';
+
+  setTimeout(()=>mountHeroLottie(featIt.lottie_url, featIt.image_url), 10);
 
   return `
     <div class="ticker">${feedHtml}</div>
     <div class="banner-tabs">${bTabsHtml}</div>
     <div class="stage">
       <div class="stage-top">
-        <div style="display:flex;gap:5px;flex-wrap:wrap">${g5Badge} ${timerLine}</div>
+        <div style="display:flex;gap:5px;flex-wrap:wrap">${modeBadge} ${g5Badge} ${timerLine}</div>
         <button class="btn btn-ghost btn-sm" onclick="showRatesModal('${b.key}')">ℹ️ ${t('Шансы','Rates')}</button>
       </div>
       <div class="hero-box">
-        <div class="hero-art"><img src="${featIt.image_url}" alt=""></div>
+        <div class="hero-art" id="heroLottie"><img src="${featIt.image_url}" alt=""></div>
         <div class="hero-info">
           <h2>${esc(lang()==='en'?b.name_en:b.name_ru)}</h2>
           <p>${esc(lang()==='en'?b.desc_en:b.desc_ru)}</p>
@@ -441,11 +411,11 @@ function renderWishes(){
       </div>
       <div class="pity-grid">
         <div class="pity-box">
-          <div class="pity-row"><span>★5 ${t('Гарант','Pity')}${inSoft?' (SOFT!)':''}</span><span style="color:var(--gold)">${bp.pity_5} / ${b.hard_pity_5}</span></div>
+          <div class="pity-row"><span>★5 NFT${inSoft?' (SOFT!)':''}</span><span style="color:var(--gold)">${bp.pity_5} / ${b.hard_pity_5}</span></div>
           <div class="bar bar-gold"><i style="width:${p5Pct}%"></i></div>
         </div>
         <div class="pity-box">
-          <div class="pity-row"><span>★4 ${t('Гарант','Pity')}</span><span style="color:var(--epic)">${bp.pity_4} / ${b.hard_pity_4}</span></div>
+          <div class="pity-row"><span>${b.mode==='nft_only'?'★4 Epic NFT':'★4 NFT Гарант'}</span><span style="color:var(--epic)">${bp.pity_4} / ${b.hard_pity_4}</span></div>
           <div class="bar bar-epic"><i style="width:${p4Pct}%"></i></div>
         </div>
       </div>
@@ -454,23 +424,23 @@ function renderWishes(){
           <span>✨ ${t('Призыв 1×','Wish 1×')}</span>
           <span class="sub">💎 ${b.cost_1}</span>
         </button>
-        <button class="btn btn-gold" ${PULLING||!can10?'disabled':''} onclick="doSpin('${b.key}',10)">
+        <button class="btn btn-gold" ${PULLING?'disabled':''} onclick="doSpin('${b.key}',10)">
           <span>🌟 ${t('Призыв 10×','Wish 10×')}</span>
-          <span class="sub">💎 ${b.cost_10} · ${t('Гарант 4★+','4★+ Guar.')}</span>
+          <span class="sub">💎 ${b.cost_10} · ${t('Гарант 4★+ NFT','4★+ NFT Guar.')}</span>
         </button>
       </div>
     </div>
     ${STATE.user.blessing_days_left > 0 && STATE.user.can_claim_blessing ? `
       <div class="card" style="border-color:rgba(56,189,248,.45);display:flex;justify-content:space-between;align-items:center;gap:8px">
-        <div><div style="font-weight:900;font-size:13px">🌙 ${t('Благословение Звёзд готово!','Astral Blessing Ready!')}</div>
+        <div><div style="font-weight:900;font-size:13px">🌙 ${t('Благословение готово: +90 💎!','Blessing Ready: +90 💎!')}</div>
         <div class="sub">${t('Осталось дней:','Days left:')} ${STATE.user.blessing_days_left}</div></div>
-        <button class="btn btn-blue btn-sm" onclick="claimBlessing()">+120 💎</button>
+        <button class="btn btn-blue btn-sm" onclick="claimBlessing()">+90 💎</button>
       </div>` : ''}
     <div class="card">
-      <div class="sec-h"><h3>${t('Путь закрытой коллекции','Closed Collection Loop')}</h3><span class="tag tag-green">${t('Без пустых спинов','0% Empty Spins')}</span></div>
+      <div class="sec-h"><h3>🎨 ${t('Как работают NFT и Искры ✨','How NFTs & Sparks ✨ Work')}</h3><span class="tag tag-green">${t('Без обратного выкупа','No Buyback')}</span></div>
       <div style="font-size:11.5px;color:var(--muted);line-height:1.45">
-        ${t('• Каждый призыв даёт 3D-экспонат 3★, 4★ или 5★.<br>• Повторки пробуждают Созвездия (C1–C6, +15% CP и пассивную Пыль ✨ в Отряде).<br>• Звёздная Пыль ✨ обменивается в Лавке без рандома.',
-            '• Every pull grants a 3★/4★/5★ 3D collectible.<br>• Duplicates awaken C1–C6 Constellations (+15% CP & Expedition Dust ✨).<br>• Exchange Star Dust ✨ deterministically in the Dust Shop.')}
+        ${t('• Выигранные <b>4★/5★ Telegram NFT</b> попадают в раздел <b>«🎨 Мои NFT»</b> — их можно забрать на любой свой TON-кошелёк и распоряжаться ими свободно вне бота.<br>• <b>3★ 3D-карточки</b> усиливают Созвездия (C0–C6) и Отряд Экспедиции, давая <b>✨ Искры</b>, которые меняются в Лавке на <b>💎 Алмазы</b>.',
+            '• Won <b>4★/5★ Telegram NFTs</b> go to <b>«🎨 My NFTs»</b> to transfer to your personal TON wallet.<br>• <b>3★ 3D Cards</b> power up C0–C6 Constellations & Expeditions, yielding <b>✨ Sparks</b> convertible into <b>💎 Diamonds</b>.')}
       </div>
     </div>`;
 }
@@ -478,19 +448,18 @@ function renderWishes(){
 function showRatesModal(bKey){
   const b=CATALOG.banners.find(x=>x.key===bKey)||CATALOG.banners[0];
   openModal(`
-    <h3 style="margin:0 0 8px">📜 ${t('Точные вероятности и Правила','Drop Rates & Fair Rules')}</h3>
+    <h3 style="margin:0 0 8px">📜 ${t('Точные шансы и Правила','Drop Rates & Fair Rules')}</h3>
     <div class="card" style="background:#070b18;margin-bottom:10px;font-size:12px;line-height:1.5">
-      <div><b>5★ Легендарный:</b> базовый <b>${b.base_5_pct}%</b> · Soft Pity с <b>${b.soft_pity_5}-й</b> · Hard Pity 100% на <b>${b.hard_pity_5}-й</b></div>
-      <div><b>4★ Эпический:</b> базовый <b>${b.base_4_pct}%</b> · Hard Pity 100% каждые <b>${b.hard_pity_4}</b> круток</div>
-      <div><b>3★ Редкий:</b> гарантированный базовый экспонат во всех остальных случаях</div>
-      ${b.has_5050 ? `<div><b>Система 50/50:</b> первый 5★ с шансом 50% ивентовый (${esc(itemName(CATALOG.items[b.featured_5[0]]))}); при другом 5★ следующий 5★ — <b>100% ивентовый!</b></div>` : ''}
+      <div><b>5★ Легендарный Telegram NFT:</b> база <b>${b.base_5_pct}%</b> · Soft Pity с <b>${b.soft_pity_5}-й</b> · Hard Pity 100% на <b>${b.hard_pity_5}-й</b></div>
+      <div><b>4★ ${b.mode==='nft_only'?'Редкий Epic NFT':'Коллекционный NFT'}:</b> база <b>${b.base_4_pct}%</b> · Hard Pity 100% каждые <b>${b.hard_pity_4}</b> круток</div>
+      <div><b>Базовый итог:</b> ${b.mode==='nft_only'?'100% реальный Base Fragment NFT + 40 ✨ Искр':'3★ 3D-карточка Альбома + ✨ Искры (обмен в Лавке на 💎 Алмазы)'}</div>
+      ${b.has_5050 ? `<div><b>Система 50/50:</b> первый 5★ с шансом 50% ивентовый (${esc(itemName(CATALOG.items[b.featured_5[0]]))}); иначе следующий 5★ — <b>100% ивентовый!</b></div>`:''}
     </div>
     <div style="font-size:11.5px;color:var(--muted);line-height:1.45;margin-bottom:12px">
-      ${t('<b>Закрытая цифровая экономика:</b> все герои, артефакты, рамки, кристаллы 💎 и пыль ✨ существуют исключительно внутри коллекции GiftBox. Вывод в деньги, обналичивание и обратный выкуп отсутствуют.',
-          '<b>Closed Digital Economy:</b> all collectibles, crystals 💎, dust ✨, and cosmetics remain inside GiftBox. No cash-out or buyback.')}
+      ${t('<b>Правила выдачи NFT:</b> бот не покупает NFT обратно за баланс/деньги, здесь нет пустых спинов и ставок со сгоранием. Выигранные Telegram NFT передаются на твой личный TON-кошелёк, где ты владеешь ими полностью.',
+          '<b>NFT Rules:</b> No NFT buyback, zero empty spins, zero burning games. Won Fragment NFTs transfer to your personal TON wallet.')}
     </div>
-    <button class="btn btn-blue" style="width:100%" onclick="closeModal()">OK</button>
-  `);
+    <button class="btn btn-blue" style="width:100%" onclick="closeModal()">OK</button>`);
 }
 
 async function doSpin(bKey, count){
@@ -504,43 +473,39 @@ async function doSpin(bKey, count){
     playPullReveal(res.results);
   }catch(e){
     PULLING=false; renderAll();
-    if(e.message.includes('кристаллов') || e.message.toLowerCase().includes('crystals')){
+    if(e.message.includes('алмазов') || e.message.toLowerCase().includes('crystals')){
       toast(e.message);
       setTimeout(()=>goTab('shop','stars'), 500);
-    } else {
-      toast(e.message);
-    }
+    } else { toast(e.message); }
   }
 }
 
 function playPullReveal(results){
   const maxRank = Math.max(...results.map(r=>r.stars_rank));
   const color = maxRank===5 ? '#facc15' : (maxRank===4 ? '#c084fc' : '#38bdf8');
-  const title = maxRank===5 ? t('🌟 ЗОЛОТАЯ КОМЕТА! 5★ ЛЕГЕНДА!','🌟 GOLDEN METEOR! 5★ LEGENDARY!')
-              : (maxRank===4 ? t('🔮 ФИОЛЕТОВАЯ ВСПЫШКА! 4★ ЭПИК!','🔮 VIOLET STARFALL! 4★ EPIC!')
-              : t('✨ СИЯНИЕ ЗВЁЗД!','✨ STARLIGHT WISH!'));
-  openModal(`
-    <div class="meteor" style="border:2px solid ${color};box-shadow:0 0 36px ${color}44">
-      <div style="font-size:38px">${maxRank===5?'🌠':(maxRank===4?'☄️':'✨')}</div>
-      <div style="color:${color}">${title}</div>
-    </div>`);
+  const title = maxRank===5 ? t('🌟 5★ ЛЕГЕНДАРНЫЙ TELEGRAM NFT!','🌟 5★ LEGENDARY NFT!')
+              : (maxRank===4 ? t('🎨 4★ TELEGRAM NFT!','🎨 4★ TELEGRAM NFT!')
+              : t('✨ ЗВЁЗДНЫЙ ПРИЗЫВ!','✨ STARLIGHT WISH!'));
+  openModal(`<div class="meteor" style="border:2px solid ${color};box-shadow:0 0 36px ${color}44"><div style="font-size:38px">${maxRank>=4?'🎁':'✨'}</div><div style="color:${color}">${title}</div></div>`);
   setTimeout(()=>{
     const cardsHtml = results.map((r,idx)=>{
-      const badge = r.is_new ? `<span style="color:#34d399">NEW!</span>` : `<span style="color:#fde047">C${r.constellation} +${r.dust_gained}✨</span>`;
+      const badge = r.is_nft ? `<span style="color:#6ee7b7">REAL NFT!</span>` : `<span style="color:#fde047">C${r.constellation} +${r.sparks_gained}✨</span>`;
       return `<div class="rev-card r${r.stars_rank}" style="animation-delay:${idx*0.04}s">
         <div style="display:flex;justify-content:space-between;font-size:9px;font-weight:900"><span>${starBadges(r.stars_rank)}</span>${badge}</div>
         <img src="${r.image_url}" alt="">
         <div style="font-size:11px;font-weight:800">${esc(lang()==='en'?r.name_en:r.name_ru)}</div>
+        ${r.is_nft ? `<div style="font-size:9px;color:#7dd3fc;font-weight:800">+${r.sparks_gained} ✨ · ${t('В разделе Мои NFT','In My NFTs')}</div>`:''}
         ${r.won_5050 ? `<div style="font-size:9px;color:#34d399;font-weight:900">50/50 WIN!</div>`:''}
         ${r.lost_5050 ? `<div style="font-size:9px;color:#fb7185;font-weight:900">${t('СЛЕД. 5★ ГАРАНТ!','NEXT 5★ GUARANTEED!')}</div>`:''}
       </div>`;
     }).join('');
+    const anyNft = results.some(r=>r.is_nft);
     openModal(`
       <h3 style="margin:0 0 6px;text-align:center">${t('Итоги призыва','Wish Results')} (${results.length}×)</h3>
       <div class="reveal-grid" style="${results.length===1?'grid-template-columns:1fr':''}">${cardsHtml}</div>
-      <button class="btn btn-gold" style="width:100%;margin-top:8px" onclick="closeModal()">${t('Отлично!','Awesome!')}</button>
-    `);
-  }, 650);
+      ${anyNft?`<button class="btn btn-epic" style="width:100%;margin-top:8px" onclick="closeModal();goTab('nfts')">🎨 ${t('Забрать NFT на кошелёк','Claim NFT in My NFTs')}</button>`:''}
+      <button class="btn btn-gold" style="width:100%;margin-top:8px" onclick="closeModal()">OK</button>`);
+  }, 600);
 }
 
 function renderSquad(){
@@ -550,23 +515,20 @@ function renderSquad(){
   const slotsHtml=exp.slots.map((k,idx)=>{
     const it = k && CATALOG.items[k];
     if(!it) return `<div class="slot" onclick="pickSlot(${idx})"><div style="font-size:20px;opacity:.5">＋</div><div class="slot-name">${t('Слот #'+(idx+1),'Slot #'+(idx+1))}</div></div>`;
-    const ow=owned[k]||{constellation:0,hourly_dust:it.hourly_dust};
+    const ow=owned[k]||{constellation:0,hourly_sparks:it.hourly_sparks};
     return `<div class="slot filled" onclick="pickSlot(${idx})">
       <div class="c-badge">C${ow.constellation}</div>
       <img src="${it.image_url}">
       <div class="slot-name">${esc(itemName(it))}</div>
-      <div class="slot-rate">+${ow.hourly_dust} ✨/${t('ч','h')}</div>
+      <div class="slot-rate">+${ow.hourly_sparks} ✨/${t('ч','h')}</div>
     </div>`;
   }).join('');
 
   const questsHtml=(STATE.daily_quests||[]).map(q=>{
-    const dis = !q.can_claim;
     return `<div class="quest-row">
-      <div>
-        <div style="font-size:12px;font-weight:800">${esc(lang()==='en'?q.title_en:q.title_ru)}</div>
-        <div class="sub">${q.progress}/${q.target} · +${q.crystals}💎 +${q.dust}✨ +${q.bp_xp} XP</div>
-      </div>
-      <button class="btn ${q.claimed?'btn-ghost':(q.can_claim?'btn-green':'btn-ghost')} btn-sm" ${dis?'disabled':''} onclick="claimQuest('${q.key}')">
+      <div><div style="font-size:12px;font-weight:800">${esc(lang()==='en'?q.title_en:q.title_ru)}</div>
+      <div class="sub">${q.progress}/${q.target} · +${q.crystals}💎 +${q.sparks}✨ +${q.bp_xp} XP</div></div>
+      <button class="btn ${q.claimed?'btn-ghost':(q.can_claim?'btn-green':'btn-ghost')} btn-sm" ${!q.can_claim?'disabled':''} onclick="claimQuest('${q.key}')">
         ${q.claimed?'✅':(q.can_claim?t('Забрать','Claim'):`${q.progress}/${q.target}`)}
       </button>
     </div>`;
@@ -580,116 +542,106 @@ function renderSquad(){
     const pCl = u.bp_claimed_prem.includes(lv.level);
     return `<div class="bp-row">
       <div style="text-align:center;font-weight:900;font-size:12px;color:${unl?'var(--gold)':'var(--muted)'}">Ур.${lv.level}</div>
-      <div class="bp-cell">
-        <span>+${lv.free_crystals}💎 +${lv.free_dust}✨</span>
-        <button class="btn ${fCl?'btn-ghost':(unl?'btn-blue':'btn-ghost')} btn-sm" style="padding:3px 7px;font-size:10px" ${(!unl||fCl)?'disabled':''} onclick="claimBp(${lv.level},'free')">${fCl?'✅':t('Взять','Get')}</button>
-      </div>
-      <div class="bp-cell" style="border:1px solid ${u.bp_premium?'rgba(250,204,21,.35)':'transparent'}">
-        <span>+${lv.prem_crystals}💎${lv.prem_cosmetic?'👑':''}</span>
-        <button class="btn ${pCl?'btn-ghost':(unl&&u.bp_premium?'btn-gold':'btn-ghost')} btn-sm" style="padding:3px 7px;font-size:10px" ${(!unl||!u.bp_premium||pCl)?'disabled':''} onclick="claimBp(${lv.level},'prem')">${pCl?'✅':(u.bp_premium?t('Взять','Get'):'🔒')}</button>
-      </div>
+      <div class="bp-cell"><span>+${lv.free_crystals}💎 +${lv.free_sparks}✨</span>
+        <button class="btn ${fCl?'btn-ghost':(unl?'btn-blue':'btn-ghost')} btn-sm" style="padding:3px 7px;font-size:10px" ${(!unl||fCl)?'disabled':''} onclick="claimBp(${lv.level},'free')">${fCl?'✅':t('Взять','Get')}</button></div>
+      <div class="bp-cell" style="border:1px solid ${u.bp_premium?'rgba(250,204,21,.35)':'transparent'}"><span>+${lv.prem_crystals}💎${lv.prem_cosmetic?'👑':''}</span>
+        <button class="btn ${pCl?'btn-ghost':(unl&&u.bp_premium?'btn-gold':'btn-ghost')} btn-sm" style="padding:3px 7px;font-size:10px" ${(!unl||!u.bp_premium||pCl)?'disabled':''} onclick="claimBp(${lv.level},'prem')">${pCl?'✅':(u.bp_premium?t('Взять','Get'):'🔒')}</button></div>
     </div>`;
   }).join('');
 
   return `
     <div class="card">
-      <div class="sec-h">
-        <h3>🚀 ${t('Отряд Экспедиции','Expedition Squad')}</h3>
-        <button class="btn btn-ghost btn-sm" onclick="autoSquad()">⚡ ${t('Авто-лучший','Auto Best')}</button>
-      </div>
+      <div class="sec-h"><h3>🚀 ${t('Отряд Экспедиции (фарм ✨ Искр)','Expedition Squad (✨ Sparks)')}</h3><button class="btn btn-ghost btn-sm" onclick="autoSquad()">⚡ ${t('Авто','Auto Best')}</button></div>
       <div class="squad-grid">${slotsHtml}</div>
       <div style="margin:8px 0">
-        <div class="pity-row"><span>${t('Накоплено добычи','Accumulated')} (${exp.hourly_dust} ✨/${t('ч','h')})</span><span style="color:var(--green)">+${exp.dust} ✨ · +${exp.bp_xp} XP</span></div>
+        <div class="pity-row"><span>${t('Добыто','Accumulated')} (${exp.hourly_sparks} ✨/${t('ч','h')})</span><span style="color:var(--green)">+${exp.sparks} ✨ · +${exp.bp_xp} XP</span></div>
         <div class="bar bar-green"><i style="width:${capPct}%"></i></div>
-        <div class="sub" style="margin-top:3px">${t('Лимит таймера 12 часов — заходи 2 раза в день!','12h AFK cap — check in twice daily!')}</div>
+        <div class="sub" style="margin-top:3px">${t('Кап 12ч — заходи 2 раза в день! Обменивай ✨ в Лавке на 💎.','12h cap — convert ✨ Sparks into 💎 in the Shop!')}</div>
       </div>
-      <button class="btn btn-green" style="width:100%" onclick="claimExp()">🔮 ${t('Собрать добычу','Claim Expedition')} (+${exp.dust} ✨)</button>
+      <button class="btn btn-green" style="width:100%" onclick="claimExp()">✨ ${t('Собрать Искры','Claim Sparks')} (+${exp.sparks} ✨)</button>
     </div>
-
+    <div class="card"><div class="sec-h"><h3>📅 ${t('Ежедневные задания','Daily Quests')}</h3></div>${questsHtml}</div>
     <div class="card">
-      <div class="sec-h"><h3>📅 ${t('Ежедневные задания','Daily Quests')}</h3></div>
-      ${questsHtml}
-    </div>
-
-    <div class="card">
-      <div class="sec-h">
-        <h3>🎖 ${t('Боевой Пропуск','Battle Pass')} (${t('Ур.','Lv.')} ${u.bp_level}/20)</h3>
-        ${u.bp_premium ? `<span class="tag tag-gold">PREMIUM</span>` : `<button class="btn btn-gold btn-sm" onclick="buyPack('pack_bp')">149 ⭐ ${t('Премиум','Unlock')}</button>`}
-      </div>
+      <div class="sec-h"><h3>🎖 ${t('Боевой Пропуск','Battle Pass')} (${t('Ур.','Lv.')} ${u.bp_level}/20)</h3>
+      ${u.bp_premium ? `<span class="tag tag-gold">PREMIUM</span>` : `<button class="btn btn-gold btn-sm" onclick="buyPack('pack_bp')">299 ⭐ ${t('Премиум','Unlock')}</button>`}</div>
       <div class="bar bar-gold" style="margin-bottom:8px"><i style="width:${u.bp_level>=20?100:Math.round(bpCur/2)}%"></i></div>
-      <div style="max-height:260px;overflow-y:auto">${bpHtml}</div>
+      <div style="max-height:240px;overflow-y:auto">${bpHtml}</div>
     </div>`;
 }
 
 async function autoSquad(){
   try{
-    const best = [...(STATE.collection||[])].sort((a,b)=>b.hourly_dust-a.hourly_dust).slice(0,4).map(x=>x.item_key);
+    const best = [...(STATE.collection||[])].sort((a,b)=>b.hourly_sparks-a.hourly_sparks).slice(0,4).map(x=>x.item_key);
     STATE = await api('/api/expedition/set_squad','POST',{slots:best});
-    toast(t('Выставлен лучший отряд по добыче Пыли!','Best Dust Squad equipped!'));
-    renderAll();
+    toast(t('Лучший отряд выставлен!','Best Squad equipped!')); renderAll();
   }catch(e){toast(e.message)}
 }
-
 function pickSlot(slotIdx){
   const cur=[...STATE.expedition.slots];
-  const cols=(STATE.collection||[]).sort((a,b)=>b.hourly_dust-a.hourly_dust);
+  const cols=(STATE.collection||[]).sort((a,b)=>b.hourly_sparks-a.hourly_sparks);
   const rows=cols.map(c=>{
     const it=CATALOG.items[c.item_key];
     const inUse=cur.includes(c.item_key) && cur[slotIdx]!==c.item_key;
     return `<div class="shop-item" style="opacity:${inUse?.55:1}">
-      <div style="display:flex;align-items:center;gap:8px">
-        <img src="${it.image_url}" style="width:42px;height:42px;object-fit:contain">
-        <div><div style="font-weight:800;font-size:12.5px">${esc(itemName(it))} (C${c.constellation})</div>
-        <div class="sub">+${c.hourly_dust} ✨/${t('ч','h')} · ${c.power} CP</div></div>
-      </div>
-      <button class="btn btn-blue btn-sm" ${inUse?'disabled':''} onclick="assignSlot(${slotIdx},'${c.item_key}')">${inUse?t('В отряде','In Squad'):t('Выбрать','Select')}</button>
+      <div style="display:flex;align-items:center;gap:8px"><img src="${it.image_url}" style="width:40px;height:40px;object-fit:contain">
+        <div><div style="font-weight:800;font-size:12px">${esc(itemName(it))} (C${c.constellation})</div><div class="sub">+${c.hourly_sparks} ✨/${t('ч','h')}</div></div></div>
+      <button class="btn btn-blue btn-sm" ${inUse?'disabled':''} onclick="assignSlot(${slotIdx},'${c.item_key}')">${inUse?t('Занят','In use'):t('Выбрать','Select')}</button>
     </div>`;
-  }).join('') || `<div class="sub">${t('Открой хотя бы 1 экспонат!','Unlock an item first!')}</div>`;
-  openModal(`<h3 style="margin:0 0 10px">${t('Слот Отряда #'+(slotIdx+1),'Squad Slot #'+(slotIdx+1))}</h3>${rows}<button class="btn btn-ghost" style="width:100%" onclick="closeModal()">${t('Закрыть','Close')}</button>`);
+  }).join('') || `<div class="sub">${t('Альбом пуст!','Empty album!')}</div>`;
+  openModal(`<h3 style="margin:0 0 10px">${t('Слот #'+(slotIdx+1),'Slot #'+(slotIdx+1))}</h3>${rows}<button class="btn btn-ghost" style="width:100%" onclick="closeModal()">${t('Закрыть','Close')}</button>`);
 }
-
 async function assignSlot(idx, key){
-  const cur=[...STATE.expedition.slots];
-  cur[idx]=key;
-  try{ STATE=await api('/api/expedition/set_squad','POST',{slots:cur}); closeModal(); renderAll(); }
-  catch(e){toast(e.message)}
+  const cur=[...STATE.expedition.slots]; cur[idx]=key;
+  try{ STATE=await api('/api/expedition/set_squad','POST',{slots:cur}); closeModal(); renderAll(); }catch(e){toast(e.message)}
 }
 async function claimExp(){
-  try{ const r=await api('/api/expedition/claim','POST',{}); STATE=r; toast(`+${r.reward.dust} ✨, +${r.reward.bp_xp} XP!`); renderAll(); }
-  catch(e){toast(e.message)}
+  try{ const r=await api('/api/expedition/claim','POST',{}); STATE=r; toast(`+${r.reward.sparks} ✨, +${r.reward.bp_xp} XP!`); renderAll(); }catch(e){toast(e.message)}
 }
 async function claimQuest(qKey){
-  try{ const r=await api('/api/quests/claim','POST',{quest_key:qKey}); STATE=r; toast(`+${r.reward.crystals} 💎 +${r.reward.dust} ✨!`); renderAll(); }
-  catch(e){toast(e.message)}
+  try{ const r=await api('/api/quests/claim','POST',{quest_key:qKey}); STATE=r; toast(`+${r.reward.crystals} 💎 +${r.reward.sparks} ✨!`); renderAll(); }catch(e){toast(e.message)}
 }
 async function claimBp(level, track){
-  try{ const r=await api('/api/bp/claim','POST',{level,track}); STATE=r; toast(`+${r.reward.crystals} 💎 +${r.reward.dust} ✨!`); renderAll(); }
-  catch(e){toast(e.message)}
+  try{ const r=await api('/api/bp/claim','POST',{level,track}); STATE=r; toast(`+${r.reward.crystals} 💎 +${r.reward.sparks} ✨!`); renderAll(); }catch(e){toast(e.message)}
 }
 
-function renderAlbum(){
+function renderNftsAndAlbum(){
   const u=STATE.user;
+  const nfts=STATE.nft_inventory||[];
+  const nftListHtml = nfts.length ? nfts.map(n=>{
+    const it=CATALOG.items[n.item_key];
+    const stTag = n.status==='in_collection' ? `<span class="tag tag-green">${t('Готов к выводу NFT','Ready to Claim')}</span>`
+                : (n.status==='pending_transfer' ? `<span class="tag tag-gold">⏳ ${t('Передаётся (1–24ч)','Pending Transfer')}</span>`
+                : `<span class="tag">✅ ${t('Отправлен','Transferred')}</span>`);
+    return `<div class="nft-row">
+      <div style="display:flex;align-items:center;gap:9px">
+        <img src="${it?it.image_url:''}" style="width:46px;height:46px;object-fit:contain">
+        <div>
+          <div style="font-weight:900;font-size:13px">${esc(it?itemName(it):n.item_key)}</div>
+          <div style="margin-top:3px">${stTag}</div>
+        </div>
+      </div>
+      ${n.status==='in_collection' ? `<button class="btn btn-gold btn-sm" onclick="claimNft(${n.id})">📤 ${t('Забрать','Claim')}</button>` : ''}
+    </div>`;
+  }).join('') : `<div class="sub" style="color:var(--muted)">${t('Пока нет выигранных Telegram NFT. Крути баннеры — каждые 5–10 круток или в 100% NFT Сюрприз-Боксе падает реальный NFT!','No won Telegram NFTs yet — pull banners or open 100% NFT Box!')}</div>`;
+
   const owned=ownedMap();
   const msHtml=(CATALOG.milestones||[]).map(m=>{
     const done=u.milestones_claimed.includes(m.count);
     const can=!done && u.unique_count>=m.count;
     return `<div class="sday ${done?'done':(can?'next':'')}" style="padding:7px 4px;cursor:pointer" onclick="${can?`claimMilestone(${m.count})`:''}">
-      <div>${m.count}/30</div>
-      <div style="font-size:8.5px">${done?'✅':`+${m.crystals}💎`}</div>
-    </div>`;
+      <div>${m.count}/35</div><div style="font-size:8.5px">${done?'✅':`+${m.crystals}💎`}</div></div>`;
   }).join('');
 
   let list=Object.values(CATALOG.items);
-  if(ALBUM_FILTER==='5') list=list.filter(x=>x.stars_rank===5);
-  else if(ALBUM_FILTER==='4') list=list.filter(x=>x.stars_rank===4);
-  else if(ALBUM_FILTER==='3') list=list.filter(x=>x.stars_rank===3);
+  if(ALBUM_FILTER==='nft') list=list.filter(x=>x.is_nft);
+  else if(ALBUM_FILTER==='card') list=list.filter(x=>!x.is_nft);
   else if(ALBUM_FILTER==='owned') list=list.filter(x=>!!owned[x.key]);
   else if(ALBUM_FILTER==='missing') list=list.filter(x=>!owned[x.key]);
 
   const cards=list.map(it=>{
     const ow=owned[it.key];
     return `<div class="item-card r${it.stars_rank} ${ow?'':'locked'}" onclick="openItemModal('${it.key}')">
-      <div class="ic-top"><span>${starBadges(it.stars_rank)}</span>${ow?`<span class="c-badge">C${ow.constellation}</span>`:`<span>🔒</span>`}</div>
+      <div class="ic-top"><span>${it.is_nft?'🎨':starBadges(it.stars_rank)}</span>${ow?`<span class="c-badge">C${ow.constellation}</span>`:`<span>🔒</span>`}</div>
       <img src="${it.image_url}" alt="">
       <div class="ic-name">${esc(itemName(it))}</div>
       <div class="ic-pw">${ow?`⚡ ${ow.power} CP`:`+${it.base_power} CP`}</div>
@@ -697,23 +649,46 @@ function renderAlbum(){
   }).join('');
 
   return `
-    <div class="card">
-      <div class="sec-h">
-        <h3>📖 ${t('Астральный Альбом','Astral Album')} (${u.unique_count}/30)</h3>
-        <span class="tag tag-gold">⚡ ${u.power_score} CP</span>
+    <div class="card" style="border-color:rgba(192,132,252,.45)">
+      <div class="sec-h"><h3>🎨 ${t('Мои реальные Telegram NFT','My Real Telegram NFTs')} (${nfts.length})</h3><span class="tag">${t('Без обратного выкупа','Keep / Transfer')}</span></div>
+      <div style="margin-bottom:10px">
+        <div class="sub" style="margin-bottom:4px;color:var(--muted)">${t('TON-кошелёк для получения NFT (Tonkeeper / MyTonWallet / @wallet, формат UQ...):','Your TON receiving wallet (UQ... / EQ...):')}</div>
+        <div style="display:flex;gap:7px">
+          <input class="input" id="tonAddrInp" value="${esc(u.ton_wallet||'')}" placeholder="UQ...">
+          <button class="btn btn-blue btn-sm" onclick="saveWallet()">${t('Сохранить','Save')}</button>
+        </div>
       </div>
-      <div style="font-size:11px;color:var(--muted);margin-bottom:6px">${t('Вехи коллекции (нажми на подсвеченную):','Collection Milestones (tap highlighted):')}</div>
-      <div class="streak-row" style="grid-template-columns:repeat(6,1fr)">${msHtml}</div>
+      ${nftListHtml}
+    </div>
+
+    <div class="card">
+      <div class="sec-h"><h3>📖 ${t('Астральный Альбом','Astral Album')} (${u.unique_count}/35)</h3><span class="tag tag-gold">⚡ ${u.power_score} CP</span></div>
+      <div class="streak-row" style="grid-template-columns:repeat(5,1fr)">${msHtml}</div>
     </div>
     <div class="filters">
-      <button class="fbtn ${ALBUM_FILTER==='all'?'active':''}" onclick="ALBUM_FILTER='all';renderAll()">${t('Все 30','All 30')}</button>
-      <button class="fbtn ${ALBUM_FILTER==='5'?'active':''}" onclick="ALBUM_FILTER='5';renderAll()">5★</button>
-      <button class="fbtn ${ALBUM_FILTER==='4'?'active':''}" onclick="ALBUM_FILTER='4';renderAll()">4★</button>
-      <button class="fbtn ${ALBUM_FILTER==='3'?'active':''}" onclick="ALBUM_FILTER='3';renderAll()">3★</button>
+      <button class="fbtn ${ALBUM_FILTER==='all'?'active':''}" onclick="ALBUM_FILTER='all';renderAll()">${t('Все 35','All 35')}</button>
+      <button class="fbtn ${ALBUM_FILTER==='nft'?'active':''}" onclick="ALBUM_FILTER='nft';renderAll()">🎨 NFT (19)</button>
+      <button class="fbtn ${ALBUM_FILTER==='card'?'active':''}" onclick="ALBUM_FILTER='card';renderAll()">✨ 3D (16)</button>
       <button class="fbtn ${ALBUM_FILTER==='owned'?'active':''}" onclick="ALBUM_FILTER='owned';renderAll()">${t('Открыты','Owned')}</button>
-      <button class="fbtn ${ALBUM_FILTER==='missing'?'active':''}" onclick="ALBUM_FILTER='missing';renderAll()">${t('Не открыты','Missing')}</button>
+      <button class="fbtn ${ALBUM_FILTER==='missing'?'active':''}" onclick="ALBUM_FILTER='missing';renderAll()">${t('Нет','Missing')}</button>
     </div>
     <div class="album-grid">${cards}</div>`;
+}
+
+async function saveWallet(){
+  const w=(document.getElementById('tonAddrInp')?.value||'').trim();
+  try{ STATE=await api('/api/wallet/set','POST',{wallet:w}); toast(t('TON-кошелёк сохранён!','Wallet saved!')); renderAll(); }
+  catch(e){toast(e.message)}
+}
+async function claimNft(invId){
+  const w=(document.getElementById('tonAddrInp')?.value||'').trim();
+  try{
+    const res=await api('/api/nft/claim','POST',{inv_id:invId, wallet:w});
+    STATE=res; renderAll();
+    openModal(`<h3 style="margin:0 0 8px">🎨 ${res.claim_status==='transferred'?t('NFT отправлен!','NFT Sent!'):t('Заявка принята!','Transfer Queued')}</h3>
+      <p style="font-size:13px;line-height:1.45">${esc(res.message)}</p>
+      <button class="btn btn-gold" style="width:100%" onclick="closeModal()">OK</button>`);
+  }catch(e){toast(e.message)}
 }
 
 function openItemModal(k){
@@ -721,29 +696,35 @@ function openItemModal(k){
   const ow=ownedMap()[k];
   openModal(`
     <div style="text-align:center">
-      <span class="tag ${it.stars_rank===5?'tag-gold':(it.stars_rank===4?'tag-epic':'')}">${starBadges(it.stars_rank)} ${it.rarity.toUpperCase()}</span>
+      <span class="tag ${it.stars_rank===5?'tag-gold':(it.stars_rank===4?'tag-epic':'')}">${it.is_nft?'REAL TELEGRAM NFT':'3D COLLECTIBLE'}</span>
       <h2 style="margin:8px 0 4px">${esc(itemName(it))}</h2>
-      <img src="${it.image_url}" style="width:128px;height:128px;object-fit:contain;margin:4px 0">
-      <p style="font-size:12px;color:var(--muted)">${esc((lang()==='en'?it.lore_en:it.lore_ru)||t('Уникальный 3D-экспонат закрытой коллекции GiftBox.','Unique 3D GiftBox collectible.'))}</p>
+      <div id="modalLottie" style="width:128px;height:128px;margin:4px auto;display:flex;align-items:center;justify-content:center"><img src="${it.image_url}" style="width:120px;height:120px;object-fit:contain"></div>
+      <p style="font-size:12px;color:var(--muted)">${esc((lang()==='en'?it.lore_en:it.lore_ru)||'')}</p>
       <div class="card" style="background:#070b18;text-align:left;font-size:12px">
-        <div>${t('Созвездие:','Constellation:')} <b>${ow?`C${ow.constellation}/6 (${ow.copies} копий)`:'🔒 Не открыт'}</b></div>
-        <div>${t('Мощь в Зале Славы:','Collection Power:')} <b>⚡ ${ow?ow.power:it.base_power} CP</b> (+15% за каждый C-уровень)</div>
-        <div>${t('Добыча в Отряде:','Expedition Yield:')} <b>+${ow?ow.hourly_dust:it.hourly_dust} ✨/${t('час','hr')}</b></div>
+        <div>${t('Созвездие:','Constellation:')} <b>${ow?`C${ow.constellation}/6 (${ow.copies} шт.)`:'🔒 Не открыт'}</b></div>
+        <div>${t('Мощь в Зале Славы:','Collection Power:')} <b>⚡ ${ow?ow.power:it.base_power} CP</b></div>
+        <div>${t('Добыча Искр в Отряде:','Expedition Yield:')} <b>+${ow?ow.hourly_sparks:it.hourly_sparks} ✨/${t('час','hr')}</b></div>
       </div>
-      ${ow?`<button class="btn btn-gold" style="width:100%;margin-bottom:8px" onclick="setShowcase('${k}')">⭐ ${t('Поставить на витрину профиля','Set as Profile Showcase')}</button>`:''}
+      ${ow?`<button class="btn btn-gold" style="width:100%;margin-bottom:8px" onclick="setShowcase('${k}')">⭐ ${t('На витрину профиля','Set Showcase')}</button>`:''}
       <button class="btn btn-ghost" style="width:100%" onclick="closeModal()">${t('Закрыть','Close')}</button>
     </div>`);
+  if(it.lottie_url && window.lottie){
+    const mEl=document.getElementById('modalLottie');
+    if(mEl){
+      mEl.innerHTML='';
+      try{
+        MODAL_LOTTIE=window.lottie.loadAnimation({container:mEl,renderer:'svg',loop:true,autoplay:true,path:it.lottie_url});
+        MODAL_LOTTIE.addEventListener('data_failed',()=>{mEl.innerHTML=`<img src="${it.image_url}" style="width:120px;height:120px;object-fit:contain">`;});
+      }catch(e){}
+    }
+  }
 }
-
 async function setShowcase(k){
-  try{
-    const u=STATE.user;
-    STATE=await api('/api/profile/equip','POST',{frame:u.equipped_frame,title:u.equipped_title,showcase_item:k});
-    closeModal(); toast(t('Витрина профиля обновлена!','Profile showcase updated!')); renderAll();
-  }catch(e){toast(e.message)}
+  try{ const u=STATE.user; STATE=await api('/api/profile/equip','POST',{frame:u.equipped_frame,title:u.equipped_title,showcase_item:k}); closeModal(); toast(t('Витрина обновлена!','Showcase updated!')); renderAll(); }
+  catch(e){toast(e.message)}
 }
 async function claimMilestone(cnt){
-  try{ const r=await api('/api/milestones/claim','POST',{count:cnt}); STATE=r; toast(`+${r.reward.crystals} 💎 +${r.reward.dust} ✨!`); renderAll(); }
+  try{ const r=await api('/api/milestones/claim','POST',{count:cnt}); STATE=r; toast(`+${r.reward.crystals} 💎 +${r.reward.sparks} ✨!`); renderAll(); }
   catch(e){toast(e.message)}
 }
 
@@ -751,14 +732,14 @@ function renderShop(){
   const u=STATE.user;
   const subTabs=`
     <div class="btn-row" style="margin-bottom:10px">
-      <button class="btn ${SHOP_SUB==='dust'?'btn-epic':'btn-ghost'} btn-sm" onclick="SHOP_SUB='dust';renderAll()">🔮 ${t('Лавка Пыли (0% рандома)','Dust Shop (Deterministic)')}</button>
-      <button class="btn ${SHOP_SUB==='stars'?'btn-blue':'btn-ghost'} btn-sm" onclick="SHOP_SUB='stars';renderAll()">⭐ ${t('Кристаллы и Пропуска','Crystals & Passes')}</button>
+      <button class="btn ${SHOP_SUB==='sparks'?'btn-epic':'btn-ghost'} btn-sm" onclick="SHOP_SUB='sparks';renderAll()">✨ ${t('Искры → 💎 Алмазы','Sparks → 💎')}</button>
+      <button class="btn ${SHOP_SUB==='stars'?'btn-blue':'btn-ghost'} btn-sm" onclick="SHOP_SUB='stars';renderAll()">⭐ ${t('Магазин Звёзд','Stars Store')}</button>
     </div>`;
 
-  if(SHOP_SUB==='dust'){
-    const boughtMap=STATE.dust_shop_bought||{};
+  if(SHOP_SUB==='sparks'){
+    const boughtMap=STATE.spark_shop_bought||{};
     const cosOwned=new Set(STATE.cosmetics||[]);
-    const offers=(CATALOG.dust_shop||[]).map(d=>{
+    const offers=(CATALOG.spark_shop||[]).map(d=>{
       const q=boughtMap[d.key]||0;
       const isCos=d.kind==='cosmetic';
       const maxOut = isCos ? cosOwned.has(d.cosmetic_key) : (d.monthly_limit>0 && q>=d.monthly_limit);
@@ -768,55 +749,48 @@ function renderShop(){
           <div style="font-weight:900;font-size:13px">${d.emoji} ${esc(lang()==='en'?d.title_en:d.title_ru)} <span class="tag" style="font-size:9px">${limLbl}</span></div>
           <div class="sub" style="color:var(--muted);margin-top:2px">${esc(lang()==='en'?d.desc_en:d.desc_ru)}</div>
         </div>
-        <button class="btn ${maxOut?'btn-ghost':'btn-epic'} btn-sm" ${maxOut?'disabled':''} onclick="buyDust('${d.key}')">
-          ${maxOut?'✅':`🔮 ${d.cost_dust}`}
+        <button class="btn ${maxOut?'btn-ghost':'btn-epic'} btn-sm" ${maxOut?'disabled':''} onclick="buySpark('${d.key}')">
+          ${maxOut?'✅':`✨ ${d.cost_sparks}`}
         </button>
       </div>`;
     }).join('');
-    return subTabs + `<div class="card"><div class="sec-h"><h3>🔮 ${t('Обмен Звёздной Пыли ✨','Star Dust Exchange ✨')}</h3><span class="tag tag-gold">🔮 ${u.dust} ✨</span></div>${offers}</div>`;
+    return subTabs + `<div class="card"><div class="sec-h"><h3>✨ ${t('Обмен Искр на Алмазы 💎','Convert Sparks to 💎')}</h3><span class="tag tag-gold">✨ ${u.sparks}</span></div>${offers}</div>`;
   }
 
   const blessCard = u.blessing_days_left > 0
     ? `<div class="card" style="border-color:rgba(56,189,248,.5)"><div class="sec-h"><h3>🌙 ${t('Благословение активно:','Blessing Active:')} ${u.blessing_days_left} ${t('дн.','days')}</h3>
-       ${u.can_claim_blessing ? `<button class="btn btn-blue btn-sm" onclick="claimBlessing()">${t('Забрать 120 💎','Claim 120 💎')}</button>` : `<span class="tag tag-green">✅ ${t('Сегодня забрано','Claimed today')}</span>`}</div></div>` : '';
+       ${u.can_claim_blessing ? `<button class="btn btn-blue btn-sm" onclick="claimBlessing()">${t('Забрать 90 💎','Claim 90 💎')}</button>` : `<span class="tag tag-green">✅ ${t('Сегодня забрано','Claimed today')}</span>`}</div></div>` : '';
 
   const packs=(CATALOG.packs||[]).map(p=>{
     const oneDone = p.one_time && u.starter_bought;
     const bpDone = p.is_bp && u.bp_premium;
-    const gotDouble = p.double_first && !(u.double_packs_bought||[]).includes(p.key);
     const disabled = oneDone || bpDone;
-    const tag = gotDouble ? '🔥 ×2 ПЕРВЫЙ БОНУС' : (lang()==='en'?p.tag_en:p.tag_ru);
+    const tag = lang()==='en'?p.tag_en:p.tag_ru;
     return `<div class="shop-item" style="${p.featured?'border-color:rgba(250,204,21,.4)':''}">
       <div>
         <div style="font-weight:900;font-size:13px">${esc(lang()==='en'?p.title_en:p.title_ru)} ${tag?`<span class="tag tag-gold" style="font-size:9px">${esc(tag)}</span>`:''}</div>
         <div class="sub" style="color:var(--muted);margin-top:2px">${esc(lang()==='en'?p.desc_en:p.desc_ru)}</div>
       </div>
-      <button class="btn ${disabled?'btn-ghost':'btn-blue'} btn-sm" ${disabled?'disabled':''} onclick="buyPack('${p.key}')">
-        ${oneDone||bpDone?'✅':`⭐ ${p.stars}`}
-      </button>
+      <button class="btn ${disabled?'btn-ghost':'btn-blue'} btn-sm" ${disabled?'disabled':''} onclick="buyPack('${p.key}')">${oneDone||bpDone?'✅':`⭐ ${p.stars}`}</button>
     </div>`;
   }).join('');
 
-  return subTabs + blessCard + `<div class="card"><div class="sec-h"><h3>⭐ ${t('Цифровые наборы Telegram Stars','Digital Telegram Stars Store')}</h3></div>${packs}
-    <div style="font-size:10.5px;color:var(--muted);margin-top:6px">${t('Покупка цифровых внутриигровых ресурсов (Telegram Stars). Обналичивание не предусмотрено.','Digital closed-economy goods only. No cash-out.')}</div></div>`;
+  return subTabs + blessCard + `<div class="card"><div class="sec-h"><h3>⭐ ${t('Алмазы Призыва и Пропуска','Diamonds & Passes')}</h3></div>${packs}
+    <div style="font-size:10.5px;color:var(--muted);margin-top:6px">${t('Оплата через официальный Telegram Stars (XTR). Выигранные NFT можно забрать на личный TON-кошелёк без обратного выкупа.','Official Telegram Stars (XTR) digital packs.')}</div></div>`;
 }
 
-async function buyDust(key){
-  try{ const r=await api('/api/dust_shop/buy','POST',{offer_key:key}); STATE=r; toast(t('Успешно куплено за Звёздную Пыль!','Purchased with Star Dust!')); renderAll(); }
+async function buySpark(key){
+  try{ const r=await api('/api/spark_shop/buy','POST',{offer_key:key}); STATE=r; toast(t('Обмен выполнен!','Converted!')); renderAll(); }
   catch(e){toast(e.message)}
 }
 async function claimBlessing(){
-  try{ const r=await api('/api/blessing/claim','POST',{}); STATE=r; toast('+120 💎!'); renderAll(); }
-  catch(e){toast(e.message)}
+  try{ const r=await api('/api/blessing/claim','POST',{}); STATE=r; toast('+90 💎!'); renderAll(); }catch(e){toast(e.message)}
 }
 async function buyPack(packKey){
   try{
     const r=await api('/api/invoice','POST',{pack_key:packKey});
-    if(tg && tg.openInvoice){
-      tg.openInvoice(r.invoice_link, async (status)=>{
-        if(status==='paid'){ toast(t('Оплата прошла! Обновляю...','Paid! Refreshing...')); await loadAll(); }
-      });
-    } else { window.open(r.invoice_link,'_blank'); }
+    if(tg && tg.openInvoice){ tg.openInvoice(r.invoice_link, async (s)=>{ if(s==='paid'){ toast(t('Оплата прошла!','Paid!')); await loadAll(); } }); }
+    else { window.open(r.invoice_link,'_blank'); }
   }catch(e){toast(e.message)}
 }
 
@@ -826,97 +800,60 @@ function renderTopTab(){
   const titles=(STATE.cosmetics||[]).filter(k=>CATALOG.cosmetics[k]?.kind==='title');
   const frameSel=`<select class="input" id="eqFrame" onchange="applyCosmetics()" style="margin-bottom:6px"><option value="">${t('Без рамки','No frame')}</option>${frames.map(k=>`<option value="${k}" ${u.equipped_frame===k?'selected':''}>${esc(CATALOG.cosmetics[k].name_ru)}</option>`).join('')}</select>`;
   const titleSel=`<select class="input" id="eqTitle" onchange="applyCosmetics()"><option value="">${t('Без титула','No title')}</option>${titles.map(k=>`<option value="${k}" ${u.equipped_title===k?'selected':''}>${esc(CATALOG.cosmetics[k].name_ru)}</option>`).join('')}</select>`;
-
   const streakDays=(CATALOG.streak_rewards||[]).map(sr=>{
     const done=sr.day<=u.streak_day;
     const isNext=u.can_streak && sr.day===((u.streak_day%7)+1);
     return `<div class="sday ${done?'done':(isNext?'next':'')}"><div>Д${sr.day}</div><div>+${sr.crystals}💎</div></div>`;
   }).join('');
-
   const lbRows=(BOARD.length?BOARD:[]).map(r=>{
     const sc=r.showcase_item && CATALOG.items[r.showcase_item];
     return `<div class="lb-row">
-      <div style="display:flex;align-items:center;gap:8px">
-        <b style="width:22px;color:${r.rank<=3?'var(--gold)':'var(--muted)'}">#${r.rank}</b>
-        ${sc?`<img src="${sc.image_url}" style="width:30px;height:30px;object-fit:contain">`:'✨'}
-        <div><div style="font-weight:800;font-size:12px">${esc(r.display_name)} ${r.equipped_title&&CATALOG.cosmetics[r.equipped_title]?CATALOG.cosmetics[r.equipped_title].badge:''}</div>
-        <div class="sub">📖 ${r.unique_count}/30 · C+${r.total_const}</div></div>
-      </div>
-      <div style="font-weight:900;color:var(--gold);font-size:12px">⚡ ${r.power_score}</div>
-    </div>`;
-  }).join('') || `<div class="sub">${t('Загрузка рейтинга...','Loading leaderboard...')}</div>`;
-
-  const ch=STATE.channel||{};
-  const gw=ch.giveaway;
-  const shareUrl=`https://t.me/share/url?url=https://t.me/${CATALOG.bot_username}?start=ref_${u.user_id}&text=Собирай%203D-коллекцию%20в%20GiftBox!`;
-
+      <div style="display:flex;align-items:center;gap:8px"><b style="width:22px;color:${r.rank<=3?'var(--gold)':'var(--muted)'}">#${r.rank}</b>
+      ${sc?`<img src="${sc.image_url}" style="width:30px;height:30px;object-fit:contain">`:'✨'}
+      <div><div style="font-weight:800;font-size:12px">${esc(r.display_name)} ${r.equipped_title&&CATALOG.cosmetics[r.equipped_title]?CATALOG.cosmetics[r.equipped_title].badge:''}</div>
+      <div class="sub">📖 ${r.unique_count}/35 · C+${r.total_const}</div></div></div>
+      <div style="font-weight:900;color:var(--gold);font-size:12px">⚡ ${r.power_score}</div></div>`;
+  }).join('') || `<div class="sub">${t('Загрузка рейтинга...','Loading...')}</div>`;
+  const ch=STATE.channel||{}; const gw=ch.giveaway;
+  const shareUrl=`https://t.me/share/url?url=https://t.me/${CATALOG.bot_username}?start=ref_${u.user_id}&text=Собирай%20Telegram%20NFT%20в%20GiftBox!`;
   return `
     <div class="card">
-      <div class="sec-h"><h3>👤 ${t('Профиль Коллекционера','Collector Profile')}</h3><button class="btn btn-green btn-sm" onclick="shareInvite('${shareUrl}')">👥 ${t('Друг (+25✨/+80💎)','Invite')}</button></div>
+      <div class="sec-h"><h3>👤 ${t('Профиль Коллекционера','Profile')}</h3><button class="btn btn-green btn-sm" onclick="shareInvite('${shareUrl}')">👥 ${t('Друг (+25✨/+80💎)','Invite')}</button></div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px">
-        <div><div class="sub">${t('Рамка профиля','Profile Frame')}</div>${frameSel}</div>
-        <div><div class="sub">${t('Титул рейтинга','Title')}</div>${titleSel}</div>
+        <div><div class="sub">${t('Рамка','Frame')}</div>${frameSel}</div>
+        <div><div class="sub">${t('Титул','Title')}</div>${titleSel}</div>
       </div>
       <div class="btn-row">
-        <button class="btn ${u.can_daily_12h?'btn-blue':'btn-ghost'} btn-sm" ${u.can_daily_12h?'':'disabled'} onclick="claimDaily12()">
-          ${u.can_daily_12h ? `🎁 +60💎 +15✨ (12ч)` : `⏳ ${fmtLeft(u.next_daily_in_sec)}`}
-        </button>
-        <button class="btn ${u.can_streak?'btn-gold':'btn-ghost'} btn-sm" ${u.can_streak?'':'disabled'} onclick="claimStreak()">
-          ${u.can_streak ? `🔥 ${t('День #'+(u.streak_day%7+1),'Streak Day')}` : `✅ ${t('Серия:','Streak:')} ${u.streak_day}/7`}
-        </button>
+        <button class="btn ${u.can_daily_12h?'btn-blue':'btn-ghost'} btn-sm" ${u.can_daily_12h?'':'disabled'} onclick="claimDaily12()">${u.can_daily_12h?'🎁 +40💎 +20✨ (12ч)':`⏳ ${fmtLeft(u.next_daily_in_sec)}`}</button>
+        <button class="btn ${u.can_streak?'btn-gold':'btn-ghost'} btn-sm" ${u.can_streak?'':'disabled'} onclick="claimStreak()">${u.can_streak?`🔥 ${t('День #'+(u.streak_day%7+1),'Streak Day')}`:`✅ ${t('Серия:','Streak:')} ${u.streak_day}/7`}</button>
       </div>
       <div class="streak-row">${streakDays}</div>
     </div>
-
     ${ch.channel_id && ch.tma_enabled && !u.channel_sub_claimed ? `
-      <div class="card" style="border-color:rgba(56,189,248,.45)">
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
-          <div><div style="font-weight:900;font-size:13px">📢 ${esc(ch.channel_title||'GiftBox Live')}</div><div class="sub">+160 💎 +40 ✨ ${t('за подписку','for subscribing')}</div></div>
-          <div style="display:flex;gap:6px">
-            ${ch.channel_url?`<a class="btn btn-ghost btn-sm" href="${esc(ch.channel_url)}" target="_blank">${t('Канал','Join')}</a>`:''}
-            <button class="btn btn-blue btn-sm" onclick="claimSub()">✅</button>
-          </div>
-        </div>
-      </div>` : ''}
-
-    ${gw ? `
-      <div class="card" style="border-color:rgba(250,204,21,.45)">
-        <div class="sec-h"><h3>🎉 ${t('Розыгрыш','Giveaway')} ${gw.prize_count}×${gw.crystals}💎</h3><span class="tag">${gw.participants} ${t('уч.','entries')}</span></div>
-        <button class="btn ${gw.joined?'btn-ghost':'btn-gold'} btn-sm" style="width:100%" onclick="joinGw()">
-          ${gw.joined ? `✅ ${t('Билетов:','Tickets:')} ${gw.my_tickets}` : `🎉 ${t('Участвовать бесплатно','Join Giveaway')}`}
-        </button>
-      </div>` : ''}
-
-    <div class="card">
-      <div class="sec-h"><h3>🎟 ${t('Промокод','Promo Code')}</h3></div>
-      <div style="display:flex;gap:7px">
-        <input class="input" id="promoInp" placeholder="START45 / WISH160">
-        <button class="btn btn-blue btn-sm" onclick="redeemPromo()">OK</button>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="sec-h"><h3>🏆 ${t('Зал Славы (Топ Мощи CP)','Hall of Fame (CP)')}</h3><button class="btn btn-ghost btn-sm" onclick="loadLeaderboard()">🔄</button></div>
-      ${lbRows}
-    </div>`;
+      <div class="card" style="border-color:rgba(56,189,248,.45)"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+        <div><div style="font-weight:900;font-size:13px">📢 ${esc(ch.channel_title||'GiftBox Live')}</div><div class="sub">+80 💎 +40 ✨</div></div>
+        <div style="display:flex;gap:6px">${ch.channel_url?`<a class="btn btn-ghost btn-sm" href="${esc(ch.channel_url)}" target="_blank">${t('Канал','Join')}</a>`:''}<button class="btn btn-blue btn-sm" onclick="claimSub()">✅</button></div>
+      </div></div>` : ''}
+    ${gw ? `<div class="card" style="border-color:rgba(250,204,21,.45)"><div class="sec-h"><h3>🎉 ${t('Розыгрыш','Giveaway')} ${gw.prize_count}×${gw.crystals}💎</h3><span class="tag">${gw.participants}</span></div>
+      <button class="btn ${gw.joined?'btn-ghost':'btn-gold'} btn-sm" style="width:100%" onclick="joinGw()">${gw.joined?`✅ ${t('Билетов:','Tickets:')} ${gw.my_tickets}`:`🎉 ${t('Участвовать','Join')}`}</button></div>` : ''}
+    <div class="card"><div class="sec-h"><h3>🎟 ${t('Промокод','Promo Code')}</h3></div>
+      <div style="display:flex;gap:7px"><input class="input" id="promoInp" placeholder="START45 / WISH120"><button class="btn btn-blue btn-sm" onclick="redeemPromo()">OK</button></div></div>
+    <div class="card"><div class="sec-h"><h3>🏆 ${t('Зал Славы (CP)','Hall of Fame (CP)')}</h3><button class="btn btn-ghost btn-sm" onclick="loadLeaderboard()">🔄</button></div>${lbRows}</div>`;
 }
 
 function shareInvite(url){ if(tg&&tg.openTelegramLink) tg.openTelegramLink(url); else window.open(url,'_blank'); }
 async function applyCosmetics(){
-  const frame=document.getElementById('eqFrame')?.value||'';
-  const title=document.getElementById('eqTitle')?.value||'';
-  try{ STATE=await api('/api/profile/equip','POST',{frame,title,showcase_item:STATE.user.showcase_item||''}); toast(t('Профиль обновлён!','Profile updated!')); renderAll(); }
-  catch(e){toast(e.message)}
+  const frame=document.getElementById('eqFrame')?.value||''; const title=document.getElementById('eqTitle')?.value||'';
+  try{ STATE=await api('/api/profile/equip','POST',{frame,title,showcase_item:STATE.user.showcase_item||''}); toast(t('Сохранено!','Saved!')); renderAll(); }catch(e){toast(e.message)}
 }
-async function claimDaily12(){ try{ STATE=await api('/api/daily','POST',{}); toast('+60 💎 +15 ✨!'); renderAll(); }catch(e){toast(e.message)} }
-async function claimStreak(){ try{ const r=await api('/api/streak','POST',{}); STATE=r; toast(`День #${r.reward.day}: +${r.reward.crystals} 💎!`); renderAll(); }catch(e){toast(e.message)} }
-async function claimSub(){ try{ const r=await api('/api/claim_channel_sub','POST',{}); STATE=r; toast(`+${r.reward.crystals} 💎 +${r.reward.dust} ✨!`); renderAll(); }catch(e){toast(e.message)} }
-async function joinGw(){ try{ const r=await api('/api/join_giveaway','POST',{}); STATE=r; toast(t('Ты в розыгрыше! Билетов: '+r.giveaway_entry.tickets,'Joined!')); renderAll(); }catch(e){toast(e.message)} }
+async function claimDaily12(){ try{ STATE=await api('/api/daily','POST',{}); toast('+40 💎 +20 ✨!'); renderAll(); }catch(e){toast(e.message)} }
+async function claimStreak(){ try{ const r=await api('/api/streak','POST',{}); STATE=r; toast(`+${r.reward.crystals} 💎!`); renderAll(); }catch(e){toast(e.message)} }
+async function claimSub(){ try{ const r=await api('/api/claim_channel_sub','POST',{}); STATE=r; toast(`+${r.reward.crystals} 💎!`); renderAll(); }catch(e){toast(e.message)} }
+async function joinGw(){ try{ const r=await api('/api/join_giveaway','POST',{}); STATE=r; toast(t('Участвуешь!','Joined!')); renderAll(); }catch(e){toast(e.message)} }
 async function redeemPromo(){
   const code=(document.getElementById('promoInp')?.value||'').trim();
   if(!code) return;
-  try{ const r=await api('/api/redeem_promo','POST',{code}); STATE=r; toast(`+${r.reward.crystals} 💎 +${r.reward.dust} ✨!`); renderAll(); }
-  catch(e){toast(e.message)}
+  try{ const r=await api('/api/redeem_promo','POST',{code}); STATE=r; toast(`+${r.reward.crystals} 💎 +${r.reward.sparks} ✨!`); renderAll(); }catch(e){toast(e.message)}
 }
 
 function renderAll(){
@@ -925,14 +862,12 @@ function renderAll(){
   const main=document.getElementById('main');
   if(CUR_TAB==='wishes') main.innerHTML=renderWishes();
   else if(CUR_TAB==='squad') main.innerHTML=renderSquad();
-  else if(CUR_TAB==='album') main.innerHTML=renderAlbum();
+  else if(CUR_TAB==='nfts') main.innerHTML=renderNftsAndAlbum();
   else if(CUR_TAB==='shop') main.innerHTML=renderShop();
   else main.innerHTML=renderTopTab();
 }
 
-loadAll().catch(e=>{
-  document.getElementById('topSub').textContent='Ошибка: '+e.message;
-});
+loadAll().catch(e=>{ document.getElementById('topSub').textContent='Ошибка: '+e.message; });
 </script>
 </body>
 </html>
