@@ -3,24 +3,25 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-  <title>GiftBox v3 • 30 Подарков Telegram, Боксы и Игры</title>
-  <meta name="description" content="Открывай 6 гача-боксов, играй в Звёздные Мины 5×5 и Колесо Апгрейда — забирай 30 официальных подарков и комбо Telegram!">
+  <title>GiftBox v4 • Коллекционные TON NFT Подарки и Игры</title>
+  <meta name="description" content="Выбивай настоящие коллекционные Telegram NFT подарки (Fragment TEP-62) и выводи в NFT или TON на свой кошелёк!">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
+  <script src="https://unpkg.com/@tonconnect/ui@2.0.9/dist/tonconnect-ui.min.js"></script>
   <style>
     :root{
-      --bg:#05070e;--glass:rgba(15,23,42,.78);--glass2:rgba(8,12,24,.92);
+      --bg:#05070e;--glass:rgba(15,23,42,.78);--glass2:rgba(8,12,24,.93);
       --border:rgba(148,163,184,.18);--spec:rgba(255,255,255,.13);
-      --text:#f8fafc;--muted:#94a3b8;--accent:#38bdf8;--gold:#facc15;--green:#34d399;
+      --text:#f8fafc;--muted:#94a3b8;--accent:#38bdf8;--ton:#0098ea;--gold:#facc15;--green:#34d399;
       --purple:#c084fc;--mythic:#fb7185;--btn:#2563eb;
-      --aurora1:rgba(56,189,248,.17);--aurora2:rgba(250,204,21,.14);
+      --aurora1:rgba(0,152,234,.18);--aurora2:rgba(250,204,21,.14);
     }
-    body.theme-spark{--aurora1:rgba(251,146,60,.20);--aurora2:rgba(56,189,248,.15)}
-    body.theme-star{--aurora1:rgba(56,189,248,.18);--aurora2:rgba(250,204,21,.14)}
+    body.theme-spark{--aurora1:rgba(251,146,60,.20);--aurora2:rgba(0,152,234,.16)}
+    body.theme-star{--aurora1:rgba(0,152,234,.20);--aurora2:rgba(250,204,21,.14)}
     body.theme-romance{--aurora1:rgba(244,63,94,.22);--aurora2:rgba(250,204,21,.15)}
     body.theme-cyber_event{--aurora1:rgba(236,72,153,.20);--aurora2:rgba(56,189,248,.18)}
     body.theme-whale_vault{--aurora1:rgba(168,85,247,.22);--aurora2:rgba(250,204,21,.18)}
-    body.theme-imperial{--aurora1:rgba(250,204,21,.24);--aurora2:rgba(244,63,94,.20)}
+    body.theme-imperial{--aurora1:rgba(250,204,21,.25);--aurora2:rgba(244,63,94,.20)}
     *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
     body{
       margin:0;padding:0 11px 94px;min-height:100vh;
@@ -47,18 +48,22 @@
 
     .hdr{
       position:sticky;top:0;z-index:22;margin:0 -11px 9px;padding:7px 11px;
-      background:rgba(5,7,14,.84);backdrop-filter:blur(14px);border-bottom:1px solid rgba(148,163,184,.11);
+      background:rgba(5,7,14,.86);backdrop-filter:blur(14px);border-bottom:1px solid rgba(148,163,184,.12);
       display:flex;justify-content:space-between;align-items:center;gap:6px;
     }
     .bal-group{display:flex;gap:5px;align-items:center;flex-wrap:wrap}
     .pill{
       background:var(--glass);border:1px solid var(--border);border-top-color:var(--spec);
-      border-radius:999px;padding:5px 10px;font-size:12.5px;font-weight:800;
+      border-radius:999px;padding:5px 9px;font-size:12px;font-weight:800;
       display:inline-flex;align-items:center;gap:4px;box-shadow:0 4px 12px rgba(0,0,0,.28);
     }
     .pill.plus{background:linear-gradient(135deg,#facc15,#f97316);border-color:rgba(255,255,255,.3);color:#090d16;cursor:pointer}
+    .pill.ton-btn{
+      background:linear-gradient(135deg,#0098ea,#0284c7);border-color:rgba(255,255,255,.28);color:#fff;cursor:pointer;font-size:11px;
+    }
+    .pill.ton-btn.ok{background:rgba(16,185,129,.2);border-color:var(--green);color:#a7f3d0}
     .hdr-right{display:flex;align-items:center;gap:5px}
-    .lang-btn{background:var(--glass);color:var(--text);border:1px solid var(--border);border-radius:10px;padding:5px 8px;font-size:11px;font-weight:800;cursor:pointer}
+    .lang-btn{background:var(--glass);color:var(--text);border:1px solid var(--border);border-radius:10px;padding:5px 7px;font-size:10.5px;font-weight:800;cursor:pointer}
 
     .welcome-cta{
       background:linear-gradient(135deg,rgba(250,204,21,.22),rgba(249,115,22,.18));
@@ -72,7 +77,6 @@
       display:none;justify-content:space-between;align-items:center;gap:8px;cursor:pointer;
     }
 
-    /* 6-Box Grid */
     .box-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-bottom:9px}
     .btab{
       position:relative;background:var(--glass);border:1px solid var(--border);border-top-color:var(--spec);
@@ -87,11 +91,10 @@
       position:absolute;top:-6px;right:4px;background:linear-gradient(135deg,#facc15,#f97316);
       color:#090d16;font-size:8px;font-weight:900;padding:1px 5px;border-radius:999px;letter-spacing:.02em;
     }
-    .btab img{width:34px;height:34px;object-fit:contain;border-radius:8px;filter:drop-shadow(0 3px 6px rgba(0,0,0,.5))}
+    .btab img{width:36px;height:36px;object-fit:contain;border-radius:8px;filter:drop-shadow(0 3px 6px rgba(0,0,0,.5))}
     .btab-nm{font-size:10.5px;font-weight:800;line-height:1.12;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
     .btab-cost{font-size:10.5px;color:var(--gold);font-weight:900}
 
-    /* Compact Stage */
     .hero-stage{
       background:var(--glass);border:1px solid var(--border);border-top-color:var(--spec);
       border-radius:16px;padding:10px 11px;margin-bottom:8px;
@@ -100,8 +103,8 @@
     }
     .hero-gift-box{
       width:64px;height:64px;border-radius:14px;
-      background:radial-gradient(circle,rgba(250,204,21,.24),rgba(15,23,42,.65));
-      border:1px solid rgba(250,204,21,.36);display:flex;align-items:center;justify-content:center;
+      background:radial-gradient(circle,rgba(0,152,234,.28),rgba(15,23,42,.7));
+      border:1px solid rgba(56,189,248,.4);display:flex;align-items:center;justify-content:center;
       animation:floatY 3.2s ease-in-out infinite;
     }
     @keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
@@ -111,7 +114,7 @@
     .hero-sub{font-size:10.5px;color:var(--muted);margin:0 0 5px;line-height:1.25}
     .pity-row{display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px;color:#cbd5e1}
     .pity-bar{height:6px;background:#020617;border-radius:999px;overflow:hidden;border:1px solid rgba(255,255,255,.06)}
-    .pity-fill{height:100%;background:linear-gradient(90deg,var(--accent),#facc15);transition:width .4s}
+    .pity-fill{height:100%;background:linear-gradient(90deg,var(--ton),#facc15);transition:width .4s}
     .hero-meta-row{display:flex;justify-content:space-between;align-items:center;gap:6px;margin-top:4px;flex-wrap:wrap}
     .mini-pity-txt{font-size:10px;color:#38bdf8;font-weight:700}
     .fomo-pill{display:none;font-size:9.5px;font-weight:800;color:#fde047;background:rgba(250,204,21,.12);border:1px solid rgba(250,204,21,.3);border-radius:999px;padding:1px 7px}
@@ -121,7 +124,7 @@
     .reel-shell{
       position:relative;border-radius:16px;padding:12px 0;margin-bottom:8px;overflow:hidden;
       background:linear-gradient(180deg,rgba(15,23,42,.93),rgba(5,8,18,.98));
-      border:1px solid rgba(56,189,248,.32);box-shadow:inset 0 0 32px rgba(0,0,0,.78),0 8px 22px rgba(0,0,0,.4);
+      border:1px solid rgba(0,152,234,.36);box-shadow:inset 0 0 32px rgba(0,0,0,.78),0 8px 22px rgba(0,0,0,.4);
     }
     .reel-shell::before,.reel-shell::after{content:"";position:absolute;top:0;bottom:0;width:42px;z-index:4;pointer-events:none}
     .reel-shell::before{left:0;background:linear-gradient(90deg,#05070e,transparent)}
@@ -148,12 +151,11 @@
     .tile-nm{font-size:9.5px;font-weight:700;color:#e2e8f0;max-width:84px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
     .tile-st{font-size:10px;font-weight:900;color:var(--gold);background:rgba(2,6,23,.68);padding:1px 7px;border-radius:999px}
 
-    /* 1x / 3x / 5x / 10x Spin Deck */
     .spin-bar{display:grid;grid-template-columns:1fr 1.15fr auto;gap:7px;margin-bottom:6px}
     .spin-sub-bar{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px}
     .btn{
       border:0;border-radius:13px;padding:11px 9px;font-weight:900;font-size:12.5px;cursor:pointer;color:#fff;
-      background:linear-gradient(135deg,#2563eb,#0ea5e9);box-shadow:0 5px 16px rgba(37,99,235,.32);transition:transform .1s;
+      background:linear-gradient(135deg,#0098ea,#2563eb);box-shadow:0 5px 16px rgba(0,152,234,.32);transition:transform .1s;
     }
     .btn:active{transform:scale(.97)}
     .btn.gold{background:linear-gradient(135deg,#facc15,#f97316);color:#090d16;box-shadow:0 5px 18px rgba(249,115,22,.32)}
@@ -168,14 +170,13 @@
     }
     .fast-btn.on{border-color:var(--gold);color:var(--gold);background:rgba(250,204,21,.14)}
 
-    /* Filter Pills */
     .flt-row{display:flex;gap:5px;overflow-x:auto;padding-bottom:4px;margin-bottom:8px;scrollbar-width:none}
     .flt-row::-webkit-scrollbar{display:none}
     .fpill{
       background:rgba(15,23,42,.82);border:1px solid var(--border);color:var(--muted);
       border-radius:999px;padding:5px 10px;font-size:11px;font-weight:800;cursor:pointer;white-space:nowrap;
     }
-    .fpill.active{background:linear-gradient(135deg,rgba(56,189,248,.25),rgba(37,99,235,.32));border-color:var(--accent);color:#fff}
+    .fpill.active{background:linear-gradient(135deg,rgba(0,152,234,.3),rgba(37,99,235,.35));border-color:var(--ton);color:#fff}
 
     .util-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
     .mini-box{
@@ -183,14 +184,14 @@
       border-radius:15px;padding:11px;font-size:12px;backdrop-filter:blur(12px);
     }
     .sm-btn{
-      width:100%;margin-top:6px;padding:8px;border-radius:10px;border:0;font-size:11.5px;font-weight:800;
-      cursor:pointer;color:#fff;background:linear-gradient(135deg,#2563eb,#0ea5e9);
+      width:100%;margin-top:6px;padding:8px;border-radius:10px;border:0;font-size:11px;font-weight:800;
+      cursor:pointer;color:#fff;background:linear-gradient(135deg,#0098ea,#2563eb);
     }
+    .sm-btn.nft{background:linear-gradient(135deg,#a855f7,#ec4899)}
     .sm-btn.risk{background:linear-gradient(135deg,#f43f5e,#f97316)}
     .sm-btn.sec{background:rgba(30,41,59,.88);border:1px solid var(--border);color:#e2e8f0}
     .sm-btn:disabled{opacity:.45;cursor:not-allowed}
 
-    /* GAMES HUB: Subtabs, Star Mines 5x5 & Live Wheel */
     .game-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px}
     .gtab{
       background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:9px 4px;
@@ -200,10 +201,7 @@
 
     .mines-ladder{display:flex;gap:5px;overflow-x:auto;padding-bottom:4px;margin-bottom:8px;scrollbar-width:none}
     .mines-ladder::-webkit-scrollbar{display:none}
-    .mlad-pill{
-      flex:0 0 auto;background:rgba(15,23,42,.85);border:1px solid var(--border);border-radius:9px;
-      padding:4px 8px;text-align:center;font-size:10px;color:var(--muted);
-    }
+    .mlad-pill{flex:0 0 auto;background:rgba(15,23,42,.85);border:1px solid var(--border);border-radius:9px;padding:4px 8px;text-align:center;font-size:10px;color:var(--muted)}
     .mlad-pill.cur{border-color:var(--green);background:rgba(16,185,129,.18);color:#ecfdf5;font-weight:900}
     .mlad-pill.nxt{border-color:var(--gold);color:var(--gold)}
 
@@ -220,36 +218,19 @@
     }
     .mcell.armed{border-color:rgba(56,189,248,.45)}
     .mcell.armed:active{transform:scale(.92)}
-    .mcell.gem{
-      border-color:#34d399;background:radial-gradient(circle,rgba(52,211,153,.32),rgba(6,78,59,.88));
-      box-shadow:0 0 14px rgba(52,211,153,.35);animation:popIn .22s ease-out;
-    }
-    .mcell.boom{
-      border-color:#fb7185;background:radial-gradient(circle,rgba(244,63,94,.45),rgba(76,5,25,.92));
-      box-shadow:0 0 18px rgba(244,63,94,.5);animation:shake .36s ease-in-out;
-    }
+    .mcell.gem{border-color:#34d399;background:radial-gradient(circle,rgba(52,211,153,.32),rgba(6,78,59,.88));box-shadow:0 0 14px rgba(52,211,153,.35);animation:popIn .22s ease-out}
+    .mcell.boom{border-color:#fb7185;background:radial-gradient(circle,rgba(244,63,94,.45),rgba(76,5,25,.92));box-shadow:0 0 18px rgba(244,63,94,.5);animation:shake .36s ease-in-out}
     .mcell.reveal-bomb{opacity:.62;border-color:rgba(251,113,133,.35);background:rgba(30,15,24,.8)}
     .mcell.dim{opacity:.45;cursor:default}
     @keyframes popIn{0%{transform:scale(.65)}70%{transform:scale(1.08)}100%{transform:scale(1)}}
 
     .chip-row{display:flex;gap:5px;flex-wrap:wrap;margin:5px 0 9px}
-    .chip{
-      flex:1 1 auto;min-width:52px;text-align:center;padding:7px 6px;border-radius:10px;
-      background:rgba(2,6,23,.72);border:1px solid var(--border);color:#cbd5e1;font-size:11.5px;font-weight:800;cursor:pointer;
-    }
+    .chip{flex:1 1 auto;min-width:52px;text-align:center;padding:7px 6px;border-radius:10px;background:rgba(2,6,23,.72);border:1px solid var(--border);color:#cbd5e1;font-size:11.5px;font-weight:800;cursor:pointer}
     .chip.active{border-color:var(--gold);background:rgba(250,204,21,.16);color:var(--gold)}
 
-    /* Spinning Upgrade Wheel */
     .wheel-wrap{position:relative;width:198px;height:198px;margin:4px auto 10px;display:flex;align-items:center;justify-content:center}
-    .wheel-ptr{
-      position:absolute;top:-8px;left:50%;transform:translateX(-50%);z-index:8;
-      font-size:18px;color:#facc15;filter:drop-shadow(0 2px 6px rgba(0,0,0,.85));
-    }
-    .wheel-rotor{
-      width:190px;height:190px;border-radius:50%;border:3px solid rgba(250,204,21,.65);
-      box-shadow:0 0 26px rgba(16,185,129,.22),inset 0 0 18px rgba(0,0,0,.65);
-      will-change:transform;
-    }
+    .wheel-ptr{position:absolute;top:-8px;left:50%;transform:translateX(-50%);z-index:8;font-size:18px;color:#facc15;filter:drop-shadow(0 2px 6px rgba(0,0,0,.85))}
+    .wheel-rotor{width:190px;height:190px;border-radius:50%;border:3px solid rgba(250,204,21,.65);box-shadow:0 0 26px rgba(16,185,129,.22),inset 0 0 18px rgba(0,0,0,.65);will-change:transform}
     .wheel-center{
       position:absolute;width:118px;height:118px;border-radius:50%;z-index:5;
       background:radial-gradient(circle,#0f172a,#050811);border:2px solid rgba(148,163,184,.28);
@@ -259,10 +240,7 @@
     .wheel-center img{width:54px;height:54px;object-fit:contain;border-radius:10px}
     .hstrip{display:flex;gap:7px;overflow-x:auto;padding:4px 1px 6px;scrollbar-width:none}
     .hstrip::-webkit-scrollbar{display:none}
-    .up-item{
-      flex:0 0 82px;background:rgba(15,23,42,.82);border:1.5px solid var(--border);border-radius:12px;
-      padding:6px 4px;text-align:center;cursor:pointer;
-    }
+    .up-item{flex:0 0 84px;background:rgba(15,23,42,.82);border:1.5px solid var(--border);border-radius:12px;padding:6px 4px;text-align:center;cursor:pointer}
     .up-item.sel{border-color:var(--gold);background:rgba(250,204,21,.14);box-shadow:0 0 12px rgba(250,204,21,.22)}
     .up-item img{width:40px;height:40px;object-fit:contain;border-radius:8px}
 
@@ -285,15 +263,16 @@
     .loot-card img{width:52px;height:52px;object-fit:contain;border-radius:10px}
     .loot-tag{
       position:absolute;top:4px;right:4px;font-size:7.5px;font-weight:900;padding:1px 4px;border-radius:5px;
-      background:rgba(250,204,21,.2);color:#fde047;border:1px solid rgba(250,204,21,.35);
+      background:rgba(168,85,247,.28);color:#f5d0fe;border:1px solid rgba(192,132,252,.45);
     }
+    .loot-tag.stock{left:4px;right:auto;background:rgba(16,185,129,.25);color:#a7f3d0;border-color:rgba(52,211,153,.5)}
     .loot-nm{font-size:10px;font-weight:700;color:#e2e8f0;max-width:92px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
     .loot-st{font-size:10.5px;font-weight:900;color:var(--gold)}
 
     .panel{display:none}.panel.active{display:block}
     .inv-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:6px}
     .inv-card{
-      background:var(--glass);border:1px solid var(--border);border-top-color:var(--spec);
+      position:relative;background:var(--glass);border:1px solid var(--border);border-top-color:var(--spec);
       border-radius:15px;padding:10px;text-align:center;backdrop-filter:blur(12px);
     }
     .inv-card.legendary{border-color:rgba(250,204,21,.7)}
@@ -303,9 +282,10 @@
     .pack{
       position:relative;background:var(--glass);border:1px solid var(--border);border-top-color:var(--spec);
       border-radius:15px;padding:12px 10px;text-align:left;color:var(--text);cursor:pointer;
-      display:flex;flex-direction:column;justify-content:space-between;min-height:110px;
+      display:flex;flex-direction:column;justify-content:space-between;min-height:108px;
     }
     .pack.featured{border-color:rgba(250,204,21,.62);background:linear-gradient(180deg,rgba(250,204,21,.12),var(--glass))}
+    .pack.ton-p{border-color:rgba(0,152,234,.55);background:linear-gradient(180deg,rgba(0,152,234,.14),var(--glass))}
     .lb-row{display:flex;justify-content:space-between;padding:7px 4px;border-bottom:1px solid var(--border);font-size:12px}
 
     .bnav{
@@ -324,7 +304,7 @@
       position:absolute;top:1px;right:12%;background:var(--gold);color:#090d16;font-size:8px;
       font-weight:900;padding:1px 4.5px;border-radius:999px;display:none;
     }
-    .nav-badge.hot{background:linear-gradient(135deg,#f43f5e,#f97316);color:#fff;display:block}
+    .nav-badge.hot{background:linear-gradient(135deg,#a855f7,#ec4899);color:#fff;display:block}
 
     .overlay{
       position:fixed;inset:0;background:rgba(2,6,23,.86);backdrop-filter:blur(8px);
@@ -337,11 +317,11 @@
       max-height:89vh;overflow-y:auto;box-shadow:0 24px 50px rgba(0,0,0,.72);
     }
     .win-stage{
-      width:134px;height:134px;margin:2px auto 8px;border-radius:50%;
-      background:radial-gradient(circle,rgba(250,204,21,.28),transparent 70%);
-      display:flex;align-items:center;justify-content:center;
+      width:136px;height:136px;margin:2px auto 8px;border-radius:24px;
+      background:radial-gradient(circle,rgba(168,85,247,.28),transparent 72%);
+      display:flex;align-items:center;justify-content:center;overflow:hidden;
     }
-    .win-stage img,.win-stage svg{width:120px;height:120px;object-fit:contain;border-radius:16px}
+    .win-stage img,.win-stage svg{width:124px;height:124px;object-fit:contain;border-radius:16px}
     .shake{animation:shake .4s ease-in-out infinite}
     @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px) rotate(-4deg)}75%{transform:translateX(8px) rotate(4deg)}}
 
@@ -386,13 +366,13 @@
     .mtile.in-beam{transform:scale(1.06);border-color:#facc15;box-shadow:0 0 12px rgba(250,204,21,.45)}
     .mtile-vis{width:30px;height:30px;display:flex;align-items:center;justify-content:center}
     .mtile-vis img,.mtile-vis svg{width:30px;height:30px;object-fit:contain;border-radius:6px}
-    .mtile-lbl{font-size:8.5px;font-weight:900;color:var(--gold);line-height:1;white-space:nowrap}
+    .mtile-lbl{font-size:8px;font-weight:900;color:var(--gold);line-height:1;white-space:nowrap}
     .mreel-foot{
       height:18px;padding:0 6px;display:flex;justify-content:space-between;align-items:center;
       font-size:9.5px;font-weight:700;background:rgba(2,6,23,.74);border-top:1px solid rgba(148,163,184,.12);
       color:#94a3b8;white-space:nowrap;overflow:hidden;
     }
-    .mreel-fnm{overflow:hidden;text-overflow:ellipsis;max-width:72%}
+    .mreel-fnm{overflow:hidden;text-overflow:ellipsis;max-width:70%}
     .mreel-fst{font-weight:900;color:var(--gold)}
 
     .toast{
@@ -401,7 +381,7 @@
       text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.55);
     }
     .demo-bar{
-      background:rgba(250,204,21,.1);border:1px solid rgba(250,204,21,.32);border-radius:12px;
+      background:rgba(0,152,234,.12);border:1px solid rgba(0,152,234,.38);border-radius:12px;
       padding:8px 12px;font-size:12px;margin-bottom:8px;display:none;
     }
   </style>
@@ -414,19 +394,19 @@
     <div class="bal-group">
       <div class="pill">💎 <span id="balCry">0</span></div>
       <div class="pill">✨ <span id="balSh">0</span></div>
-      <button class="pill plus" onclick="goTab('shop')">+ ⭐</button>
+      <button class="pill plus" onclick="goTab('shop')">+ Пополнить</button>
     </div>
     <div class="hdr-right">
-      <button class="lang-btn" onclick="goTab('bonuses');setTimeout(()=>document.getElementById('albumBox').scrollIntoView({behavior:'smooth'}),80)">📕 <span id="hdrAlb">0/30</span></button>
-      <button class="lang-btn" id="langBtn" onclick="toggleLang()">🇬🇧 EN</button>
+      <button class="pill ton-btn" id="tonHdrBtn" onclick="openWalletModal()">💠 TON</button>
+      <button class="lang-btn" id="langBtn" onclick="toggleLang()">🇬🇧</button>
     </div>
   </div>
 
   <!-- WELCOME FREE SPIN BANNER -->
   <div class="welcome-cta" id="welcomeBanner" onclick="runWelcomeSpin()">
     <div>
-      <div style="font-size:13.5px;font-weight:900;color:#fde047" data-i18n="w_title">🎁 Приветственный Бокс (Бесплатно!)</div>
-      <div style="font-size:11px;color:#e2e8f0" data-i18n="w_sub">Открой 1-й бокс и забери стартовый бонус 💎+✨</div>
+      <div style="font-size:13.5px;font-weight:900;color:#fde047" data-i18n="w_title">🎁 Приветственный Кейс (Бесплатно!)</div>
+      <div style="font-size:11px;color:#e2e8f0" data-i18n="w_sub">Крутани 1-й бокс и забери стартовый бонус 💎+✨</div>
     </div>
     <div style="font-size:23px">🎡</div>
   </div>
@@ -440,7 +420,7 @@
     <div class="pill plus" style="background:linear-gradient(135deg,#f43f5e,#f97316);color:#fff">15 ⭐</div>
   </div>
 
-  <!-- TAB 1: 6 BOXES & 30 GIFTS SHOWCASE -->
+  <!-- TAB 1: 6 NFT BOXES -->
   <section class="panel active" id="panel-boxes">
     <div class="box-tabs" id="boxGrid"></div>
 
@@ -448,20 +428,20 @@
       <div class="hero-gift-box"><div class="hero-lottie" id="heroLottie"></div></div>
       <div>
         <div class="hero-title">
-          <span id="heroTitle">Звёздная Капсула</span>
-          <button class="info-btn" onclick="openOddsModal()">ℹ️ <span data-i18n="odds_btn">Шансы</span></button>
+          <span id="heroTitle">Неон NFT Кейс</span>
+          <button class="info-btn" onclick="openOddsModal()">ℹ️ <span data-i18n="odds_btn">Инфо</span></button>
         </div>
-        <div class="hero-sub" id="heroDesc">Подарки и комбо 15–150⭐</div>
+        <div class="hero-sub" id="heroDesc">Настоящие коллекционные TON NFT и слитки TON</div>
         <div class="pity-row">
-          <span data-i18n="pity_lbl">🎯 Гарант топ-приза</span>
+          <span data-i18n="pity_lbl">🎯 Гарант NFT</span>
           <strong id="pityTxt">0 / 85</strong>
         </div>
         <div class="pity-bar"><div class="pity-fill" id="pityFill" style="width:0%"></div></div>
         <div class="hero-meta-row">
-          <span class="mini-pity-txt" id="miniPityTxt">🎁 Подарок ≤ 6 спин.</span>
+          <span class="mini-pity-txt" id="miniPityTxt">💎 Дроп TON/NFT ≤ 6 спин.</span>
           <span class="fomo-pill" id="fomoBar">⏳ <span id="fomoTimer">14d</span></span>
         </div>
-        <div class="guar-pill" id="guarBadge" data-i18n="guar_on">🔥 100% ГАРАНТ ГЛАВНОГО ПРИЗА</div>
+        <div class="guar-pill" id="guarBadge" data-i18n="guar_on">🔥 100% ГАРАНТ ГЛАВНОГО NFT</div>
       </div>
     </div>
 
@@ -483,79 +463,73 @@
     </div>
 
     <div class="sec-h">
-      <span id="showcaseHdr">🎁 Витрина призов (30 подарков)</span>
-      <span style="font-size:10px;text-transform:none" data-i18n="tap_anim">Тапни на любой</span>
+      <span id="showcaseHdr">🎨 Коллекционные NFT & TON (30)</span>
+      <span style="font-size:10px;text-transform:none" data-i18n="tap_anim">Живая 3D / Lottie</span>
     </div>
     <div class="flt-row">
-      <button class="fpill active" id="gf-box" onclick="setGiftFilter('box')">📦 В этом боксе</button>
+      <button class="fpill active" id="gf-box" onclick="setGiftFilter('box')">📦 В этом кейсе</button>
+      <button class="fpill" id="gf-nft" onclick="setGiftFilter('nft')">🎨 Все 24 NFT</button>
       <button class="fpill" id="gf-all" onclick="setGiftFilter('all')">✨ Все 30 призов</button>
-      <button class="fpill" id="gf-combo" onclick="setGiftFilter('combo')">🎁 Комбо-сеты (16)</button>
-      <button class="fpill" id="gf-vip" onclick="setGiftFilter('vip')">👑 100–2500⭐</button>
+      <button class="fpill" id="gf-vip" onclick="setGiftFilter('vip')">👑 3–25 TON</button>
     </div>
     <div class="loot-grid" id="lootGrid"></div>
   </section>
 
-  <!-- TAB 2: ARCADE GAMES HUB (STAR MINES 5x5, LIVE WHEEL, 5->1 CRAFT) -->
+  <!-- TAB 2: GAMES HUB -->
   <section class="panel" id="panel-games">
     <div class="game-tabs">
       <button class="gtab active" id="gtab-mines" onclick="setGameMode('mines')">💣 Мины 5×5</button>
-      <button class="gtab" id="gtab-wheel" onclick="setGameMode('wheel')">🎡 Колесо 1→1</button>
+      <button class="gtab" id="gtab-wheel" onclick="setGameMode('wheel')">🎡 Апгрейд в NFT</button>
       <button class="gtab" id="gtab-craft" onclick="setGameMode('craft')">⚡ Крафт 5→1</button>
     </div>
 
-    <!-- GAME 1: STAR MINES 5x5 -->
     <div id="gview-mines">
       <div class="mines-ladder" id="minesLadder"></div>
       <div class="mines-grid" id="minesGrid"></div>
       <div class="mini-box" id="minesControls"></div>
     </div>
 
-    <!-- GAME 2: LIVE SPINNING UPGRADE WHEEL -->
     <div id="gview-wheel" style="display:none">
       <div class="mini-box" style="text-align:center">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-          <strong data-i18n="up1_h">🎡 Живое Колесо Апгрейда</strong>
-          <span style="font-size:10.5px;color:var(--muted)">Неудача → +25 ✨</span>
+          <strong data-i18n="up1_h">🎡 Апгрейд в Коллекционный NFT</strong>
+          <span style="font-size:10.5px;color:var(--muted)">Промах → +25 ✨</span>
         </div>
         <div class="wheel-wrap">
           <div class="wheel-ptr">▼</div>
           <div class="wheel-rotor" id="wheelRotor"></div>
           <div class="wheel-center" id="wheelCenter"></div>
         </div>
-
-        <div style="text-align:left;font-size:11px;font-weight:800;color:var(--muted);margin-bottom:4px">1. Выбери подарок из инвентаря:</div>
+        <div style="text-align:left;font-size:11px;font-weight:800;color:var(--muted);margin-bottom:4px">1. Ставка из инвентаря (капсула TON или NFT):</div>
         <div class="hstrip" id="wheelInStrip"></div>
-
-        <div style="text-align:left;font-size:11px;font-weight:800;color:var(--muted);margin:8px 0 4px">2. Выбери цель апгрейда:</div>
+        <div style="text-align:left;font-size:11px;font-weight:800;color:var(--muted);margin:8px 0 4px">2. Целевой NFT / номинал:</div>
         <div class="hstrip" id="wheelTargetStrip"></div>
-
-        <button class="btn gold" style="width:100%;margin-top:10px" id="wheelSpinBtn" onclick="spinUpgradeWheel()">🎡 Выбери подарок для апгрейда</button>
+        <button class="btn gold" style="width:100%;margin-top:10px" id="wheelSpinBtn" onclick="spinUpgradeWheel()">🎡 Выбери предмет</button>
       </div>
     </div>
 
-    <!-- GAME 3: 5->1 FUSION CONTRACTS -->
     <div id="gview-craft" style="display:none">
       <div class="mini-box">
-        <strong data-i18n="contract_h">⚡ Контракт Крафта 5 → 1</strong>
-        <p style="font-size:11.5px;color:var(--muted);margin:5px 0 10px" data-i18n="contract_d">Обменяй 5 подарков одного тира на гарантированный подарок выше (шанс сорвать до 5×100⭐)!</p>
-        <div style="display:grid;gap:8px" id="craftList">
+        <strong data-i18n="contract_h">⚡ Крафт 5 → 1 в NFT</strong>
+        <p style="font-size:11.5px;color:var(--muted);margin:5px 0 10px">Собери 5 младших капсул и скрафти более крупный актив или коллекционный Fragment NFT!</p>
+        <div style="display:grid;gap:8px">
           <div style="background:rgba(2,6,23,.62);border:1px solid var(--border);border-radius:12px;padding:10px;display:flex;justify-content:space-between;align-items:center;gap:8px">
             <div>
-              <div style="font-weight:900;font-size:13px">5 × 15⭐ → 50⭐ / 100⭐</div>
+              <div style="font-weight:900;font-size:13px">5 × 0.15 TON → 0.50 TON / NFT 1 TON</div>
               <div style="font-size:11px;color:var(--muted)" id="c15Sub">В инвентаре: 0 / 5</div>
             </div>
             <button class="btn" style="padding:9px 14px" onclick="runContract(15)" id="c15Btn">Крафт</button>
           </div>
           <div style="background:rgba(2,6,23,.62);border:1px solid var(--border);border-radius:12px;padding:10px;display:flex;justify-content:space-between;align-items:center;gap:8px">
             <div>
-              <div style="font-weight:900;font-size:13px">5 × 25⭐ → до 200⭐</div>
+              <div style="font-weight:900;font-size:13px">5 × 0.25 TON → до 2× NFT</div>
               <div style="font-size:11px;color:var(--muted)" id="c25Sub">В инвентаре: 0 / 5</div>
             </div>
             <button class="btn" style="padding:9px 14px" onclick="runContract(25)" id="c25Btn">Крафт</button>
           </div>
           <div style="background:rgba(2,6,23,.62);border:1px solid var(--border);border-radius:12px;padding:10px;display:flex;justify-content:space-between;align-items:center;gap:8px">
             <div>
-              <div style="font-weight:900;font-size:13px">5 × 50⭐ → до 500⭐</div>
+              <div style="font-weight:900;font-size:13px">5 × 0.50 TON → Гарант NFT (до 5× NFT!)</div>
               <div style="font-size:11px;color:var(--muted)" id="c50Sub">В инвентаре: 0 / 5</div>
             </div>
             <button class="btn gold" style="padding:9px 14px" onclick="runContract(50)" id="c50Btn">Крафт</button>
@@ -565,70 +539,71 @@
     </div>
   </section>
 
-  <!-- TAB 3: CLEAN INVENTORY -->
+  <!-- TAB 3: WEB3 INVENTORY (WITHDRAW AS NFT OR TON) -->
   <section class="panel" id="panel-inv">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;gap:6px">
-      <strong data-i18n="inv_h">🎒 Подарки в инвентаре</strong>
-      <button class="info-btn" id="sell15Btn" style="display:none" onclick="salvageAll15()" data-i18n="sell15_all">♻️ Продать все 15⭐</button>
+      <strong data-i18n="inv_h">🎒 Web3 Инвентарь (NFT & TON)</strong>
+      <button class="info-btn" id="sell15Btn" style="display:none" onclick="salvageAll15()">♻️ Продать все 0.15 TON</button>
     </div>
+    <div id="invWalletNotice" class="mini-box" style="margin-bottom:8px;padding:9px 11px;border-color:rgba(0,152,234,.45);display:flex;justify-content:space-between;align-items:center;gap:8px"></div>
     <div class="flt-row">
       <button class="fpill active" id="if-all" onclick="setInvFilter('all')">Все</button>
-      <button class="fpill" id="if-low" onclick="setInvFilter('low')">15–40 ⭐</button>
-      <button class="fpill" id="if-high" onclick="setInvFilter('high')">50–2500 ⭐</button>
+      <button class="fpill" id="if-nft" onclick="setInvFilter('nft')">🎨 Только NFT</button>
+      <button class="fpill" id="if-ton" onclick="setInvFilter('ton')">💠 Капсулы TON</button>
     </div>
     <div class="inv-grid" id="invGrid"></div>
   </section>
 
-  <!-- TAB 4: BONUSES, PROMOS, GIVEAWAY, ALBUM & CARDS -->
+  <!-- TAB 4: BONUSES & 24-NFT COLLECTOR ALBUM -->
   <section class="panel" id="panel-bonuses">
     <div class="mini-box" id="chanQuestCard" style="display:none;margin-bottom:9px;border-color:rgba(56,189,248,.45);background:linear-gradient(145deg,rgba(14,165,233,.15),rgba(17,24,48,.88))">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
         <strong>📢 <span id="chanQuestTitle">GiftBox Live</span></strong>
         <span style="font-size:11.5px;font-weight:900;color:#7dd3fc">+15 💎 +40 ✨</span>
       </div>
-      <div style="font-size:11.5px;color:var(--muted);margin:4px 0 8px" id="chanQuestSub">Подпишись на живую ленту дропов и выводов — забери бонус!</div>
+      <div style="font-size:11.5px;color:var(--muted);margin:4px 0 8px">Подпишись на живую ленту NFT-дропов и выплат — забери бонус!</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
-        <button class="sm-btn sec" onclick="openChannelLink()" id="chanGoBtn">📣 Открыть канал</button>
-        <button class="sm-btn" onclick="claimChannelSub()" id="chanCheckBtn">✅ Проверить</button>
+        <button class="sm-btn sec" onclick="openChannelLink()">📣 Открыть канал</button>
+        <button class="sm-btn" onclick="claimChannelSub()">✅ Проверить</button>
       </div>
     </div>
 
     <div class="mini-box" id="gwCard" style="display:none;margin-bottom:9px;border-color:rgba(250,204,21,.5);background:linear-gradient(145deg,rgba(234,179,8,.16),rgba(17,24,48,.88))">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
-        <strong id="gwTitle">🎉 Розыгрыш 3×25⭐</strong>
+        <strong id="gwTitle">🎉 Розыгрыш</strong>
         <span id="gwTimeLeft" style="font-size:11px;font-weight:800;color:var(--gold)">...</span>
       </div>
       <div style="font-size:11.5px;color:var(--muted);margin:4px 0 8px" id="gwSub">Участников: 0</div>
       <button class="sm-btn" style="background:linear-gradient(135deg,#f59e0b,#d97706)" id="gwBtn" onclick="joinGiveaway()">🎉 Участвовать в 1 клик</button>
     </div>
 
-    <div class="mini-box" id="promoBox" style="margin-bottom:9px">
+    <div class="mini-box" style="margin-bottom:9px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-        <strong data-i18n="promo_h">🎟 Промокод из канала</strong>
-        <span style="font-size:10.5px;color:var(--muted)" data-i18n="promo_sub">Лимитированные дропы</span>
+        <strong>🎟 Промокод</strong>
+        <span style="font-size:10.5px;color:var(--muted)">Лимитированные дропы</span>
       </div>
       <div style="display:flex;gap:6px">
         <input id="promoInput" type="text" placeholder="START45" maxlength="32" style="flex:1;min-width:0;padding:8px 10px;border-radius:10px;border:1px solid var(--border);background:rgba(15,23,42,.75);color:#fff;font-weight:800;text-transform:uppercase;font-size:12.5px">
-        <button class="sm-btn" style="width:auto;margin-top:0;padding:8px 14px" onclick="redeemPromo()" data-i18n="promo_btn">Активировать</button>
+        <button class="sm-btn" style="width:auto;margin-top:0;padding:8px 14px" onclick="redeemPromo()">Активировать</button>
       </div>
     </div>
 
     <div class="util-grid">
       <div class="mini-box">
-        <strong data-i18n="daily_h">🎡 Бонус 12ч</strong>
-        <div style="color:var(--muted);margin:3px 0" id="dailyDesc">+6 💎 и +20 ✨</div>
-        <button class="sm-btn" style="background:linear-gradient(135deg,#10b981,#059669)" id="dailyBtn" onclick="claimDaily()" data-i18n="claim_btn">Забрать</button>
+        <strong>🎡 Бонус 12ч</strong>
+        <div style="color:var(--muted);margin:3px 0">+6 💎 и +20 ✨</div>
+        <button class="sm-btn" style="background:linear-gradient(135deg,#10b981,#059669)" id="dailyBtn" onclick="claimDaily()">Забрать</button>
       </div>
       <div class="mini-box">
-        <strong data-i18n="shards_h">✨ Обмен осколков</strong>
+        <strong>✨ Осколки</strong>
         <div id="shardsSub" style="color:var(--muted);margin:3px 0">0 / 300 ✨ → 100 💎</div>
-        <button class="sm-btn" id="shardsBtn" onclick="exchangeShards()" data-i18n="exch_btn">Обменять 300 ✨</button>
+        <button class="sm-btn" id="shardsBtn" onclick="exchangeShards()">Обменять 300 ✨</button>
       </div>
     </div>
 
     <div class="mini-box" style="margin-bottom:9px">
       <div style="display:flex;justify-content:space-between;align-items:center">
-        <strong data-i18n="streak_h">🔥 Серия 7 дней</strong>
+        <strong>🔥 Серия 7 дней</strong>
         <span id="streakLabel" style="font-size:11px;color:var(--gold)">День 0/7</span>
       </div>
       <div class="streak-strip" id="streakStrip"></div>
@@ -636,75 +611,88 @@
     </div>
 
     <div class="mini-box" style="margin-bottom:9px">
-      <strong data-i18n="ref_h">👥 Пригласи друзей</strong>
-      <p style="font-size:11.5px;color:var(--muted);margin:5px 0" data-i18n="ref_d">Другу +35 ✨ сразу, а после 1-й оплаты — +25 💎 каждому + 10% в 💎 со всех его покупок!</p>
-      <div style="font-size:12px;margin-bottom:8px"><span data-i18n="ref_cnt">Приглашено:</span> <strong id="refCnt">0</strong></div>
-      <button class="btn green" style="width:100%" onclick="shareInvite()" data-i18n="invite_btn">📤 Пригласить друга</button>
+      <strong>👥 Пригласи друзей</strong>
+      <p style="font-size:11.5px;color:var(--muted);margin:5px 0">Другу +35 ✨ сразу, а после 1-го пополнения — +25 💎 каждому + 10% в 💎!</p>
+      <div style="font-size:12px;margin-bottom:8px">Приглашено: <strong id="refCnt">0</strong></div>
+      <button class="btn green" style="width:100%" onclick="shareInvite()">📤 Пригласить друга</button>
       <button class="btn sec" id="colChanBtn" style="display:none;width:100%;margin-top:6px" onclick="openChannelLink()">📢 Канал дропов GiftBox Live</button>
     </div>
 
     <div class="mini-box" id="partnerCard" style="display:none;margin-bottom:9px;border-color:rgba(250,204,21,.45);background:linear-gradient(145deg,rgba(245,158,11,.14),rgba(17,24,48,.85))">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
-        <strong id="partnerTitle">🤝 Партнёрский кабинет</strong>
-        <span class="btab-tag" id="partnerPctBadge" style="position:static">25% RevShare ⭐</span>
+        <strong>🤝 Партнёрский кабинет</strong>
+        <span class="btab-tag" id="partnerPctBadge" style="position:static">25% RevShare</span>
       </div>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:8px 0;text-align:center">
-        <div style="background:rgba(15,23,42,.55);padding:6px;border-radius:10px">
-          <div style="font-size:10px;color:var(--muted)" id="pBalLbl">Доступно</div>
-          <div style="font-size:13px;font-weight:900;color:var(--gold)" id="pBal">0.00 ⭐</div>
-        </div>
-        <div style="background:rgba(15,23,42,.55);padding:6px;border-radius:10px">
-          <div style="font-size:10px;color:var(--muted)" id="pTotLbl">Заработано</div>
-          <div style="font-size:13px;font-weight:900;color:#fff" id="pTot">0.00 ⭐</div>
-        </div>
-        <div style="background:rgba(15,23,42,.55);padding:6px;border-radius:10px">
-          <div style="font-size:10px;color:var(--muted)" id="pPendLbl">В заявке</div>
-          <div style="font-size:13px;font-weight:900;color:#7dd3fc" id="pPend">0 ⭐</div>
-        </div>
+        <div style="background:rgba(15,23,42,.55);padding:6px;border-radius:10px"><div style="font-size:10px;color:var(--muted)">Доступно</div><div style="font-size:13px;font-weight:900;color:var(--gold)" id="pBal">0 ⭐</div></div>
+        <div style="background:rgba(15,23,42,.55);padding:6px;border-radius:10px"><div style="font-size:10px;color:var(--muted)">Заработано</div><div style="font-size:13px;font-weight:900;color:#fff" id="pTot">0 ⭐</div></div>
+        <div style="background:rgba(15,23,42,.55);padding:6px;border-radius:10px"><div style="font-size:10px;color:var(--muted)">В заявке</div><div style="font-size:13px;font-weight:900;color:#7dd3fc" id="pPend">0 ⭐</div></div>
       </div>
       <button class="btn" id="pPayBtn" style="width:100%" onclick="requestPartnerPayout()">💫 Вывести от 50 ⭐</button>
     </div>
 
-    <!-- 30-GIFT COLLECTOR ALBUM & CARDS -->
     <div class="mini-box" id="albumBox" style="margin-bottom:9px">
       <div style="display:flex;justify-content:space-between;align-items:center">
-        <strong data-i18n="alb_h">📕 Альбом 30 Подарков (+5% ♻️)</strong>
-        <span id="albCnt" style="color:var(--gold);font-weight:900">0 / 30</span>
+        <strong>📕 Альбом NFT Подарков (+5% ♻️)</strong>
+        <span id="albCnt" style="color:var(--gold);font-weight:900">0 / 24</span>
       </div>
-      <div style="font-size:11px;color:var(--muted);margin:4px 0 8px" id="albSub">Собери 4 разных подарка в истории и продавай за 85% вместо 80%!</div>
+      <div style="font-size:11px;color:var(--muted);margin:4px 0 8px" id="albSub">Открой 4 разных предмета и продавай дубликаты за 85% вместо 80%!</div>
       <div class="loot-grid" id="albumGrid"></div>
     </div>
 
     <div class="mini-box" style="margin-bottom:9px">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:6px">
-        <strong data-i18n="cards_h">🃏 Карточки коллекции (★1..★6)</strong>
+        <strong>🃏 Карточки коллекции (★1..★6)</strong>
         <span id="cardBonusBadge" style="color:var(--green);font-weight:800;font-size:11px">+0% к ✨</span>
       </div>
       <div class="inv-grid" id="cardsGrid"></div>
     </div>
 
     <div class="mini-box" id="lbBox" style="display:none">
-      <strong data-i18n="lb_h">🏆 Сезонный рейтинг</strong>
+      <strong>🏆 Сезонный рейтинг</strong>
       <div id="lbList" style="margin-top:6px"></div>
     </div>
   </section>
 
-  <!-- TAB 5: STARS SHOP -->
+  <!-- TAB 5: MULTI-RAIL DEPOSIT HUB (TON + NFT + STARS) -->
   <section class="panel" id="panel-shop">
-    <div style="margin-bottom:9px">
-      <strong data-i18n="shop_h">💎 Пополнение Кристаллов (Telegram Stars)</strong>
-      <div style="font-size:11.5px;color:var(--muted)" data-i18n="shop_d">Выгодный курс до 11.12 💎 за ⭐. Моментальное зачисление в 1 тап.</div>
+    <div class="game-tabs">
+      <button class="gtab active" id="stab-ton" onclick="setShopMode('ton')">💠 TON (0%)</button>
+      <button class="gtab" id="stab-nft" onclick="setShopMode('nft')">🎨 Депозит NFT</button>
+      <button class="gtab" id="stab-stars" onclick="setShopMode('stars')">⭐️ Stars</button>
     </div>
-    <div class="pack-grid" id="packGrid"></div>
+
+    <div id="sview-ton">
+      <div style="font-size:11.5px;color:var(--muted);margin-bottom:8px">Мгновенное пополнение через Tonkeeper / Telegram Wallet без комиссии Telegram (до +13% 💎 бонусом):</div>
+      <div class="pack-grid" id="tonPackGrid"></div>
+    </div>
+
+    <div id="sview-nft" style="display:none">
+      <div class="mini-box" style="margin-bottom:9px;border-color:rgba(168,85,247,.45)">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:6px">
+          <strong>🎨 Пополнить баланс своим TON NFT-подарком</strong>
+          <button class="info-btn" onclick="loadMyWalletNfts()">🔄 Обновить</button>
+        </div>
+        <div style="font-size:11.5px;color:var(--muted);line-height:1.4">
+          Подключи кошелёк Tonkeeper / Wallet — бот покажет все твои верифицированные <b>Fragment Collectible Gifts</b>. Внеси ненужный NFT в 1 тап и моментально получи <b>85% его стоимости в 💎</b>!
+        </div>
+        <div id="myNftWallBox" style="margin-top:10px"></div>
+      </div>
+    </div>
+
+    <div id="sview-stars" style="display:none">
+      <div style="font-size:11.5px;color:var(--muted);margin-bottom:8px">Быстрая оплата внутренними звёздами Telegram Stars в 1 тап:</div>
+      <div class="pack-grid" id="packGrid"></div>
+    </div>
   </section>
 
   <nav class="bnav">
     <button class="active" id="nav-boxes" onclick="goTab('boxes')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/></svg>
-      <span data-i18n="t_boxes">Боксы</span>
+      <span data-i18n="t_boxes">Кейсы</span>
     </button>
     <button id="nav-games" onclick="goTab('games')">
-      <span class="nav-badge hot">NEW</span>
+      <span class="nav-badge hot">ИГРЫ</span>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="4"/><path d="M6 12h4M8 10v4M15 11h.01M18 13h.01"/></svg>
       <span data-i18n="t_games">Игры</span>
     </button>
@@ -720,7 +708,7 @@
     </button>
     <button id="nav-shop" onclick="goTab('shop')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-      <span data-i18n="t_shop">Магазин</span>
+      <span data-i18n="t_shop">Депозит</span>
     </button>
   </nav>
 
@@ -733,13 +721,14 @@
 const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
 if (tg) { try { tg.ready(); tg.expand(); } catch(e){} }
 
-let API_BASE = new URLSearchParams(location.search).get('api') || 'https://151-241-234-55.sslip.io';
+let API_BASE = new URLSearchParams(location.search).get('api') || 'https://201-8-70-200.sslip.io';
 let STATE = null;
 let CATALOG = null;
 let CUR_BOX = 'star_box';
 let GIFT_FILTER = 'box';
 let INV_FILTER = 'all';
 let GAME_MODE = 'mines';
+let SHOP_MODE = 'ton';
 let SPINNING = false;
 let FAST_MODE = false;
 let IDLE_RAF = null;
@@ -752,99 +741,93 @@ let MULTI_SPIN_ACTIVE = false;
 let MULTI_TIMERS = [];
 let MULTI_FINISH_FN = null;
 
-// Mines UI state
 let MINES_BET = 120;
 let MINES_CNT = 5;
 let MINES_LAST_REVEAL = null;
 let MINES_BUSY = false;
 
-// Spinning Wheel state
 let WHEEL_IN_ID = null;
-let WHEEL_TARGET_STARS = 50;
-let WHEEL_DEG = 0;
+let WHEEL_TARGET_STARS = 100;
 let WHEEL_SPINNING = false;
 
+let tonConnectUI = null;
+let MY_WALLET_NFTS = null;
 let LANG = ((tg && tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.language_code) || navigator.language || 'ru').toLowerCase().startsWith('ru') ? 'ru' : 'en';
 
-const LOTTIE_BASE = ['heart_15','bear_15','gift_25','rose_25','cake_50','bouquet_50','rocket_50','champagne_50','trophy_100','ring_100','diamond_100'];
-const LOTTIE_SET = new Set(LOTTIE_BASE);
+function mkNft(key, slug, emoji, ru, en, stars){
+  return {
+    key, emoji, name_ru:ru, name_en:en, stars, ton_value:+(stars/100).toFixed(2),
+    rarity:'legendary', is_nft:true, nft_slug:slug,
+    image_url:`https://nft.fragment.com/gift/${slug}-1.webp`,
+    lottie_url:`https://nft.fragment.com/gift/${slug}-1.lottie.json`
+  };
+}
 const DEFAULT_GIFTS = {
-  tg_premium_12m:{key:'tg_premium_12m',emoji:'👑',name_ru:'Premium 12 мес.',name_en:'Premium 1 Year',stars:2500,rarity:'legendary',premium_months:12,bundle_keys:[]},
-  tg_premium_6m:{key:'tg_premium_6m',emoji:'✨',name_ru:'Premium 6 мес.',name_en:'Premium 6M',stars:1500,rarity:'legendary',premium_months:6,bundle_keys:[]},
-  tg_premium_3m:{key:'tg_premium_3m',emoji:'🌟',name_ru:'Premium 3 мес.',name_en:'Premium 3M',stars:1000,rarity:'legendary',premium_months:3,bundle_keys:[]},
-  set_treasury_500:{key:'set_treasury_500',emoji:'💎',name_ru:'Сундук Алмазов',name_en:'Diamond Treasury',stars:500,rarity:'legendary',bundle_keys:['diamond_100','diamond_100','diamond_100','diamond_100','diamond_100']},
-  set_crown_300:{key:'set_crown_300',emoji:'👑',name_ru:'Корона Империи',name_en:'Imperial Crown',stars:300,rarity:'legendary',bundle_keys:['diamond_100','ring_100','trophy_100']},
-  set_champions_300:{key:'set_champions_300',emoji:'🏆',name_ru:'Триумф 3×🏆',name_en:'Triple Trophy',stars:300,rarity:'legendary',bundle_keys:['trophy_100','trophy_100','trophy_100']},
-  set_fleet_250:{key:'set_fleet_250',emoji:'🚀',name_ru:'Звёздный Флот',name_en:'Star Fleet 5×🚀',stars:250,rarity:'legendary',bundle_keys:['rocket_50','rocket_50','rocket_50','rocket_50','rocket_50']},
-  set_royal_rings_200:{key:'set_royal_rings_200',emoji:'💍',name_ru:'Королевская Пара',name_en:'Royal Rings',stars:200,rarity:'legendary',bundle_keys:['ring_100','ring_100']},
-  set_proposal_150:{key:'set_proposal_150',emoji:'💍',name_ru:'Предложение',name_en:'Grand Proposal',stars:150,rarity:'legendary',bundle_keys:['ring_100','bouquet_50']},
-  set_hyperdrive_150:{key:'set_hyperdrive_150',emoji:'💎',name_ru:'Алмазный Старт',name_en:'Diamond Launch',stars:150,rarity:'legendary',bundle_keys:['diamond_100','rocket_50']},
-  set_romance_150:{key:'set_romance_150',emoji:'💐',name_ru:'Романтик-сет',name_en:'Romance Set',stars:150,rarity:'legendary',bundle_keys:['bouquet_50','cake_50','champagne_50']},
-  diamond_100:{key:'diamond_100',emoji:'💎',name_ru:'Бриллиант',name_en:'Diamond',stars:100,rarity:'legendary',bundle_keys:[]},
-  trophy_100:{key:'trophy_100',emoji:'🏆',name_ru:'Кубок',name_en:'Trophy',stars:100,rarity:'legendary',bundle_keys:[]},
-  ring_100:{key:'ring_100',emoji:'💍',name_ru:'Кольцо',name_en:'Diamond Ring',stars:100,rarity:'legendary',bundle_keys:[]},
-  set_space_100:{key:'set_space_100',emoji:'🚀',name_ru:'Двойной Форсаж',name_en:'Twin Rockets',stars:100,rarity:'legendary',bundle_keys:['rocket_50','rocket_50']},
-  set_vip_toast_100:{key:'set_vip_toast_100',emoji:'🥂',name_ru:'VIP Тост',name_en:'VIP Toast',stars:100,rarity:'legendary',bundle_keys:['champagne_50','champagne_50']},
-  set_party_75:{key:'set_party_75',emoji:'🎂',name_ru:'Вечеринка',name_en:'Birthday Party',stars:75,rarity:'mythic',bundle_keys:['cake_50','gift_25']},
-  set_garden_75:{key:'set_garden_75',emoji:'💐',name_ru:'Сад Роз',name_en:'Rose Garden',stars:75,rarity:'mythic',bundle_keys:['bouquet_50','rose_25']},
-  rocket_50:{key:'rocket_50',emoji:'🚀',name_ru:'Ракета',name_en:'Rocket',stars:50,rarity:'mythic',bundle_keys:[]},
-  cake_50:{key:'cake_50',emoji:'🎂',name_ru:'Торт',name_en:'Cake',stars:50,rarity:'mythic',bundle_keys:[]},
-  bouquet_50:{key:'bouquet_50',emoji:'💐',name_ru:'Букет',name_en:'Bouquet',stars:50,rarity:'mythic',bundle_keys:[]},
-  champagne_50:{key:'champagne_50',emoji:'🍾',name_ru:'Шампанское',name_en:'Champagne',stars:50,rarity:'mythic',bundle_keys:[]},
-  set_date_40:{key:'set_date_40',emoji:'🌹',name_ru:'Свидание',name_en:'Date Night',stars:40,rarity:'epic',bundle_keys:['rose_25','heart_15']},
-  set_surprise_40:{key:'set_surprise_40',emoji:'🎁',name_ru:'Сюрприз-Бокс',name_en:'Surprise Pack',stars:40,rarity:'epic',bundle_keys:['gift_25','bear_15']},
-  set_sweet_30:{key:'set_sweet_30',emoji:'🧸',name_ru:'Плюшевый Дуэт',name_en:'Sweet Duo',stars:30,rarity:'epic',bundle_keys:['bear_15','heart_15']},
-  set_twins_30:{key:'set_twins_30',emoji:'💞',name_ru:'Два Сердца',name_en:'Twin Hearts',stars:30,rarity:'epic',bundle_keys:['heart_15','heart_15']},
-  gift_25:{key:'gift_25',emoji:'🎁',name_ru:'Коробка',name_en:'Gift Box',stars:25,rarity:'epic',bundle_keys:[]},
-  rose_25:{key:'rose_25',emoji:'🌹',name_ru:'Роза',name_en:'Red Rose',stars:25,rarity:'epic',bundle_keys:[]},
-  heart_15:{key:'heart_15',emoji:'💝',name_ru:'Сердце',name_en:'Heart',stars:15,rarity:'rare',bundle_keys:[]},
-  bear_15:{key:'bear_15',emoji:'🧸',name_ru:'Мишка',name_en:'Plush Bear',stars:15,rarity:'rare',bundle_keys:[]}
+  nft_durovscap:mkNft('nft_durovscap','durovscap','🧢',"Durov's Cap NFT","Durov's Cap NFT",2500),
+  nft_swisswatch:mkNft('nft_swisswatch','swisswatch','⌚️','Swiss Watch NFT','Swiss Watch NFT',1500),
+  nft_vintagecigar:mkNft('nft_vintagecigar','vintagecigar','🚬','Vintage Cigar NFT','Vintage Cigar NFT',1000),
+  nft_diamondring:mkNft('nft_diamondring','diamondring','💍','Diamond Ring NFT','Diamond Ring NFT',1000),
+  nft_trappedheart:mkNft('nft_trappedheart','trappedheart','❤️‍🔥','Trapped Heart NFT','Trapped Heart NFT',500),
+  nft_voodoodoll:mkNft('nft_voodoodoll','voodoodoll','🪆','Voodoo Doll NFT','Voodoo Doll NFT',500),
+  nft_eternalrose:mkNft('nft_eternalrose','eternalrose','🌹','Eternal Rose NFT','Eternal Rose NFT',300),
+  nft_crystalball:mkNft('nft_crystalball','crystalball','🔮','Crystal Ball NFT','Crystal Ball NFT',300),
+  nft_lovepotion:mkNft('nft_lovepotion','lovepotion','💖','Love Potion NFT','Love Potion NFT',300),
+  nft_jellybunny:mkNft('nft_jellybunny','jellybunny','🐰','Jelly Bunny NFT','Jelly Bunny NFT',250),
+  nft_spyagaric:mkNft('nft_spyagaric','spyagaric','🍄','Spy Agaric NFT','Spy Agaric NFT',250),
+  nft_starnotepad:mkNft('nft_starnotepad','starnotepad','📓','Star Notepad NFT','Star Notepad NFT',250),
+  nft_witchhat:mkNft('nft_witchhat','witchhat','🧙‍♀️','Witch Hat NFT','Witch Hat NFT',200),
+  nft_santahat:mkNft('nft_santahat','santahat','🎅','Santa Hat NFT','Santa Hat NFT',200),
+  nft_hexpot:mkNft('nft_hexpot','hexpot','🧪','Hex Pot NFT','Hex Pot NFT',200),
+  nft_cookieheart:mkNft('nft_cookieheart','cookieheart','🍪','Cookie Heart NFT','Cookie Heart NFT',150),
+  nft_homemadecake:mkNft('nft_homemadecake','homemadecake','🎂','Homemade Cake NFT','Homemade Cake NFT',150),
+  nft_lunarsnake:mkNft('nft_lunarsnake','lunarsnake','🐍','Lunar Snake NFT','Lunar Snake NFT',150),
+  nft_spicedwine:mkNft('nft_spicedwine','spicedwine','🍷','Spiced Wine NFT','Spiced Wine NFT',150),
+  nft_lolpop:mkNft('nft_lolpop','lolpop','🍭','Lol Pop NFT','Lol Pop NFT',100),
+  nft_bdaycandle:mkNft('nft_bdaycandle','bdaycandle','🕯','B-Day Candle NFT','B-Day Candle NFT',100),
+  nft_deskcalendar:mkNft('nft_deskcalendar','deskcalendar','📅','Desk Calendar NFT','Desk Calendar NFT',100),
+  nft_jesterhat:mkNft('nft_jesterhat','jesterhat','🃏','Jester Hat NFT','Jester Hat NFT',100),
+  nft_partysparkler:mkNft('nft_partysparkler','partysparkler','✨','Party Sparkler NFT','Party Sparkler NFT',100),
+  ton_75:{key:'ton_75',emoji:'⚡',name_ru:'Кристалл 0.75 TON',name_en:'0.75 TON Crystal',stars:75,ton_value:0.75,rarity:'mythic',is_nft:false,image_url:'./gifts/set_treasury_500.webp'},
+  ton_50:{key:'ton_50',emoji:'⚡',name_ru:'Кристалл 0.50 TON',name_en:'0.50 TON Crystal',stars:50,ton_value:0.50,rarity:'mythic',is_nft:false,image_url:'./gifts/diamond_100.webp'},
+  ton_40:{key:'ton_40',emoji:'💎',name_ru:'Слиток 0.40 TON',name_en:'0.40 TON Ingot',stars:40,ton_value:0.40,rarity:'epic',is_nft:false,image_url:'./gifts/set_hyperdrive_150.webp'},
+  ton_30:{key:'ton_30',emoji:'💎',name_ru:'Слиток 0.30 TON',name_en:'0.30 TON Ingot',stars:30,ton_value:0.30,rarity:'epic',is_nft:false,image_url:'./gifts/set_space_100.webp'},
+  ton_25:{key:'ton_25',emoji:'💠',name_ru:'Капсула 0.25 TON',name_en:'0.25 TON Capsule',stars:25,ton_value:0.25,rarity:'epic',is_nft:false,image_url:'./gifts/gift_25.webp'},
+  ton_15:{key:'ton_15',emoji:'💠',name_ru:'Капсула 0.15 TON',name_en:'0.15 TON Capsule',stars:15,ton_value:0.15,rarity:'rare',is_nft:false,image_url:'./gifts/diamond_100.webp'}
 };
-const ALL_GIFT_KEYS = Object.keys(DEFAULT_GIFTS);
-const EMOJI_TO_GIFT = {'💝':'heart_15','🧸':'bear_15','💞':'set_twins_30','🎁':'gift_25','🌹':'rose_25','🎂':'cake_50','💐':'bouquet_50','🚀':'rocket_50','🍾':'champagne_50','🥂':'set_vip_toast_100','🏆':'trophy_100','💍':'ring_100','💎':'diamond_100','👑':'set_crown_300','🌟':'tg_premium_3m','✨':'tg_premium_6m'};
 
 const BOX_GIFT_LISTS = {
-  mini_spark:['trophy_100','set_party_75','cake_50','set_date_40','set_surprise_40','set_sweet_30','set_twins_30','gift_25','rose_25','bear_15','heart_15'],
-  star_box:['set_proposal_150','set_hyperdrive_150','set_romance_150','diamond_100','ring_100','trophy_100','rocket_50','cake_50','set_date_40','set_surprise_40','set_sweet_30','gift_25','rose_25','heart_15','bear_15'],
-  love_box:['set_royal_rings_200','set_proposal_150','set_romance_150','ring_100','set_vip_toast_100','set_garden_75','bouquet_50','champagne_50','set_date_40','set_twins_30','set_sweet_30','rose_25','heart_15','bear_15'],
-  cyber_event:['set_fleet_250','set_hyperdrive_150','diamond_100','set_space_100','trophy_100','set_party_75','rocket_50','champagne_50','set_surprise_40','set_sweet_30','gift_25','bear_15','heart_15'],
-  whale_vault:['tg_premium_3m','set_crown_300','set_champions_300','set_fleet_250','set_royal_rings_200','set_proposal_150','set_hyperdrive_150','set_romance_150','diamond_100','trophy_100','ring_100','set_party_75','rocket_50','champagne_50','gift_25','bear_15'],
-  imperial_vip:['tg_premium_12m','tg_premium_6m','tg_premium_3m','set_treasury_500','set_crown_300','set_champions_300','set_fleet_250','set_royal_rings_200','set_proposal_150','set_hyperdrive_150','diamond_100','set_space_100','set_party_75','set_garden_75','rocket_50','bouquet_50','set_date_40','gift_25']
+  mini_spark:['nft_lolpop','ton_75','ton_50','ton_40','ton_30','ton_25','ton_15'],
+  star_box:['nft_cookieheart','nft_homemadecake','nft_lunarsnake','nft_lolpop','nft_jesterhat','nft_bdaycandle','ton_50','ton_40','ton_30','ton_25','ton_15'],
+  love_box:['nft_eternalrose','nft_lovepotion','nft_witchhat','nft_cookieheart','nft_spicedwine','nft_lolpop','ton_75','ton_50','ton_40','ton_30','ton_25','ton_15'],
+  cyber_event:['nft_jellybunny','nft_spyagaric','nft_lunarsnake','nft_bdaycandle','nft_partysparkler','nft_deskcalendar','ton_75','ton_50','ton_40','ton_30','ton_25','ton_15'],
+  whale_vault:['nft_diamondring','nft_vintagecigar','nft_trappedheart','nft_eternalrose','nft_crystalball','nft_jellybunny','nft_witchhat','nft_cookieheart','nft_partysparkler','ton_75','ton_50','ton_25'],
+  imperial_vip:['nft_durovscap','nft_swisswatch','nft_diamondring','nft_vintagecigar','nft_trappedheart','nft_voodoodoll','nft_eternalrose','nft_crystalball','nft_jellybunny','nft_witchhat','nft_cookieheart','ton_75','ton_50','ton_40','ton_25']
 };
 
 const I18N = {
-  ru:{
-    w_title:'🎁 Приветственный Бокс (Бесплатно!)',w_sub:'Открой 1-й бокс и забери стартовый бонус 💎+✨',
-    tilt_h:'🔥 Шанс докрута: 15 ⭐ → 175 💎',tilt_sub:'До гаранта близко! Исчезнет через',
-    pity_lbl:'🎯 Гарант топ-приза',odds_btn:'Шансы',guar_on:'🔥 100% ГАРАНТ ГЛАВНОГО ПРИЗА',daily_h:'🎡 Бонус 12ч',claim_btn:'Забрать',
-    shards_h:'✨ Осколки',exch_btn:'Обменять 300 ✨',streak_h:'🔥 Серия 7 дней',
-    tap_anim:'Тапни для 3D',inv_h:'🎒 Подарки в инвентаре',sell15_all:'♻️ Продать все 15⭐',
-    up1_h:'🎡 Живое Колесо Апгрейда',contract_h:'⚡ Контракт Крафта 5 → 1',
-    contract_d:'Обменяй 5 подарков одного тира на гарантированный подарок выше (до 500⭐)!',
-    shop_h:'💎 Пополнение Кристаллов (Telegram Stars)',shop_d:'Выгодный курс до 11.12 💎 за ⭐. Моментально в 1 тап.',
-    alb_h:'📕 Альбом 30 Подарков (+5% ♻️)',ref_h:'👥 Пригласи друзей',
-    ref_d:'Другу +35 ✨ сразу, а после 1-й оплаты — +25 💎 каждому + 10% в 💎 со всех его покупок!',
-    ref_cnt:'Приглашено:',invite_btn:'📤 Пригласить друга',cards_h:'🃏 Карточки коллекции (★1..★6)',
-    promo_h:'🎟 Промокод из канала',promo_sub:'Лимитированные дропы',promo_btn:'Активировать',
-    lb_h:'🏆 Сезонный рейтинг',t_boxes:'Боксы',t_games:'Игры',t_inv:'Инвентарь',t_bonuses:'Бонусы',t_shop:'Магазин'
-  },
-  en:{
-    w_title:'🎁 Free Welcome Box Ready!',w_sub:'Spin your first box & claim starter 💎+✨!',
-    tilt_h:'🔥 Second Wind: 15 ⭐ → 175 💎',tilt_sub:'Near pity! Expires in',
-    pity_lbl:'🎯 Top Prize Guarantee',odds_btn:'Odds',guar_on:'🔥 100% FEATURED GUARANTEE',daily_h:'🎡 12h Bonus',claim_btn:'Claim',
-    shards_h:'✨ Shards',exch_btn:'Swap 300 ✨',streak_h:'🔥 7-Day Streak',
-    tap_anim:'Tap for 3D',inv_h:'🎒 Stored Gifts',sell15_all:'♻️ Salvage all 15⭐',
-    up1_h:'🎡 Live Upgrade Wheel',contract_h:'⚡ Craft Contract 5 → 1',
-    contract_d:'Fuse 5 gifts of the same tier into a higher gift up to 500⭐!',
-    shop_h:'💎 Crystal Store (Telegram Stars)',shop_d:'Up to 11.12 💎/⭐ rate. Instant 1-tap credit.',
-    alb_h:'📕 30-Gift Album (+5% ♻️)',ref_h:'👥 Invite Friends',
-    ref_d:'+35 ✨ on join, then +25 💎 each + 10% kickback after friend pays!',
-    ref_cnt:'Invited:',invite_btn:'📤 Share Invite',cards_h:'🃏 Collector Cards (★1..★6)',
-    promo_h:'🎟 Channel Promo Code',promo_sub:'Limited drops',promo_btn:'Redeem',
-    lb_h:'🏆 Season Top',t_boxes:'Boxes',t_games:'Games',t_inv:'Inventory',t_bonuses:'Bonuses',t_shop:'Shop'
-  }
+  ru:{w_title:'🎁 Приветственный Кейс (Бесплатно!)',w_sub:'Крутани 1-й бокс и забери стартовый бонус 💎+✨',pity_lbl:'🎯 Гарант NFT',odds_btn:'Инфо',guar_on:'🔥 100% ГАРАНТ ГЛАВНОГО NFT',tap_anim:'3D / Lottie',inv_h:'🎒 Web3 Инвентарь (NFT & TON)',up1_h:'🎡 Апгрейд в Коллекционный NFT',contract_h:'⚡ Крафт 5 → 1 в NFT',t_boxes:'Кейсы',t_games:'Игры',t_inv:'Инвентарь',t_bonuses:'Бонусы',t_shop:'Депозит'},
+  en:{w_title:'🎁 Free Welcome Case!',w_sub:'Spin your first case & claim starter 💎+✨!',pity_lbl:'🎯 NFT Guarantee',odds_btn:'Info',guar_on:'🔥 100% FEATURED NFT GUARANTEE',tap_anim:'3D / Lottie',inv_h:'🎒 Web3 Inventory (NFT & TON)',up1_h:'🎡 Upgrade to Collectible NFT',contract_h:'⚡ Craft 5 → 1 into NFT',t_boxes:'Cases',t_games:'Games',t_inv:'Inventory',t_bonuses:'Bonuses',t_shop:'Deposit'}
 };
 
+function getGiftsMap(){
+  const raw = Object.assign({}, DEFAULT_GIFTS);
+  if (CATALOG && CATALOG.gifts) {
+    Object.keys(CATALOG.gifts).forEach(k => {
+      raw[k] = Object.assign({}, DEFAULT_GIFTS[k] || {}, CATALOG.gifts[k]);
+      if (!raw[k].image_url && DEFAULT_GIFTS[k]) raw[k].image_url = DEFAULT_GIFTS[k].image_url;
+    });
+  }
+  return raw;
+}
+function giftImgSrc(itemKey){
+  const g = getGiftsMap()[itemKey];
+  if (g && g.image_url) return g.image_url;
+  if (g && g.nft_slug) return `https://nft.fragment.com/gift/${g.nft_slug}-1.webp`;
+  return `./gifts/diamond_100.webp`;
+}
+function fmtTon(stars){
+  return `${+(stars/100).toFixed(2)} TON`;
+}
 function crystalSvg(rarity, size){
   const pal = rarity === 'uncommon' ? ['#34d399','#059669','#a7f3d0'] : ['#38bdf8','#2563eb','#bae6fd'];
   return `<svg width="${size}" height="${size}" viewBox="0 0 64 64" fill="none">
@@ -853,11 +836,10 @@ function crystalSvg(rarity, size){
     <polygon points="32,4 40,20 32,32 24,20" fill="${pal[2]}" opacity="0.8"/>
   </svg>`;
 }
-function getGiftsMap(){ return Object.assign({}, DEFAULT_GIFTS, (CATALOG && CATALOG.gifts) || {}); }
 function visualHTML(itemKey, kind, rarity, size){
   const gMap = getGiftsMap();
   if (kind === 'gift' || gMap[itemKey]) {
-    return `<img src="./gifts/${itemKey}.webp" width="${size}" height="${size}" alt="" decoding="async" style="border-radius:${Math.max(6,Math.round(size*0.18))}px">`;
+    return `<img src="${giftImgSrc(itemKey)}" width="${size}" height="${size}" alt="" decoding="async" style="border-radius:${Math.max(6,Math.round(size*0.18))}px">`;
   }
   if (itemKey && itemKey.startsWith('card_')) {
     return `<img src="./cards/${itemKey}.webp" width="${size}" height="${size}" alt="" decoding="async" style="border-radius:${Math.max(6,Math.round(size*0.18))}px">`;
@@ -867,11 +849,13 @@ function visualHTML(itemKey, kind, rarity, size){
 function mountLottie(container, giftKey){
   if (!container) return null;
   if (container._lottie) { try { container._lottie.destroy(); } catch(e){} container._lottie = null; }
-  container.innerHTML = `<img src="./gifts/${giftKey}.webp" alt="" style="width:100%;height:100%;object-fit:contain;border-radius:14px">`;
-  if (!window.lottie || !LOTTIE_SET.has(giftKey)) return null;
+  const g = getGiftsMap()[giftKey];
+  container.innerHTML = `<img src="${giftImgSrc(giftKey)}" alt="" style="width:100%;height:100%;object-fit:contain;border-radius:14px">`;
+  const lottiePath = g && g.lottie_url ? g.lottie_url : null;
+  if (!window.lottie || !lottiePath) return null;
   const host = document.createElement('div');
   host.style.cssText = 'width:100%;height:100%';
-  const anim = window.lottie.loadAnimation({container:host, renderer:'svg', loop:true, autoplay:true, path:`./gifts/${giftKey}.json`});
+  const anim = window.lottie.loadAnimation({container:host, renderer:'svg', loop:true, autoplay:true, path:lottiePath});
   anim.addEventListener('DOMLoaded', () => { if (container.isConnected) { container.innerHTML = ''; container.appendChild(host); } });
   container._lottie = anim;
   return anim;
@@ -881,7 +865,7 @@ function showToast(msg){
   const t = document.getElementById('toast');
   t.textContent = msg; t.style.display = 'block';
   clearTimeout(t._tm);
-  t._tm = setTimeout(()=>{ t.style.display='none'; }, 3600);
+  t._tm = setTimeout(()=>{ t.style.display='none'; }, 3800);
 }
 function goTab(name){
   ['boxes','games','inv','bonuses','shop'].forEach(k=>{
@@ -891,6 +875,7 @@ function goTab(name){
     if (n) n.classList.toggle('active', k===name);
   });
   if (name === 'games') renderGamesHub();
+  if (name === 'shop' && SHOP_MODE === 'nft') loadMyWalletNfts();
 }
 function setGameMode(mode){
   GAME_MODE = mode;
@@ -900,9 +885,17 @@ function setGameMode(mode){
   });
   renderGamesHub();
 }
+function setShopMode(mode){
+  SHOP_MODE = mode;
+  ['ton','nft','stars'].forEach(m=>{
+    document.getElementById('stab-'+m).classList.toggle('active', m===mode);
+    document.getElementById('sview-'+m).style.display = m===mode ? 'block' : 'none';
+  });
+  if (mode === 'nft') loadMyWalletNfts();
+}
 function setGiftFilter(flt){
   GIFT_FILTER = flt;
-  ['box','all','combo','vip'].forEach(k=>{
+  ['box','nft','all','vip'].forEach(k=>{
     const el = document.getElementById('gf-'+k);
     if (el) el.classList.toggle('active', k===flt);
   });
@@ -910,7 +903,7 @@ function setGiftFilter(flt){
 }
 function setInvFilter(flt){
   INV_FILTER = flt;
-  ['all','low','high'].forEach(k=>{
+  ['all','nft','ton'].forEach(k=>{
     const el = document.getElementById('if-'+k);
     if (el) el.classList.toggle('active', k===flt);
   });
@@ -933,7 +926,7 @@ function toggleLang(){
   }
 }
 function applyLang(){
-  document.getElementById('langBtn').textContent = LANG === 'ru' ? '🇬🇧 EN' : '🇷🇺 RU';
+  document.getElementById('langBtn').textContent = LANG === 'ru' ? '🇬🇧' : '🇷🇺';
   const d = I18N[LANG];
   document.querySelectorAll('[data-i18n]').forEach(el => { const k = el.getAttribute('data-i18n'); if(d[k]) el.textContent = d[k]; });
   renderAll();
@@ -949,7 +942,187 @@ async function apiCall(path, method='GET', body=null){
   return data;
 }
 
+function initTonConnect(){
+  if (!window.TON_CONNECT_UI) return;
+  try {
+    tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+      manifestUrl: 'https://lux1984.github.io/gacha/tonconnect-manifest.json',
+      actionsConfiguration: { twaReturnUrl: 'https://t.me/StarsLootBoxBot' }
+    });
+    tonConnectUI.onStatusChange(async (wallet) => {
+      if (wallet && wallet.account && wallet.account.address) {
+        try {
+          const res = await apiCall('/api/ton/link_wallet', 'POST', {wallet: wallet.account.address});
+          STATE = res;
+          MY_WALLET_NFTS = null;
+          renderAll();
+          if (SHOP_MODE === 'nft') loadMyWalletNfts();
+        } catch(e){ console.warn('Wallet sync warn', e); }
+      }
+    });
+  } catch(e){ console.warn('TON Connect init warn', e); }
+}
+
+function getUserWallet(){
+  return (STATE && STATE.user && STATE.user.ton_wallet) ? STATE.user.ton_wallet : '';
+}
+function shortAddr(w){ return w ? `${w.slice(0,4)}…${w.slice(-4)}` : ''; }
+
+function openWalletModal(){
+  const m = document.getElementById('modalBody');
+  m.classList.remove('multi10');
+  const curW = getUserWallet();
+  const tcConnected = tonConnectUI && tonConnectUI.connected;
+  m.innerHTML = `
+    <h3 style="margin:0 0 8px">💠 TON Кошелёк (NFT & Выплаты)</h3>
+    <p style="font-size:12px;color:var(--muted);line-height:1.45">
+      Подключи <b>Tonkeeper / Telegram Wallet</b> через официальный TON Connect 2.0 (без юзерботов, 0% риск бана) либо укажи свой адрес TON вручную для вывода NFT и TON.
+    </p>
+    ${curW ? `<div style="background:rgba(16,185,129,.14);border:1px solid var(--green);border-radius:12px;padding:9px;margin:8px 0;font-size:11.5px;word-break:break-all">🟢 Привязан: <b>${curW}</b></div>` : ''}
+    <button class="btn" style="width:100%;margin-top:6px" onclick="triggerTonConnect()">
+      ${tcConnected ? '🔄 Сменить / Отключить через TON Connect' : '🔗 Подключить через TON Connect 2.0'}
+    </button>
+    <div style="margin-top:12px;text-align:left;font-size:11px;color:var(--muted)">Или вставь адрес кошелька (UQ... / EQ...):</div>
+    <div style="display:flex;gap:6px;margin-top:5px">
+      <input id="manualWalletInp" type="text" value="${curW}" placeholder="UQA..." style="flex:1;min-width:0;padding:8px 10px;border-radius:10px;border:1px solid var(--border);background:rgba(15,23,42,.85);color:#fff;font-size:12px">
+      <button class="btn green" style="padding:8px 12px" onclick="saveManualWallet()">Сохранить</button>
+    </div>
+    <button class="btn sec" style="width:100%;margin-top:10px" onclick="closeModal(true)">Закрыть</button>`;
+  document.getElementById('overlay').classList.add('open');
+}
+
+async function triggerTonConnect(){
+  closeModal(true);
+  if (!tonConnectUI) { showToast('Используй поле ручного ввода адреса UQ...'); return; }
+  if (tonConnectUI.connected) {
+    await tonConnectUI.disconnect();
+    const res = await apiCall('/api/ton/link_wallet', 'POST', {wallet: ''});
+    STATE = res; renderAll();
+    showToast('Кошелёк отключён');
+  } else {
+    tonConnectUI.openModal();
+  }
+}
+
+async function saveManualWallet(){
+  const v = (document.getElementById('manualWalletInp').value || '').trim();
+  try {
+    const res = await apiCall('/api/ton/link_wallet', 'POST', {wallet: v});
+    STATE = res; MY_WALLET_NFTS = null;
+    closeModal(true); renderAll();
+    showToast(v ? '✅ TON-кошелёк успешно привязан!' : 'Кошелёк очищен');
+  } catch(e){ showToast(e.message || 'Неверный формат TON-адреса'); }
+}
+
+async function buyTonPack(packKey){
+  if (!tg || !tg.initData) { showToast('Открой внутри @StarsLootBoxBot'); return; }
+  if (!tonConnectUI || !tonConnectUI.connected) {
+    showToast('Сначала подключи кошелёк через TON Connect!');
+    if (tonConnectUI) tonConnectUI.openModal(); else openWalletModal();
+    return;
+  }
+  try {
+    const res = await apiCall('/api/ton/create_order', 'POST', {pack_key: packKey});
+    const ord = res.order;
+    await tonConnectUI.sendTransaction({
+      validUntil: Math.floor(Date.now() / 1000) + 600,
+      messages: [{
+        address: ord.destination,
+        amount: String(ord.nanoton),
+        payload: ord.payload_b64
+      }]
+    });
+    showToast('⏳ Транзакция отправлена! Ожидаем подтверждение сети TON...');
+    pollTonOrder(ord.order_id, 0);
+  } catch(e){
+    showToast(e.message || 'Оплата отменена');
+  }
+}
+
+async function pollTonOrder(orderId, step){
+  if (step > 20) return;
+  try {
+    const r = await apiCall('/api/ton/verify_order', 'POST', {order_id: orderId});
+    if (r.confirmed) {
+      STATE = r; renderAll();
+      try{ tg.HapticFeedback&&tg.HapticFeedback.notificationOccurred('success'); }catch(e){}
+      showToast('🎉 TON депозит подтверждён! Кристаллы зачислены!');
+      return;
+    }
+  } catch(e){}
+  setTimeout(()=>pollTonOrder(orderId, step + 1), 4500);
+}
+
+async function loadMyWalletNfts(){
+  const box = document.getElementById('myNftWallBox');
+  if (!box) return;
+  const w = getUserWallet();
+  if (!w) {
+    box.innerHTML = `<button class="btn" style="width:100%" onclick="openWalletModal()">🔗 Подключить TON-кошелёк для сканирования NFT</button>`;
+    return;
+  }
+  box.innerHTML = `<div style="text-align:center;color:var(--muted);padding:12px">🔎 Сканируем коллекционные NFT на ${shortAddr(w)}...</div>`;
+  try {
+    const res = await apiCall('/api/ton/my_nfts?wallet=' + encodeURIComponent(w));
+    MY_WALLET_NFTS = res.nfts || [];
+    if (!MY_WALLET_NFTS.length) {
+      box.innerHTML = `<div style="text-align:center;padding:10px;color:var(--muted);font-size:11.5px">
+        На кошельке <b>${shortAddr(w)}</b> не найдено ончейн NFT-подарков Fragment.<br>
+        <span style="font-size:10.5px">(Убедись, что подарок выведен в блокчейн TON через Fragment, либо пополни баланс в TON / Stars!)</span>
+      </div>`;
+      return;
+    }
+    box.innerHTML = `<div class="inv-grid">${MY_WALLET_NFTS.map(n => `
+      <div class="inv-card legendary">
+        <img src="${n.image_url}" alt="" style="border-radius:12px">
+        <div style="font-size:11.5px;font-weight:800;margin-top:4px">${n.name}</div>
+        <div style="font-size:11px;color:var(--gold);font-weight:900">Оценка: ~${n.ton_value} TON</div>
+        <button class="sm-btn nft" onclick="depositMyNft('${n.nft_address}','${n.name.replace(/'/g,"")}')">📥 Внести за +${n.deposit_crystals} 💎</button>
+      </div>`).join('')}</div>`;
+  } catch(e){
+    box.innerHTML = `<div style="color:#fda4af;font-size:11.5px">Ошибка сканирования TonAPI: ${e.message || 'попробуй снова'}</div>`;
+  }
+}
+
+async function depositMyNft(nftAddr, nftName){
+  if (!tonConnectUI || !tonConnectUI.connected) {
+    showToast('Подключи этот кошелёк через TON Connect, чтобы подписать перевод NFT!');
+    if (tonConnectUI) tonConnectUI.openModal();
+    return;
+  }
+  try {
+    const prep = await apiCall('/api/ton/prepare_nft_deposit', 'POST', {nft_address: nftAddr, wallet: getUserWallet()});
+    await tonConnectUI.sendTransaction({
+      validUntil: Math.floor(Date.now() / 1000) + 600,
+      messages: [{
+        address: prep.tx.nft_address,
+        amount: prep.tx.amount_nanoton,
+        payload: prep.tx.payload_b64
+      }]
+    });
+    showToast(`⏳ Перевод ${nftName} отправлен! Проверяем поступление на склад...`);
+    pollNftDeposit(nftAddr, 0);
+  } catch(e){
+    showToast(e.message || 'Перевод NFT отменён');
+  }
+}
+
+async function pollNftDeposit(nftAddr, step){
+  if (step > 22) return;
+  try {
+    const r = await apiCall('/api/ton/verify_nft_deposit', 'POST', {nft_address: nftAddr});
+    if (r.confirmed) {
+      STATE = r; renderAll(); loadMyWalletNfts();
+      try{ tg.HapticFeedback&&tg.HapticFeedback.notificationOccurred('success'); }catch(e){}
+      showToast(`🎉 ${r.deposit.nft_name} принят! Начислено +${r.deposit.crystals_credited} 💎!`);
+      return;
+    }
+  } catch(e){}
+  setTimeout(()=>pollNftDeposit(nftAddr, step + 1), 5000);
+}
+
 async function bootstrap(){
+  initTonConnect();
   const qs = new URLSearchParams(location.search);
   const pQuery = qs.get('promo');
   const sp = (tg && tg.initDataUnsafe && tg.initDataUnsafe.start_param) || '';
@@ -986,9 +1159,7 @@ async function bootstrap(){
   }
   const dn = document.getElementById('demoNotice');
   dn.style.display = 'block';
-  dn.innerHTML = LANG==='ru'
-    ? '👀 Предпросмотр Mini App. Чтобы играть на реальные Подарки Telegram, открой <a href="https://t.me/StarsLootBoxBot" style="color:#facc15;font-weight:900">@StarsLootBoxBot</a>!'
-    : '👀 Preview mode. Open <a href="https://t.me/StarsLootBoxBot" style="color:#facc15;font-weight:900">@StarsLootBoxBot</a> inside Telegram!';
+  dn.innerHTML = '👀 Предпросмотр Web3 Mini App. Открой <a href="https://t.me/StarsLootBoxBot" style="color:#facc15;font-weight:900">@StarsLootBoxBot</a> внутри Telegram!';
   applyBoxTheme();
   applyLang();
   startIdleLoop();
@@ -996,12 +1167,12 @@ async function bootstrap(){
 
 function getBoxesList(){
   return (CATALOG && CATALOG.boxes && CATALOG.boxes.length >= 6) ? CATALOG.boxes : [
-    {key:'mini_spark',name_ru:'Искра Удачи',name_en:'Lucky Spark',desc_ru:'Быстрый бокс от 60 💎: подарки 15–100 ⭐',desc_en:'Fast 60 💎 box: 15–100 ⭐ gifts',badge_ru:'ОТ 60 💎',badge_en:'FAST 60💎',cost_1:60,cost_3:176,cost_5:291,cost_10:570,hard_pity:90,soft_pity:75,mini_pity:9,featured_gift:'set_party_75',icon_gift:'set_surprise_40',theme:'spark',banner_days:0},
-    {key:'star_box',name_ru:'Звёздная Капсула',name_en:'Star Capsule',desc_ru:'Хит: подарки и комбо 15–150 ⭐',desc_en:'Balanced hit: 15–150 ⭐ gifts & combos',badge_ru:'ХИТ',badge_en:'POPULAR',cost_1:100,cost_3:294,cost_5:485,cost_10:950,hard_pity:85,soft_pity:70,mini_pity:6,featured_gift:'diamond_100',icon_gift:'diamond_100',theme:'star',banner_days:0},
-    {key:'love_box',name_ru:'Романтик Бокс',name_en:'Romance Box',desc_ru:'Розы, Букеты, Шампанское и «Предложение» 150 ⭐',desc_en:'Roses, Bouquets & 150 ⭐ Proposal Set',badge_ru:'КОМБО 💝',badge_en:'ROMANCE',cost_1:150,cost_3:441,cost_5:728,cost_10:1425,hard_pity:82,soft_pity:68,mini_pity:5,featured_gift:'set_proposal_150',icon_gift:'set_proposal_150',theme:'romance',banner_days:0},
-    {key:'cyber_event',name_ru:'Космо-Охота',name_en:'Space Hunt',desc_ru:'Ивент: Ракеты, Форсаж и Алмазный Старт 150 ⭐',desc_en:'14d Event: Rockets & Diamond Launch',badge_ru:'ИВЕНТ',badge_en:'14D EVENT',cost_1:220,cost_3:647,cost_5:1067,cost_10:2090,hard_pity:80,soft_pity:65,mini_pity:5,featured_gift:'diamond_100',icon_gift:'set_hyperdrive_150',theme:'cyber_event',banner_days:14},
-    {key:'whale_vault',name_ru:'Королевский Сейф',name_en:'Royal Vault',desc_ru:'Комбо 100–300 ⭐ и Telegram Premium 3 мес.!',desc_en:'100–300 ⭐ combos & TG Premium 3M!',badge_ru:'ДО 1 000 ⭐',badge_en:'UP TO 1000⭐',cost_1:450,cost_3:1323,cost_5:2182,cost_10:4275,hard_pity:60,soft_pity:45,mini_pity:4,featured_gift:'trophy_100',icon_gift:'trophy_100',theme:'whale_vault',banner_days:0},
-    {key:'imperial_vip',name_ru:'Империя Premium',name_en:'Imperial Mythic',desc_ru:'Только от 25 ⭐, Корона 300 ⭐, Алмазы 500 ⭐ и Premium 1 год!',desc_en:'25–500 ⭐ combos & TG Premium up to 1 Year!',badge_ru:'ДО 2 500 ⭐',badge_en:'UP TO 2500⭐',cost_1:900,cost_3:2646,cost_5:4365,cost_10:8550,hard_pity:50,soft_pity:38,mini_pity:3,featured_gift:'set_crown_300',icon_gift:'tg_premium_12m',theme:'imperial',banner_days:0}
+    {key:'mini_spark',name_ru:'Искра TON',name_en:'TON Spark',desc_ru:'Быстрый кейс 60 💎: TON-капсулы и шанс на Lol Pop NFT!',desc_en:'Fast 60 💎 case: TON capsules & Lol Pop NFT!',badge_ru:'ОТ 60 💎',badge_en:'FAST 60💎',cost_1:60,cost_3:176,cost_5:291,cost_10:570,hard_pity:90,soft_pity:75,mini_pity:9,featured_gift:'ton_75',icon_gift:'nft_lolpop',theme:'spark',banner_days:0},
+    {key:'star_box',name_ru:'Неон NFT Кейс',name_en:'Neon NFT Case',desc_ru:'Хит: слитки TON и Lol Pop, Jester Hat, Cookie Heart NFT!',desc_en:'Hit case: TON ingots & Collectible NFTs!',badge_ru:'ХИТ NFT',badge_en:'POPULAR',cost_1:100,cost_3:294,cost_5:485,cost_10:950,hard_pity:85,soft_pity:70,mini_pity:6,featured_gift:'nft_lolpop',icon_gift:'nft_jesterhat',theme:'star',banner_days:0},
+    {key:'love_box',name_ru:'Вечная Роза NFT',name_en:'Eternal Rose NFT',desc_ru:'Cookie Heart, Witch Hat и Eternal Rose NFT!',desc_en:'Cookie Heart, Witch Hat & Eternal Rose NFT!',badge_ru:'NFT ЛЮБОВЬ',badge_en:'ROMANCE',cost_1:150,cost_3:441,cost_5:728,cost_10:1425,hard_pity:82,soft_pity:68,mini_pity:5,featured_gift:'nft_cookieheart',icon_gift:'nft_eternalrose',theme:'romance',banner_days:0},
+    {key:'cyber_event',name_ru:'Охота за NFT',name_en:'NFT Hunter',desc_ru:'Ивент: Jelly Bunny, Lunar Snake и B-Day Candle NFT!',desc_en:'Event: Jelly Bunny & Lunar Snake NFTs!',badge_ru:'ИВЕНТ',badge_en:'EVENT',cost_1:220,cost_3:647,cost_5:1067,cost_10:2090,hard_pity:80,soft_pity:65,mini_pity:5,featured_gift:'nft_bdaycandle',icon_gift:'nft_jellybunny',theme:'cyber_event',banner_days:14},
+    {key:'whale_vault',name_ru:'Сейф Коллекционера',name_en:'Collector Vault',desc_ru:'Eternal Rose, Crystal Ball и Diamond Ring NFT!',desc_en:'Eternal Rose, Crystal Ball & Diamond Ring NFT!',badge_ru:'ДО 10 TON',badge_en:'UP TO 10 TON',cost_1:450,cost_3:1323,cost_5:2182,cost_10:4275,hard_pity:60,soft_pity:45,mini_pity:4,featured_gift:'nft_partysparkler',icon_gift:'nft_diamondring',theme:'whale_vault',banner_days:0},
+    {key:'imperial_vip',name_ru:"Империя Durov's Cap",name_en:"Durov's Cap Empire",desc_ru:"Trapped Heart, Vintage Cigar, Swiss Watch и Durov's Cap NFT!",desc_en:"Swiss Watch & Durov's Cap NFT!",badge_ru:'ДО 25 TON',badge_en:'UP TO 25 TON',cost_1:900,cost_3:2646,cost_5:4365,cost_10:8550,hard_pity:50,soft_pity:38,mini_pity:3,featured_gift:'nft_eternalrose',icon_gift:'nft_durovscap',theme:'imperial',banner_days:0}
   ];
 }
 
@@ -1032,7 +1203,7 @@ function startIdleLoop(){
     return `<div class="tile ${g.rarity}" onclick="previewGift('${g.key}')">
       <div class="tile-vis">${visualHTML(g.key,'gift',g.rarity,54)}</div>
       <div class="tile-nm">${nm}</div>
-      <div class="tile-st">⭐ ${g.stars}</div>
+      <div class="tile-st">${fmtTon(g.stars)}</div>
     </div>`;
   }).join('');
 
@@ -1062,25 +1233,23 @@ function selectBox(boxKey){
 
 function renderShowcase(){
   const gMap = getGiftsMap();
+  const stock = (STATE && STATE.vault_stock) || {};
   let list = [];
   if (GIFT_FILTER === 'box') list = getBoxShowcaseList(CUR_BOX);
   else {
     list = Object.values(gMap).sort((a,b)=>(b.stars-a.stars)||(a.key<b.key?-1:1));
-    if (GIFT_FILTER === 'combo') list = list.filter(g => (g.bundle_keys && g.bundle_keys.length > 0));
-    else if (GIFT_FILTER === 'vip') list = list.filter(g => g.stars >= 100);
+    if (GIFT_FILTER === 'nft') list = list.filter(g => g.is_nft);
+    else if (GIFT_FILTER === 'vip') list = list.filter(g => g.stars >= 300);
   }
-  document.getElementById('showcaseHdr').textContent = LANG==='ru'
-    ? `🎁 Витрина подарков (${list.length})`
-    : `🎁 Official Gift Showcase (${list.length})`;
+  document.getElementById('showcaseHdr').textContent = `🎨 Витрина NFT & TON (${list.length})`;
   document.getElementById('lootGrid').innerHTML = list.map(g => {
-    const isCombo = g.bundle_keys && g.bundle_keys.length > 0;
-    const isPrem = g.premium_months && g.premium_months > 0;
-    const tag = isPrem ? 'PREMIUM' : (isCombo ? (LANG==='ru'?'КОМБО':'SET') : '');
+    const inStock = g.nft_slug && stock[g.nft_slug] > 0;
     return `<div class="loot-card ${g.rarity}" onclick="previewGift('${g.key}')">
-      ${tag?`<span class="loot-tag">${tag}</span>`:''}
-      <img src="./gifts/${g.key}.webp" alt="" loading="lazy">
+      ${inStock ? `<span class="loot-tag stock">🟢 ×${stock[g.nft_slug]}</span>` : ''}
+      ${g.is_nft ? `<span class="loot-tag">NFT</span>` : ''}
+      <img src="${giftImgSrc(g.key)}" alt="" loading="lazy">
       <div class="loot-nm">${LANG==='ru'?g.name_ru:g.name_en}</div>
-      <div class="loot-st">⭐ ${g.stars}</div>
+      <div class="loot-st">${fmtTon(g.stars)}</div>
     </div>`;
   }).join('');
 }
@@ -1089,42 +1258,57 @@ function renderInventory(){
   if (!STATE || !STATE.inventory) return;
   const inv = STATE.inventory;
   const stored = inv.filter(x=>x.status==='stored');
+  const stock = STATE.vault_stock || {};
   const badge = document.getElementById('invBadge');
   badge.style.display = inv.length ? 'block' : 'none';
   badge.textContent = inv.length;
   const s15Btn = document.getElementById('sell15Btn');
   if (s15Btn) s15Btn.style.display = stored.some(x=>x.stars===15) ? 'inline-block' : 'none';
 
+  const curW = getUserWallet();
+  const wBox = document.getElementById('invWalletNotice');
+  if (wBox) {
+    wBox.innerHTML = curW
+      ? `<span style="font-size:11.5px">🟢 Кошелёк для вывода: <b>${shortAddr(curW)}</b></span><button class="info-btn" onclick="openWalletModal()">Изменить</button>`
+      : `<span style="font-size:11.5px;color:#bae6fd">💠 Подключи TON-кошелёк для вывода NFT и TON</span><button class="info-btn" style="border-color:var(--ton);color:#fff" onclick="openWalletModal()">Подключить</button>`;
+  }
+
   let filtered = inv;
-  if (INV_FILTER === 'low') filtered = inv.filter(x=>x.stars <= 40);
-  else if (INV_FILTER === 'high') filtered = inv.filter(x=>x.stars >= 50);
+  if (INV_FILTER === 'nft') filtered = inv.filter(x=>x.is_nft);
+  else if (INV_FILTER === 'ton') filtered = inv.filter(x=>!x.is_nft);
 
   document.getElementById('invGrid').innerHTML = filtered.length ? filtered.map(it => {
     const nm = LANG==='ru' ? it.name_ru : it.name_en;
     const pend = it.status === 'pending_approval' || it.status === 'pending_delivery';
+    const hasStock = it.nft_slug && stock[it.nft_slug] > 0;
     const pendTxt = it.status === 'pending_delivery'
-      ? (LANG==='ru' ? '⏳ В очереди быстрой отправки · скоро в профиле' : '⏳ Queued for express delivery')
-      : (LANG==='ru' ? '🎉 Крупный выигрыш на проверке · скоро в профиле' : '🎉 Big win in fast verification');
+      ? '⏳ В очереди ончейн-отправки · скоро на кошельке'
+      : '🎨 Заявка на вывод оформлена · скоро поступит на твой TON-кошелёк';
     return `<div class="inv-card ${it.rarity}">
-      <img src="./gifts/${it.gift_key}.webp" alt="" onclick="previewGift('${it.gift_key}')">
+      ${it.is_nft ? `<span class="loot-tag">${hasStock ? '🟢 AUTO NFT' : 'TEP-62 NFT'}</span>` : ''}
+      <img src="${giftImgSrc(it.gift_key)}" alt="" onclick="previewGift('${it.gift_key}')">
       <div style="font-size:12px;font-weight:800;margin-top:4px">${nm}</div>
-      <div style="font-size:12px;color:var(--gold);font-weight:900">${it.stars} ⭐</div>
+      <div style="font-size:12px;color:var(--gold);font-weight:900">${fmtTon(it.stars)}</div>
       ${pend
-        ? `<div style="margin-top:8px;padding:7px 8px;border-radius:10px;background:rgba(56,189,248,.12);border:1px solid rgba(56,189,248,.35);font-size:10.5px;color:#bae6fd;line-height:1.35">${pendTxt}</div>`
-        : `<button class="sm-btn" style="background:linear-gradient(135deg,#10b981,#059669)" onclick="claimGift(${it.id})">🎁 ${LANG==='ru'?'В профиль':'Claim'}</button>
-           ${it.stars <= 300 ? `<button class="sm-btn" onclick="jumpToWheel(${it.id})">🎡 ${LANG==='ru'?'В Колесо':'Upgrade'}</button>` : ''}
-           <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px">
-             <button class="sm-btn sec" onclick="salvageIds([${it.id}],false,false)">♻️ +${it.salvage_crystals}💎</button>
-             <button class="sm-btn risk" onclick="salvageIds([${it.id}],false,true)">🔥 2x</button>
-           </div>`
+        ? `<div style="margin-top:8px;padding:7px 8px;border-radius:10px;background:rgba(0,152,234,.14);border:1px solid rgba(0,152,234,.4);font-size:10.5px;color:#bae6fd;line-height:1.35">${pendTxt}</div>`
+        : `${it.is_nft
+            ? `<button class="sm-btn nft" onclick="claimGift(${it.id},false,'nft')">🎨 Вывести NFT</button>
+               <button class="sm-btn" onclick="claimGift(${it.id},false,'ton')">💎 Забрать ${fmtTon(it.stars)}</button>`
+            : `<button class="sm-btn" style="background:linear-gradient(135deg,#10b981,#059669)" onclick="claimGift(${it.id},false,'ton')">💎 Вывести ${fmtTon(it.stars)}</button>`
+          }
+          ${it.stars <= 300 ? `<button class="sm-btn sec" onclick="jumpToWheel(${it.id})">🎡 Апгрейд в NFT</button>` : ''}
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px">
+            <button class="sm-btn sec" onclick="salvageIds([${it.id}],false,false)">♻️ +${it.salvage_crystals}💎</button>
+            <button class="sm-btn risk" onclick="salvageIds([${it.id}],false,true)">🔥 2x</button>
+          </div>`
       }
     </div>`;
   }).join('') : `<div class="mini-box" style="grid-column:1/-1;text-align:center;padding:22px 14px">
-    <div style="font-size:36px;margin-bottom:6px">🎁</div>
-    <div style="font-size:13.5px;font-weight:800;margin-bottom:4px">${LANG==='ru'?'В этой категории пока пусто':'No gifts here yet'}</div>
-    <div style="font-size:11.5px;color:var(--muted);margin-bottom:12px">${LANG==='ru'?'Открывай боксы или играй в Звёздные Мины 5×5!':'Open boxes or play Star Mines 5×5!'}</div>
+    <div style="font-size:36px;margin-bottom:6px">🎨</div>
+    <div style="font-size:13.5px;font-weight:800;margin-bottom:4px">Инвентарь пока пуст</div>
+    <div style="font-size:11.5px;color:var(--muted);margin-bottom:12px">Выбивай коллекционные Telegram NFT в кейсах или Звёздных Минах 5×5!</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">
-      <button class="btn" onclick="goTab('boxes')">📦 Боксы</button>
+      <button class="btn" onclick="goTab('boxes')">📦 Кейсы NFT</button>
       <button class="btn gold" onclick="goTab('games')">💣 Мины 5×5</button>
     </div>
   </div>`;
@@ -1132,9 +1316,9 @@ function renderInventory(){
   const c15 = stored.filter(x=>x.stars===15).length;
   const c25 = stored.filter(x=>x.stars===25).length;
   const c50 = stored.filter(x=>x.stars===50).length;
-  document.getElementById('c15Sub').textContent = `${LANG==='ru'?'В инвентаре':'Stored'}: ${c15} / 5`;
-  document.getElementById('c25Sub').textContent = `${LANG==='ru'?'В инвентаре':'Stored'}: ${c25} / 5`;
-  document.getElementById('c50Sub').textContent = `${LANG==='ru'?'В инвентаре':'Stored'}: ${c50} / 5`;
+  document.getElementById('c15Sub').textContent = `В инвентаре: ${c15} / 5`;
+  document.getElementById('c25Sub').textContent = `В инвентаре: ${c25} / 5`;
+  document.getElementById('c50Sub').textContent = `В инвентаре: ${c50} / 5`;
   document.getElementById('c15Btn').disabled = c15 < 5;
   document.getElementById('c25Btn').disabled = c25 < 5;
   document.getElementById('c50Btn').disabled = c50 < 5;
@@ -1153,7 +1337,6 @@ function renderMinesGame(){
   const mCnt = active ? active.mines_count : MINES_CNT;
   const safeNow = active ? active.safe_picks : 0;
 
-  // Multiplier step ladder
   const steps = [1,2,3,4,5,6,8,10].filter(k => k <= 25 - mCnt);
   document.getElementById('minesLadder').innerHTML = steps.map(k => {
     const m = calcMinesMultJS(mCnt, k);
@@ -1161,33 +1344,27 @@ function renderMinesGame(){
     return `<div class="mlad-pill ${cls}"><div>${k}💎</div><div>x${m.toFixed(2)}</div></div>`;
   }).join('');
 
-  // 5x5 Board
   const revSet = new Set(showState ? (showState.revealed || []) : []);
   const bombSet = new Set((showState && showState.bombs) ? showState.bombs : []);
   const hitCell = showState && showState.hit_bomb ? showState.hit_cell : -1;
   const cells = [];
   for (let i=0; i<25; i++) {
-    if (revSet.has(i)) {
-      cells.push(`<div class="mcell gem">💎</div>`);
-    } else if (i === hitCell) {
-      cells.push(`<div class="mcell boom">💥</div>`);
-    } else if (bombSet.has(i)) {
-      cells.push(`<div class="mcell reveal-bomb">💣</div>`);
-    } else if (active) {
-      cells.push(`<div class="mcell armed" onclick="pickMineCell(${i})"><span style="font-size:13px;color:rgba(148,163,184,.45)">✦</span></div>`);
-    } else {
-      cells.push(`<div class="mcell dim"><span style="font-size:12px;color:rgba(148,163,184,.28)">•</span></div>`);
-    }
+    if (revSet.has(i)) cells.push(`<div class="mcell gem">💎</div>`);
+    else if (i === hitCell) cells.push(`<div class="mcell boom">💥</div>`);
+    else if (bombSet.has(i)) cells.push(`<div class="mcell reveal-bomb">💣</div>`);
+    else if (active) cells.push(`<div class="mcell armed" onclick="pickMineCell(${i})"><span style="font-size:13px;color:rgba(148,163,184,.45)">✦</span></div>`);
+    else cells.push(`<div class="mcell dim"><span style="font-size:12px;color:rgba(148,163,184,.28)">•</span></div>`);
   }
   document.getElementById('minesGrid').innerHTML = cells.join('');
 
   const ctrl = document.getElementById('minesControls');
   if (active) {
     const go = active.gift_option;
-    const giftBtn = go ? `<button class="btn green" style="width:100%;margin-top:7px;display:flex;align-items:center;justify-content:center;gap:7px" onclick="cashoutMines(true)">
-      <img src="./gifts/${go.sample_key}.webp" width="22" height="22" style="border-radius:5px">
-      <span>🎁 ${LANG==='ru'?'Забрать Подарком':'Claim as Gift'} (${go.stars} ⭐)${go.leftover_crystals>0?` + ${go.leftover_crystals} 💎`:''}</span>
-    </button>` : `<div style="font-size:10.5px;color:var(--muted);text-align:center;margin-top:6px">🎁 ${LANG==='ru'?'До вывода подарком 15⭐ нужно 165 💎':'Reach 165 💎 to claim directly as a 15⭐+ Gift!'}</div>`;
+    const isNftReward = go && go.stars >= 100;
+    const giftBtn = go ? `<button class="btn ${isNftReward?'':'green'}" style="${isNftReward?'background:linear-gradient(135deg,#a855f7,#ec4899);':''}width:100%;margin-top:7px;display:flex;align-items:center;justify-content:center;gap:7px" onclick="cashoutMines(true)">
+      <img src="${giftImgSrc(go.sample_key)}" width="22" height="22" style="border-radius:5px">
+      <span>${isNftReward?'🎨 Забрать NFT':'💠 Забрать в TON'} (${fmtTon(go.stars)})${go.leftover_crystals>0?` + ${go.leftover_crystals} 💎`:''}</span>
+    </button>` : `<div style="font-size:10.5px;color:var(--muted);text-align:center;margin-top:6px">🎨 От 1 100 💎 открывается прямой вывод выигрыша настоящим NFT!</div>`;
 
     ctrl.innerHTML = `
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
@@ -1195,38 +1372,33 @@ function renderMinesGame(){
         <span style="color:var(--gold);font-weight:900">След: x${active.next_mult} (${active.next_win} 💎)</span>
       </div>
       <button class="btn gold" style="width:100%" ${active.safe_picks<1?'disabled':''} onclick="cashoutMines(false)">
-        ${active.safe_picks<1
-          ? (LANG==='ru'?'👆 Открой хотя бы 1 клетку на поле':'👆 Tap any tile on the 5×5 grid')
-          : `💰 ${LANG==='ru'?'Забрать':'Cashout'} ${active.current_win} 💎 (x${active.current_mult})`}
+        ${active.safe_picks<1 ? '👆 Открой хотя бы 1 клетку на поле' : `💰 Забрать ${active.current_win} 💎 (x${active.current_mult})`}
       </button>
       ${giftBtn}`;
   } else {
     const bets = (CATALOG && CATALOG.mines && CATALOG.mines.bets) || [60,120,250,500,1000];
     const cnts = (CATALOG && CATALOG.mines && CATALOG.mines.counts) || [3,5,8,12];
     ctrl.innerHTML = `
-      <div style="font-size:11px;font-weight:800;color:var(--muted)">💎 ${LANG==='ru'?'Ставка в кристаллах':'Bet amount'}:</div>
+      <div style="font-size:11px;font-weight:800;color:var(--muted)">💎 Ставка в кристаллах:</div>
       <div class="chip-row">${bets.map(b=>`<div class="chip ${b===MINES_BET?'active':''}" onclick="MINES_BET=${b};MINES_LAST_REVEAL=null;renderMinesGame()">${b} 💎</div>`).join('')}</div>
-      <div style="font-size:11px;font-weight:800;color:var(--muted)">💣 ${LANG==='ru'?'Количество бомб на поле 5×5':'Mines on 5×5 board'}:</div>
+      <div style="font-size:11px;font-weight:800;color:var(--muted)">💣 Количество бомб на поле 5×5:</div>
       <div class="chip-row">${cnts.map(c=>`<div class="chip ${c===MINES_CNT?'active':''}" onclick="MINES_CNT=${c};MINES_LAST_REVEAL=null;renderMinesGame()">${c} 💣</div>`).join('')}</div>
-      <button class="btn gold" style="width:100%;margin-top:4px" onclick="startMinesGame()">💣 ${LANG==='ru'?'Начать игру':'Start Mines'} (${MINES_BET} 💎)</button>`;
+      <button class="btn gold" style="width:100%;margin-top:4px" onclick="startMinesGame()">💣 Начать игру (${MINES_BET} 💎)</button>`;
   }
 }
 
 async function startMinesGame(){
   if (MINES_BUSY) return;
-  if (!tg || !tg.initData) { showToast(LANG==='ru'?'Открой @StarsLootBoxBot в Telegram':'Open @StarsLootBoxBot in Telegram'); return; }
-  MINES_BUSY = true;
-  MINES_LAST_REVEAL = null;
+  if (!tg || !tg.initData) { showToast('Открой @StarsLootBoxBot в Telegram'); return; }
+  MINES_BUSY = true; MINES_LAST_REVEAL = null;
   try {
     const res = await apiCall('/api/mines/start', 'POST', {bet_crystals: MINES_BET, mines_count: MINES_CNT});
     STATE = res;
     try{ tg.HapticFeedback&&tg.HapticFeedback.impactOccurred('light'); }catch(e){}
     renderAll();
   } catch (err) {
-    if (err.code === 'insufficient_crystals') {
-      showToast(LANG==='ru'?'Недостаточно 💎! Пополни баланс в Магазине':'Not enough 💎!');
-      goTab('shop');
-    } else showToast(err.message || 'Error');
+    if (err.code === 'insufficient_crystals') { showToast('Недостаточно 💎! Пополни баланс'); goTab('shop'); }
+    else showToast(err.message || 'Error');
   } finally { MINES_BUSY = false; }
 }
 
@@ -1239,7 +1411,7 @@ async function pickMineCell(idx){
     if (res.mines.hit_bomb) {
       MINES_LAST_REVEAL = res.mines;
       try{ tg.HapticFeedback&&tg.HapticFeedback.notificationOccurred('error'); }catch(e){}
-      showToast(LANG==='ru'?`💥 Бум! Утешительный бонус +${res.mines.consolation_shards||0} ✨`:`💥 Boom! +${res.mines.consolation_shards||0} ✨`);
+      showToast(`💥 Бум! Утешительный бонус +${res.mines.consolation_shards||0} ✨`);
     } else if (res.mines.auto_cashed) {
       MINES_LAST_REVEAL = res.mines;
       try{ tg.HapticFeedback&&tg.HapticFeedback.notificationOccurred('success'); }catch(e){}
@@ -1257,8 +1429,7 @@ async function cashoutMines(asGift){
   MINES_BUSY = true;
   try {
     const res = await apiCall('/api/mines/cashout', 'POST', {as_gift: !!asGift});
-    STATE = res;
-    MINES_LAST_REVEAL = res.mines;
+    STATE = res; MINES_LAST_REVEAL = res.mines;
     try{ tg.HapticFeedback&&tg.HapticFeedback.notificationOccurred('success'); }catch(e){}
     renderAll();
     if (res.mines.gift_won) {
@@ -1266,12 +1437,12 @@ async function cashoutMines(asGift){
       const m = document.getElementById('modalBody');
       m.classList.remove('multi10');
       m.innerHTML = `<div class="win-stage" id="minesWinStage"></div>
-        <h3 style="margin:6px 0">💣 Выигрыш в Минах!</h3>
-        <div style="font-size:15px;font-weight:900;color:var(--gold)">${gw.emoji} ${LANG==='ru'?gw.name_ru:gw.name_en} (${gw.stars} ⭐)</div>
+        <h3 style="margin:6px 0">💣 Забрано в Минах!</h3>
+        <div style="font-size:15px;font-weight:900;color:var(--gold)">${gw.emoji} ${gw.name_ru} (${fmtTon(gw.stars)})</div>
         ${res.mines.crystals_won > 0 ? `<div style="font-size:12.5px;color:var(--accent);margin-top:4px">+ сдача ${res.mines.crystals_won} 💎 на баланс</div>` : ''}
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:12px">
-          <button class="btn green" onclick="claimGift(${gw.inv_id},true)">🎁 В профиль</button>
-          <button class="btn sec" onclick="closeModal(true)">Супер!</button>
+          <button class="btn green" onclick="claimGift(${gw.inv_id},true,'auto')">🎨 Вывести на TON</button>
+          <button class="btn sec" onclick="closeModal(true)">В инвентарь</button>
         </div>`;
       document.getElementById('overlay').classList.add('open');
       MODAL_LOTTIE = mountLottie(document.getElementById('minesWinStage'), gw.gift_key);
@@ -1297,23 +1468,23 @@ function renderUpgradeWheel(){
   const inStrip = document.getElementById('wheelInStrip');
   inStrip.innerHTML = stored.length ? stored.map(it => `
     <div class="up-item ${it.id===WHEEL_IN_ID?'sel':''}" onclick="if(!WHEEL_SPINNING){WHEEL_IN_ID=${it.id};renderUpgradeWheel()}">
-      <img src="./gifts/${it.gift_key}.webp" alt="">
-      <div style="font-size:9.5px;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${LANG==='ru'?it.name_ru:it.name_en}</div>
-      <div style="font-size:10px;color:var(--gold);font-weight:900">${it.stars}⭐</div>
-    </div>`).join('') : `<div style="font-size:11.5px;color:var(--muted);padding:8px 2px">${LANG==='ru'?'В инвентаре пока нет подарков ≤300⭐ — выбей первый в боксах или Минах!':'No gifts ≤300⭐ in inventory yet!'}</div>`;
+      <img src="${giftImgSrc(it.gift_key)}" alt="">
+      <div style="font-size:9.5px;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${it.name_ru}</div>
+      <div style="font-size:10px;color:var(--gold);font-weight:900">${fmtTon(it.stars)}</div>
+    </div>`).join('') : `<div style="font-size:11.5px;color:var(--muted);padding:8px 2px">В инвентаре пока нет предметов ≤ 3 TON — открой любой кейс!</div>`;
 
   const allTargets = [25,40,50,75,100,150,200,300,500];
   const inStars = selItem ? selItem.stars : 15;
   const validTargets = allTargets.filter(t => t > inStars && (inStars * 0.74) / t >= 0.04);
-  if (!validTargets.includes(WHEEL_TARGET_STARS)) WHEEL_TARGET_STARS = validTargets[0] || 50;
+  if (!validTargets.includes(WHEEL_TARGET_STARS)) WHEEL_TARGET_STARS = validTargets.find(t=>t>=100) || validTargets[0] || 100;
 
-  const sampleForTier = {25:'rose_25',40:'set_date_40',50:'rocket_50',75:'set_party_75',100:'diamond_100',150:'set_proposal_150',200:'set_royal_rings_200',300:'set_crown_300',500:'set_treasury_500'};
+  const sampleForTier = {25:'ton_25',40:'ton_40',50:'ton_50',75:'ton_75',100:'nft_lolpop',150:'nft_cookieheart',200:'nft_witchhat',300:'nft_eternalrose',500:'nft_trappedheart'};
   document.getElementById('wheelTargetStrip').innerHTML = validTargets.map(t => {
     const pct = Math.min(80, Math.round((inStars * 74 / t) * 10) / 10);
-    const gk = sampleForTier[t] || 'diamond_100';
+    const gk = sampleForTier[t] || 'nft_lolpop';
     return `<div class="up-item ${t===WHEEL_TARGET_STARS?'sel':''}" onclick="if(!WHEEL_SPINNING){WHEEL_TARGET_STARS=${t};renderUpgradeWheel()}">
-      <img src="./gifts/${gk}.webp" alt="">
-      <div style="font-size:10px;color:var(--gold);font-weight:900">${t} ⭐</div>
+      <img src="${giftImgSrc(gk)}" alt="">
+      <div style="font-size:9.5px;color:var(--gold);font-weight:900">${t>=100?'NFT ':''}${fmtTon(t)}</div>
       <div style="font-size:9.5px;color:var(--green);font-weight:800">${pct}%</div>
     </div>`;
   }).join('');
@@ -1323,21 +1494,20 @@ function renderUpgradeWheel(){
   const rotor = document.getElementById('wheelRotor');
   if (rotor && !WHEEL_SPINNING) {
     rotor.style.transition = 'none';
-    WHEEL_DEG = 0;
     rotor.style.transform = 'rotate(0deg)';
     rotor.style.background = `conic-gradient(#10b981 0deg ${winDeg.toFixed(1)}deg, rgba(30,41,59,.92) ${winDeg.toFixed(1)}deg 360deg)`;
   }
-  const tKey = sampleForTier[WHEEL_TARGET_STARS] || 'diamond_100';
+  const tKey = sampleForTier[WHEEL_TARGET_STARS] || 'nft_lolpop';
   document.getElementById('wheelCenter').innerHTML = `
-    <img src="./gifts/${tKey}.webp" alt="">
+    <img src="${giftImgSrc(tKey)}" alt="">
     <div style="font-size:13px;font-weight:900;color:#fff;margin-top:2px">${pct}%</div>
-    <div style="font-size:9.5px;color:var(--gold);font-weight:800">→ ${WHEEL_TARGET_STARS} ⭐</div>`;
+    <div style="font-size:9.5px;color:var(--gold);font-weight:800">→ ${fmtTon(WHEEL_TARGET_STARS)}</div>`;
 
   const btn = document.getElementById('wheelSpinBtn');
   btn.disabled = !selItem || WHEEL_SPINNING;
   btn.textContent = selItem
-    ? `🎡 ${LANG==='ru'?'Крутить':'Spin'}: ${selItem.stars}⭐ → ${WHEEL_TARGET_STARS}⭐ (${pct}%)`
-    : (LANG==='ru'?'Сначала выбери подарок в инвентаре':'Pick a gift from inventory first');
+    ? `🎡 Крутить: ${fmtTon(selItem.stars)} → ${WHEEL_TARGET_STARS>=100?'NFT ':''}${fmtTon(WHEEL_TARGET_STARS)} (${pct}%)`
+    : 'Сначала выбери предмет в инвентаре';
 }
 
 async function spinUpgradeWheel(){
@@ -1353,13 +1523,10 @@ async function spinUpgradeWheel(){
     rotor.style.background = `conic-gradient(#10b981 0deg ${winDeg.toFixed(1)}deg, rgba(30,41,59,.92) ${winDeg.toFixed(1)}deg 360deg)`;
 
     let landAngle;
-    if (res.upgrade.won) {
-      landAngle = winDeg * (0.18 + Math.random() * 0.64);
-    } else if (Math.random() < 0.55) {
-      landAngle = Math.random() < 0.5 ? Math.min(354, winDeg + 5 + Math.random() * 9) : (355 - Math.random() * 8);
-    } else {
-      landAngle = winDeg + 18 + Math.random() * Math.max(10, 325 - winDeg);
-    }
+    if (res.upgrade.won) landAngle = winDeg * (0.18 + Math.random() * 0.64);
+    else if (Math.random() < 0.55) landAngle = Math.random() < 0.5 ? Math.min(354, winDeg + 5 + Math.random() * 9) : (355 - Math.random() * 8);
+    else landAngle = winDeg + 18 + Math.random() * Math.max(10, 325 - winDeg);
+
     const targetRot = 1800 + ((360 - landAngle) % 360);
     const dur = FAST_MODE ? 1250 : 3050;
     rotor.style.transition = 'none';
@@ -1374,7 +1541,7 @@ async function spinUpgradeWheel(){
     renderAll();
     if (res.upgrade.won) {
       try{ tg.HapticFeedback&&tg.HapticFeedback.notificationOccurred('success'); }catch(e){}
-      showToast(`🎉 АПГРЕЙД СРАБОТАЛ! Выпал ${res.upgrade.emoji} ${res.upgrade.name_ru} (${res.upgrade.stars}⭐)!`);
+      showToast(`🎉 АПГРЕЙД СРАБОТАЛ! Выпал ${res.upgrade.emoji} ${res.upgrade.name_ru} (${fmtTon(res.upgrade.stars)})!`);
     } else {
       try{ tg.HapticFeedback&&tg.HapticFeedback.notificationOccurred('warning'); }catch(e){}
       showToast(`💥 Почти! Утешительный бонус +${res.upgrade.shards_gained||25} ✨`);
@@ -1395,28 +1562,28 @@ function renderGamesHub(){
 function renderAll(){
   const gMap = getGiftsMap();
   const u = STATE && STATE.user ? STATE.user : null;
+  const curW = getUserWallet();
+  const tonBtn = document.getElementById('tonHdrBtn');
+  if (tonBtn) {
+    tonBtn.classList.toggle('ok', !!curW);
+    tonBtn.textContent = curW ? `🟢 ${shortAddr(curW)}` : '💠 TON';
+  }
+
   if (u) {
     document.getElementById('balCry').textContent = u.crystals;
     document.getElementById('balSh').textContent = u.shards;
     document.getElementById('refCnt').textContent = u.referrals_count || 0;
-    const unlAll = new Set((u.unlocked_gifts || []).filter(k => gMap[k]));
-    document.getElementById('hdrAlb').textContent = `${unlAll.size}/30`;
+    const unlAll = new Set((u.unlocked_gifts || []));
 
     const pCard = document.getElementById('partnerCard');
     if (u.is_partner || (u.partner_stars_total || 0) > 0) {
       pCard.style.display = 'block';
       const pBal = Number(u.partner_stars_balance || 0);
-      const pTot = Number(u.partner_stars_total || 0);
-      const pPend = Number(u.partner_pending_payout_stars || 0);
-      document.getElementById('partnerPctBadge').textContent = `${u.partner_pct || 0}% RevShare ⭐`;
+      document.getElementById('partnerPctBadge').textContent = `${u.partner_pct || 0}% RevShare`;
       document.getElementById('pBal').textContent = `${pBal.toFixed(2)} ⭐`;
-      document.getElementById('pTot').textContent = `${pTot.toFixed(2)} ⭐`;
-      document.getElementById('pPend').textContent = `${pPend} ⭐`;
-      const pBtn = document.getElementById('pPayBtn');
-      pBtn.disabled = pBal < 50;
-      pBtn.textContent = pBal >= 50
-        ? `💫 Вывести ${Math.floor(pBal)} ⭐`
-        : `💫 От 50 ⭐ (ещё ${(50-pBal).toFixed(1)} ⭐)`;
+      document.getElementById('pTot').textContent = `${Number(u.partner_stars_total||0).toFixed(2)} ⭐`;
+      document.getElementById('pPend').textContent = `${Number(u.partner_pending_payout_stars||0)} ⭐`;
+      document.getElementById('pPayBtn').disabled = pBal < 50;
     } else pCard.style.display = 'none';
 
     const ch = STATE && STATE.channel ? STATE.channel : null;
@@ -1425,7 +1592,6 @@ function renderAll(){
     if (ch && ch.tma_enabled && ch.url) {
       if (colChBtn) { colChBtn.style.display = 'block'; colChBtn.textContent = `📢 ${ch.title || 'GiftBox Live'}`; }
       chCard.style.display = u.channel_sub_claimed ? 'none' : 'block';
-      if (!u.channel_sub_claimed) document.getElementById('chanQuestTitle').textContent = ch.title || 'GiftBox Live';
     } else {
       chCard.style.display = 'none';
       if (colChBtn) colChBtn.style.display = 'none';
@@ -1435,13 +1601,9 @@ function renderAll(){
     const gwCard = document.getElementById('gwCard');
     if (gw) {
       gwCard.style.display = 'block';
-      document.getElementById('gwTitle').textContent = `🎉 Розыгрыш ${gw.prize_count}×25⭐ (${gw.prize_count*25} ⭐)`;
+      document.getElementById('gwTitle').textContent = `🎉 Розыгрыш ${gw.prize_count} призов`;
       document.getElementById('gwSub').textContent = `Участников: ${gw.participants} · +1 билет за друга`;
-      document.getElementById('gwBtn').textContent = gw.joined
-        ? `✅ Ты в игре (билетов: ${gw.my_tickets})`
-        : '🎉 Участвовать в 1 клик';
-      const remS = Math.max(0, gw.ends_at - Math.floor(Date.now()/1000));
-      document.getElementById('gwTimeLeft').textContent = `${Math.floor(remS/3600)}ч ${Math.floor((remS%3600)/60)}м`;
+      document.getElementById('gwBtn').textContent = gw.joined ? `✅ Ты в игре (билетов: ${gw.my_tickets})` : '🎉 Участвовать в 1 клик';
     } else gwCard.style.display = 'none';
 
     document.getElementById('welcomeBanner').style.display = u.welcome_spun ? 'none' : 'flex';
@@ -1452,21 +1614,18 @@ function renderAll(){
     if (cd > 0 && !u.pass_claimable) {
       db.disabled = true; db.textContent = `⏳ ${Math.floor(cd/3600)}ч ${Math.floor((cd%3600)/60)}м`;
     } else {
-      db.disabled = false; db.textContent = I18N[LANG].claim_btn;
+      db.disabled = false; db.textContent = 'Забрать';
     }
     document.getElementById('shardsSub').textContent = `${u.shards} / 300 ✨ → 100 💎`;
     document.getElementById('shardsBtn').disabled = u.shards < 300;
     const bBadge = document.getElementById('bonusBadge');
-    if (bBadge) {
-      const hasBonus = (cd === 0 || u.pass_claimable || (u.streak_cooldown_sec === 0 && u.missed_streak === 0));
-      bBadge.style.display = hasBonus ? 'block' : 'none';
-    }
+    if (bBadge) bBadge.style.display = (cd === 0 || u.pass_claimable || (u.streak_cooldown_sec === 0 && u.missed_streak === 0)) ? 'block' : 'none';
 
     const rew = (CATALOG && CATALOG.streak_rewards) || [
       {day:1,crystals:0,shards:15},{day:2,crystals:5,shards:10},{day:3,crystals:0,shards:25},
       {day:4,crystals:8,shards:15},{day:5,crystals:0,shards:35},{day:6,crystals:12,shards:20},{day:7,crystals:35,shards:50}
     ];
-    document.getElementById('streakLabel').textContent = `${LANG==='ru'?'День':'Day'} ${u.streak_day}/7`;
+    document.getElementById('streakLabel').textContent = `День ${u.streak_day}/7`;
     document.getElementById('streakStrip').innerHTML = rew.map(r => {
       const cls = r.day <= u.streak_day ? 'done' : (r.day === u.streak_day + 1 ? 'next' : '');
       const txt = r.crystals ? `+${r.crystals}💎` : `+${r.shards}✨`;
@@ -1484,18 +1643,18 @@ function renderAll(){
       sBtn.textContent = `🎁 Забрать награду дня ${(u.streak_day%7)+1}`;
     }
 
-    // 30-Gift Collector Album
-    const sortedKeys = Object.keys(gMap).sort((a,b)=>(gMap[a].stars-gMap[b].stars)||(a<b?-1:1));
-    document.getElementById('albCnt').textContent = `${unlAll.size} / ${sortedKeys.length}`;
+    const nftKeys = Object.keys(gMap).filter(k => gMap[k].is_nft).sort((a,b)=>gMap[a].stars-gMap[b].stars);
+    const unlNftCnt = nftKeys.filter(k => unlAll.has(k)).length;
+    document.getElementById('albCnt').textContent = `${unlNftCnt} / ${nftKeys.length}`;
     document.getElementById('albSub').textContent = u.album_bonus_active
-      ? '✅ Бонус активен: продажа всех подарков даёт повышенные 85% в 💎!'
-      : `Открой ещё ${Math.max(0,4-unlAll.size)} разных подарка → 85% вместо 80% при продаже навсегда!`;
-    document.getElementById('albumGrid').innerHTML = sortedKeys.map(k => {
+      ? '✅ Бонус активен: продажа даёт 85% в 💎!'
+      : `Открой ещё ${Math.max(0,4-unlAll.size)} предмета → 85% вместо 80% при продаже!`;
+    document.getElementById('albumGrid').innerHTML = nftKeys.map(k => {
       const g = gMap[k];
       return `<div class="loot-card ${g.rarity} ${unlAll.has(k)?'':'locked'}" onclick="previewGift('${k}')">
-        <img src="./gifts/${k}.webp" alt="" loading="lazy">
-        <div class="loot-nm">${LANG==='ru'?g.name_ru:g.name_en}</div>
-        <div class="loot-st">${unlAll.has(k)?'✅':'🔒'} ${g.stars}⭐</div>
+        <img src="${giftImgSrc(k)}" alt="" loading="lazy">
+        <div class="loot-nm">${g.name_ru}</div>
+        <div class="loot-st">${unlAll.has(k)?'✅':'🔒'} ${fmtTon(g.stars)}</div>
       </div>`;
     }).join('');
   }
@@ -1503,10 +1662,10 @@ function renderAll(){
   const boxes = getBoxesList();
   document.getElementById('boxGrid').innerHTML = boxes.map(b => {
     const badge = LANG==='ru' ? b.badge_ru : b.badge_en;
-    const ic = b.icon_gift || b.featured_gift || 'diamond_100';
+    const ic = b.icon_gift || b.featured_gift || 'nft_lolpop';
     return `<div class="btab ${b.key===CUR_BOX?'active':''}" onclick="selectBox('${b.key}')">
       ${badge?`<span class="btab-tag">${badge}</span>`:''}
-      <img src="./gifts/${ic}.webp" alt="">
+      <img src="${giftImgSrc(ic)}" alt="">
       <div class="btab-nm">${LANG==='ru'?b.name_ru:b.name_en}</div>
       <div class="btab-cost">${b.cost_1} 💎</div>
     </div>`;
@@ -1522,14 +1681,14 @@ function renderAll(){
   document.getElementById('spin5Btn').textContent = `🔥 5x (${c5} 💎)`;
   document.getElementById('spin10Btn').textContent = `⚡ 10x (${box.cost_10} 💎)`;
   document.getElementById('fomoBar').style.display = box.banner_days > 0 ? 'inline-flex' : 'none';
-  const heroGiftKey = box.icon_gift || box.featured_gift || 'diamond_100';
+  const heroGiftKey = box.icon_gift || box.featured_gift || 'nft_lolpop';
   if (HERO_KEY !== heroGiftKey) { HERO_KEY = heroGiftKey; HERO_LOTTIE = mountLottie(document.getElementById('heroLottie'), heroGiftKey); }
 
   const pity = u ? u.pity_counter : 0;
   const miniRem = Math.max(1, (box.mini_pity || 5) - (u ? u.mini_pity_counter : 0));
   document.getElementById('pityTxt').textContent = `${pity} / ${box.hard_pity}`;
   document.getElementById('pityFill').style.width = `${Math.min(100, (pity / box.hard_pity)*100)}%`;
-  document.getElementById('miniPityTxt').textContent = LANG==='ru' ? `🎁 Подарок ≤ ${miniRem} спин.` : `🎁 Gift ≤ ${miniRem} spins`;
+  document.getElementById('miniPityTxt').textContent = `💎 Гарант ≤ ${miniRem} спин.`;
   document.getElementById('guarBadge').style.display = (u && u.guaranteed_featured) ? 'block' : 'none';
 
   renderShowcase();
@@ -1537,13 +1696,30 @@ function renderAll(){
   renderGamesHub();
 
   const feed = (STATE && STATE.feed) || [
-    {masked_name:'Alex***',emoji:'👑',item_name_ru:'Корона Империи',item_name_en:'Imperial Crown',stars:300},
-    {masked_name:'Dima***',emoji:'💍',item_name_ru:'Предложение',item_name_en:'Grand Proposal',stars:150}
+    {masked_name:'Alex***',emoji:'🌹',item_name_ru:'Eternal Rose NFT',item_name_en:'Eternal Rose NFT',stars:300},
+    {masked_name:'Dima***',emoji:'🍭',item_name_ru:'Lol Pop NFT',item_name_en:'Lol Pop NFT',stars:100}
   ];
   document.getElementById('ticker').innerHTML = feed.map(f => {
-    const gKey = EMOJI_TO_GIFT[f.emoji] || 'diamond_100';
-    return `<span class="tick-pill"><img src="./gifts/${gKey}.webp" alt=""><span><b>${f.masked_name}</b> · ${LANG==='ru'?f.item_name_ru:f.item_name_en}</span> <span class="tick-st">${f.stars}⭐</span></span>`;
+    const matchKey = Object.keys(gMap).find(k => gMap[k].name_ru === f.item_name_ru) || 'nft_lolpop';
+    return `<span class="tick-pill"><img src="${giftImgSrc(matchKey)}" alt=""><span><b>${f.masked_name}</b> · ${f.item_name_ru}</span> <span class="tick-st">${fmtTon(f.stars)}</span></span>`;
   }).join('');
+
+  const tonPacks = (CATALOG && CATALOG.ton_packs) || [
+    {key:'ton_025',ton:0.25,crystals:265,title_ru:'0.25 TON • 265 💎',tag:'+6%'},
+    {key:'ton_050',ton:0.50,crystals:540,title_ru:'0.50 TON • 540 💎',tag:'+8%'},
+    {key:'ton_100',ton:1.00,crystals:1100,title_ru:'1.00 TON • 1 100 💎',tag:'ХИТ +10%'},
+    {key:'ton_250',ton:2.50,crystals:2800,title_ru:'2.50 TON • 2 800 💎',tag:'+12%'},
+    {key:'ton_500',ton:5.00,crystals:5650,title_ru:'5.00 TON • 5 650 💎',tag:'VIP +13%'}
+  ];
+  document.getElementById('tonPackGrid').innerHTML = tonPacks.map(tp => `
+    <button class="pack ton-p" onclick="buyTonPack('${tp.key}')">
+      <span class="btab-tag" style="background:linear-gradient(135deg,#38bdf8,#2563eb);color:#fff">${tp.tag}</span>
+      <div>
+        <div style="font-size:13px;font-weight:800">${tp.title_ru}</div>
+        <div style="font-size:11px;color:var(--muted);margin:4px 0 8px">0% комиссии · TON Connect 2.0</div>
+      </div>
+      <div style="font-size:14px;font-weight:900;color:#38bdf8">💠 ${tp.ton} TON</div>
+    </button>`).join('');
 
   if (CATALOG && CATALOG.packs) {
     const firstBought = u && u.first_pack_bought;
@@ -1554,8 +1730,8 @@ function renderAll(){
         return `<button class="pack ${p.featured?'featured':''}" onclick="buyPack('${p.key}')">
           ${tag?`<span class="btab-tag">${tag}</span>`:''}
           <div>
-            <div style="font-size:13px;font-weight:800">${LANG==='ru'?p.title_ru:p.title_en}</div>
-            <div style="font-size:11px;color:var(--muted);margin:4px 0 8px">${LANG==='ru'?p.desc_ru:p.desc_en}</div>
+            <div style="font-size:13px;font-weight:800">${p.title_ru}</div>
+            <div style="font-size:11px;color:var(--muted);margin:4px 0 8px">${p.desc_ru}</div>
           </div>
           <div style="font-size:14px;font-weight:900;color:var(--gold)">⭐ ${p.stars} Stars</div>
         </button>`;
@@ -1564,25 +1740,13 @@ function renderAll(){
 
   if (STATE && STATE.cards) {
     const cPct = (u && u.card_shard_bonus_pct) || 0;
-    const cbEl = document.getElementById('cardBonusBadge');
-    if (cbEl) cbEl.textContent = `+${cPct}% к ✨`;
+    document.getElementById('cardBonusBadge').textContent = `+${cPct}% к ✨`;
     document.getElementById('cardsGrid').innerHTML = STATE.cards.map(c => `
       <div class="inv-card ${c.constellation>=6?'legendary':c.rarity}" style="opacity:${c.copies?1:0.55}">
         <img src="./cards/${c.key}.webp" alt="" style="border-radius:12px">
-        <div style="font-size:11.5px;font-weight:800;margin-top:4px">${LANG==='ru'?c.name_ru:c.name_en}</div>
+        <div style="font-size:11.5px;font-weight:800;margin-top:4px">${c.name_ru}</div>
         <div style="font-size:10.5px;color:var(--gold);font-weight:800">★ ${c.constellation} / 6 (+${c.constellation*2}% ✨)</div>
       </div>`).join('');
-  }
-  const lbBox = document.getElementById('lbBox');
-  if (STATE && STATE.leaderboard && lbBox) {
-    const activeLb = STATE.leaderboard.filter(r => r.power > 0);
-    if (activeLb.length >= 5) {
-      lbBox.style.display = 'block';
-      document.getElementById('lbList').innerHTML = STATE.leaderboard.map(r => `
-        <div class="lb-row" style="${r.is_me?'color:var(--gold);font-weight:900':''}">
-          <span>#${r.rank} ${r.name}</span><span>⚡ ${r.power} · 🎰 ${r.spins}</span>
-        </div>`).join('');
-    } else lbBox.style.display = 'none';
   }
 }
 
@@ -1612,7 +1776,7 @@ function setSpinButtonsDisabled(dis){
 
 async function spinBox(count){
   if (SPINNING) return;
-  if (!tg || !tg.initData) { showToast(LANG==='ru'?'Открой @StarsLootBoxBot внутри Telegram':'Open @StarsLootBoxBot inside Telegram'); return; }
+  if (!tg || !tg.initData) { showToast('Открой @StarsLootBoxBot внутри Telegram'); return; }
   SPINNING = true; stopIdleLoop();
   setSpinButtonsDisabled(true);
   try {
@@ -1626,14 +1790,10 @@ async function spinBox(count){
       await runMultiSpinModal(res.results);
     }
   } catch (err) {
-    if (err.code === 'insufficient_crystals') {
-      showToast(LANG==='ru'?'Недостаточно 💎! Пополни кристаллы в Магазине':'Not enough 💎!');
-      goTab('shop');
-    } else showToast(err.message || 'Error');
+    if (err.code === 'insufficient_crystals') { showToast('Недостаточно 💎! Пополни баланс в TON / NFT / Stars'); goTab('shop'); }
+    else showToast(err.message || 'Error');
     SPINNING = false; startIdleLoop();
-  } finally {
-    setSpinButtonsDisabled(false);
-  }
+  } finally { setSpinButtonsDisabled(false); }
 }
 
 function clearMultiSpinTimers(){
@@ -1659,14 +1819,8 @@ function buildFallbackReel(r, idx){
   return {strip, winner_index: winIdx, sub_offset: ((idx % 5) - 2) * 0.08};
 }
 
-function skipMultiSpin(){
-  if (typeof MULTI_FINISH_FN === 'function') MULTI_FINISH_FN();
-}
-
-async function reSpin(count){
-  closeModal(true);
-  await spinBox(count);
-}
+function skipMultiSpin(){ if (typeof MULTI_FINISH_FN === 'function') MULTI_FINISH_FN(); }
+async function reSpin(count){ closeModal(true); await spinBox(count); }
 
 function runMultiSpinModal(results){
   return new Promise(resolve => {
@@ -1684,7 +1838,7 @@ function runMultiSpinModal(results){
       if (r.fakeout) strip[reel.winner_index] = {kind:'card',item_key:'card_star_fox',name_ru:'Сюрприз',name_en:'Mystery',rarity:'common',stars:0};
       const tilesHtml = strip.map(t => `<div class="mtile ${t.rarity}">
         <div class="mtile-vis">${visualHTML(t.item_key, t.kind, t.rarity, 30)}</div>
-        <div class="mtile-lbl">${t.stars ? '⭐'+t.stars : '✨'}</div>
+        <div class="mtile-lbl">${t.stars ? (t.stars/100)+'T' : '✨'}</div>
       </div>`).join('');
       return `<div class="mreel-card" id="mcard-${i}">
         <div class="mreel-vp">
@@ -1695,7 +1849,7 @@ function runMultiSpinModal(results){
           <div class="mreel-track" id="mtrack-${i}">${tilesHtml}</div>
         </div>
         <div class="mreel-foot" id="mfoot-${i}">
-          <span class="mreel-fnm">${LANG==='ru'?'Крутится...':'Spinning...'}</span>
+          <span class="mreel-fnm">Крутится...</span>
           <span class="mreel-fst">🎲</span>
         </div>
       </div>`;
@@ -1703,7 +1857,7 @@ function runMultiSpinModal(results){
 
     m.innerHTML = `<div class="m10-hdr">
       <div style="font-size:13.5px;font-weight:900" id="m10Title">⚡ ${total}x · 0/${total}</div>
-      <button class="m10-skip" id="m10SkipBtn" onclick="skipMultiSpin()">⏭ ${LANG==='ru'?'Пропустить':'Skip'}</button>
+      <button class="m10-skip" id="m10SkipBtn" onclick="skipMultiSpin()">⏭ Пропустить</button>
     </div>
     <div class="mreel-grid ${total===3?'g3':''}">${cardsHtml}</div>
     <div id="m10Summary" style="margin-top:10px"></div>`;
@@ -1720,8 +1874,7 @@ function runMultiSpinModal(results){
       if (settled) return;
       settled = true;
       clearMultiSpinTimers();
-      MULTI_SPIN_ACTIVE = false;
-      MULTI_FINISH_FN = null;
+      MULTI_SPIN_ACTIVE = false; MULTI_FINISH_FN = null;
       const skipBtn = document.getElementById('m10SkipBtn');
       if (skipBtn) skipBtn.style.display = 'none';
 
@@ -1735,16 +1888,16 @@ function runMultiSpinModal(results){
       if (sumEl) {
         sumEl.innerHTML = `
           <div style="background:rgba(15,23,42,.75);border:1px solid var(--border);border-radius:12px;padding:8px 10px;font-size:11.5px;margin-bottom:8px;line-height:1.4">
-            🎁 <b>${LANG==='ru'?'Подарков':'Gifts'}: ${gifts.length}</b> (${giftStars} ⭐) · ✨ <b>+${totalSh}</b> · 💎 <b>+${totalCb}</b> ${LANG==='ru'?'кэшбэк':'cashback'}
+            🎨 <b>Дропов: ${gifts.length}</b> (${fmtTon(giftStars)}) · ✨ <b>+${totalSh}</b> · 💎 <b>+${totalCb}</b> кэшбэк
           </div>
           ${giftIds.length ? `
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:7px">
-            <button class="btn gold" style="padding:10px 8px;font-size:12px" onclick="salvageIds([${giftIds.join(',')}],true,false)">♻️ ${LANG==='ru'?'Продать все':'Salvage'} (+${salSum} 💎)</button>
-            <button class="btn green" style="padding:10px 8px;font-size:12px" onclick="closeModal(true);goTab('inv')">🎒 ${LANG==='ru'?'Инвентарь':'Inventory'} (${gifts.length})</button>
+            <button class="btn gold" style="padding:10px 8px;font-size:12px" onclick="salvageIds([${giftIds.join(',')}],true,false)">♻️ Продать (+${salSum} 💎)</button>
+            <button class="btn green" style="padding:10px 8px;font-size:12px" onclick="closeModal(true);goTab('inv')">🎒 Вывод NFT/TON (${gifts.length})</button>
           </div>` : ''}
           <div style="display:grid;grid-template-columns:1fr auto;gap:7px">
-            <button class="btn gold" style="padding:10px 12px;font-size:12.5px" onclick="reSpin(${total})">⚡ ${LANG==='ru'?'Ещё':'Again'} ${total}x (${costAgain} 💎)</button>
-            <button class="btn sec" style="padding:10px 14px;font-size:12.5px" onclick="closeModal(true)">${LANG==='ru'?'Готово':'Done'}</button>
+            <button class="btn gold" style="padding:10px 12px;font-size:12.5px" onclick="reSpin(${total})">⚡ Ещё ${total}x (${costAgain} 💎)</button>
+            <button class="btn sec" style="padding:10px 14px;font-size:12.5px" onclick="closeModal(true)">Готово</button>
           </div>`;
       }
       try{ tg.HapticFeedback&&tg.HapticFeedback.notificationOccurred('success'); }catch(e){}
@@ -1753,8 +1906,7 @@ function runMultiSpinModal(results){
 
     function finalizeCard(i, silent=false){
       if (landed[i]) return;
-      landed[i] = true;
-      landedCount++;
+      landed[i] = true; landedCount++;
       const r = results[i];
       const reel = reels[i];
       const card = document.getElementById(`mcard-${i}`);
@@ -1769,16 +1921,15 @@ function runMultiSpinModal(results){
           winEl.classList.remove('shake');
           if (r.fakeout) {
             winEl.className = `mtile ${r.rarity} in-beam`;
-            winEl.innerHTML = `<div class="mtile-vis">${visualHTML(r.item_key, r.kind, r.rarity, 30)}</div><div class="mtile-lbl">${r.stars ? '⭐'+r.stars : '✨'}</div>`;
+            winEl.innerHTML = `<div class="mtile-vis">${visualHTML(r.item_key, r.kind, r.rarity, 30)}</div><div class="mtile-lbl">${r.stars ? (r.stars/100)+'T' : '✨'}</div>`;
           } else winEl.classList.add('in-beam');
         }
       }
-      if (badge && r.stars > 0) { badge.textContent = `⭐ ${r.stars}`; badge.style.display = 'inline-block'; }
+      if (badge && r.stars > 0) { badge.textContent = fmtTon(r.stars); badge.style.display = 'inline-block'; }
       if (foot) {
-        const nm = LANG==='ru' ? r.name_ru : r.name_en;
-        const stTxt = r.stars ? `⭐${r.stars}` : `+${r.shards_granted||0}✨`;
+        const stTxt = r.stars ? `${r.stars/100}T` : `+${r.shards_granted||0}✨`;
         foot.style.color = r.kind==='gift' ? '#f8fafc' : '#94a3b8';
-        foot.innerHTML = `<span class="mreel-fnm">${nm}</span><span class="mreel-fst">${stTxt}</span>`;
+        foot.innerHTML = `<span class="mreel-fnm">${r.name_ru}</span><span class="mreel-fst">${stTxt}</span>`;
       }
       if (titleEl) titleEl.textContent = `⚡ ${total}x · ${landedCount}/${total}`;
       if (!silent) {
@@ -1861,8 +2012,8 @@ function animateReel(r0){
     track.style.transition = 'none'; track.style.paddingLeft = '50%'; track.style.transform = 'translate3d(-120px,0,0)';
     track.innerHTML = strip.map(t => `<div class="tile ${t.rarity}">
       <div class="tile-vis">${visualHTML(t.item_key, t.kind, t.rarity, 54)}</div>
-      <div class="tile-nm">${LANG==='ru'?t.name_ru:t.name_en}</div>
-      <div class="tile-st">${t.stars ? '⭐ '+t.stars : '✨ +'}</div>
+      <div class="tile-nm">${t.name_ru}</div>
+      <div class="tile-st">${t.stars ? fmtTon(t.stars) : '✨ +'}</div>
     </div>`).join('');
 
     const step = 102, targetX = -(reel.winner_index * step + 47 + (reel.sub_offset || 0) * 76);
@@ -1884,7 +2035,7 @@ function animateReel(r0){
         setTimeout(()=>{
           winEl.classList.remove('shake');
           winEl.className = `tile ${r0.rarity} in-beam`;
-          winEl.innerHTML = `<div class="tile-vis"></div><div class="tile-nm">${LANG==='ru'?r0.name_ru:r0.name_en}</div><div class="tile-st">⭐ ${r0.stars}</div>`;
+          winEl.innerHTML = `<div class="tile-vis"></div><div class="tile-nm">${r0.name_ru}</div><div class="tile-st">${fmtTon(r0.stars)}</div>`;
           mountLottie(winEl.querySelector('.tile-vis'), r0.item_key);
           try{ tg.HapticFeedback&&tg.HapticFeedback.notificationOccurred('success'); }catch(e){}
           setTimeout(resolve, 600);
@@ -1901,22 +2052,23 @@ function showWinModal(results){
   const m = document.getElementById('modalBody');
   m.classList.remove('multi10');
   const r = results[0];
-  const bot = (CATALOG && CATALOG.bot_username) || 'StarsLootBoxBot';
-  const uid = STATE && STATE.user ? STATE.user.user_id : '';
-  const nm = LANG==='ru' ? r.name_ru : r.name_en;
-  const shareU = `https://t.me/share/url?url=${encodeURIComponent(`https://t.me/${bot}?start=ref_${uid}`)}&text=${encodeURIComponent(`🎉 Я выбил ${r.emoji} ${nm} (${r.stars}⭐) в @${bot}!`)}`;
+  const g = getGiftsMap()[r.item_key] || {};
+  const isNft = !!g.is_nft;
   const gBtns = r.kind === 'gift' ? `
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:10px">
       <button class="btn gold" onclick="salvageIds([${r.inv_ids.join(',')}],true,false)">♻️ +${r.salvage_crystals} 💎</button>
-      <button class="btn danger" onclick="salvageIds([${r.inv_ids.join(',')}],true,true)">🔥 ${LANG==='ru'?'Риск 2x':'Risk 2x'}</button>
+      <button class="btn danger" onclick="salvageIds([${r.inv_ids.join(',')}],true,true)">🔥 Риск 2x</button>
     </div>
-    <button class="btn green" style="width:100%;margin-top:8px" onclick="claimGift(${r.inv_id},true)">🎁 ${LANG==='ru'?'Забрать в профиль':'Claim TG Gift'}</button>
-    ${r.stars>=25?`<a class="btn sec" style="display:block;text-decoration:none;width:100%;margin-top:8px" href="${shareU}" target="_blank">📤 Похвастаться</a>`:''}
+    ${isNft
+      ? `<button class="btn" style="background:linear-gradient(135deg,#a855f7,#ec4899);width:100%;margin-top:8px" onclick="claimGift(${r.inv_id},true,'nft')">🎨 Вывести NFT на TON-кошелёк</button>
+         <button class="btn green" style="width:100%;margin-top:6px" onclick="claimGift(${r.inv_id},true,'ton')">💎 Забрать монетами (${fmtTon(r.stars)})</button>`
+      : `<button class="btn green" style="width:100%;margin-top:8px" onclick="claimGift(${r.inv_id},true,'ton')">💎 Вывести ${fmtTon(r.stars)} на кошелёк</button>`
+    }
   ` : `<div style="color:var(--accent);font-weight:800;margin-top:6px">+${r.shards_granted} ✨ · +${r.crystals_cashback} 💎 кэшбэк</div>`;
-  const note5050 = r.lost_5050 ? `<div style="font-size:12px;color:var(--gold);margin-top:6px">🔥 50/50: следующий гарант — 100% Главный Приз!</div>` : '';
+  const note5050 = r.lost_5050 ? `<div style="font-size:12px;color:var(--gold);margin-top:6px">🔥 50/50: следующий гарант — 100% Главный NFT!</div>` : '';
   m.innerHTML = `<div class="win-stage" id="winStage"></div>
-    <h3 style="margin:6px 0">${nm}</h3>
-    ${r.stars?`<div style="color:var(--gold);font-weight:900;font-size:16px">⭐ ${r.stars} Telegram Gift</div>`:''}
+    <h3 style="margin:6px 0">${r.name_ru}</h3>
+    ${r.stars?`<div style="color:var(--gold);font-weight:900;font-size:16px">${isNft?'🎨 TEP-62 NFT · ':''}${fmtTon(r.stars)}</div>`:''}
     ${note5050}${gBtns}
     <button class="btn sec" style="width:100%;margin-top:10px" onclick="closeModal(true)">OK</button>`;
   if (r.kind === 'gift') MODAL_LOTTIE = mountLottie(document.getElementById('winStage'), r.item_key);
@@ -1925,28 +2077,18 @@ function showWinModal(results){
 }
 
 function previewGift(giftKey){
-  const gMap = getGiftsMap();
-  const g = gMap[giftKey];
+  const g = getGiftsMap()[giftKey];
   if (!g) return;
   const m = document.getElementById('modalBody');
   m.classList.remove('multi10');
-  let desc = LANG==='ru'
-    ? 'Официальный подарок Telegram — моментально выводится в профиль или продаётся за 💎.'
-    : 'Official Telegram Gift — claim directly to your profile or salvage for 💎.';
-  if (g.premium_months > 0) {
-    desc = LANG==='ru'
-      ? `Официальная подписка Telegram Premium на ${g.premium_months} мес. — активируется прямо на твой аккаунт!`
-      : `Official ${g.premium_months}-month Telegram Premium subscription delivered directly to your account!`;
-  } else if (g.bundle_keys && g.bundle_keys.length > 0) {
-    const parts = g.bundle_keys.map(k => gMap[k] ? `${gMap[k].emoji} ${LANG==='ru'?gMap[k].name_ru:gMap[k].name_en}` : k);
-    desc = LANG==='ru'
-      ? `Комбо-набор (${g.bundle_keys.length} подарка в профиль залпом): <b>${parts.join(' + ')}</b>`
-      : `Combo Set (${g.bundle_keys.length} gifts delivered together): <b>${parts.join(' + ')}</b>`;
-  }
+  const stock = (STATE && STATE.vault_stock && g.nft_slug) ? (STATE.vault_stock[g.nft_slug] || 0) : 0;
+  const desc = g.is_nft
+    ? `Настоящий коллекционный <b>Telegram Collectible NFT (TEP-62 / Fragment)</b>.<br>• Выводится реальным NFT на твой TON-кошелёк (свободная торговля на <b>Fragment / Getgems / Portals</b>) либо монетами <b>${fmtTon(g.stars)}</b>!${stock ? `<br>🟢 <b>Сейчас на горячем складе: ${stock} шт. (автовывод за 5 сек!)</b>` : ''}`
+    : `Ликвидная капсула <b>${fmtTon(g.stars)}</b>: выводится монетами TON на подключённый кошелёк либо прокручивается в <b>Колесе Апгрейда</b> до полноценного NFT!`;
   m.innerHTML = `<div class="win-stage" id="prevStage"></div>
-    <h3 style="margin:6px 0">${LANG==='ru'?g.name_ru:g.name_en}</h3>
-    <div style="color:var(--gold);font-weight:900;font-size:15px">⭐ ${g.stars} Official Telegram Gift</div>
-    <p style="font-size:12px;color:#cbd5e1;line-height:1.45">${desc}</p>
+    <h3 style="margin:6px 0">${g.name_ru}</h3>
+    <div style="color:var(--gold);font-weight:900;font-size:15px">${g.is_nft?'🎨 Fragment Collectible NFT · ':'💠 '}${fmtTon(g.stars)}</div>
+    <p style="font-size:12px;color:#cbd5e1;line-height:1.48">${desc}</p>
     <button class="btn sec" style="width:100%;margin-top:8px" onclick="closeModal(true)">OK</button>`;
   document.getElementById('overlay').classList.add('open');
   MODAL_LOTTIE = mountLottie(document.getElementById('prevStage'), giftKey);
@@ -1954,13 +2096,13 @@ function previewGift(giftKey){
 
 function openOddsModal(){
   document.getElementById('modalBody').classList.remove('multi10');
-  const box = getBoxesList().find(x=>x.key===CUR_BOX) || {name_ru:'Звёздная Капсула',soft_pity:70,hard_pity:85,mini_pity:6};
-  document.getElementById('modalBody').innerHTML = `<h3>ℹ️ ${LANG==='ru'?box.name_ru:box.name_en}</h3>
+  const box = getBoxesList().find(x=>x.key===CUR_BOX) || {name_ru:'Неон NFT Кейс',soft_pity:70,hard_pity:85,mini_pity:6};
+  document.getElementById('modalBody').innerHTML = `<h3>ℹ️ ${box.name_ru}</h3>
     <p style="font-size:12.5px;color:var(--muted);text-align:left;line-height:1.55">
-      • <b>Гарант подарка:</b> минимум 1 подарок каждые <b>${box.mini_pity||5}</b> круток.<br>
-      • <b>Главный приз:</b> с ${box.soft_pity}-й крутки шанс на топ-приз растёт, на <b>${box.hard_pity}-й — 100% гарант</b>.<br>
-      • <b>Звёздные Мины 5×5:</b> честная математика и прямой вывод выигрыша готовым подарком от 15⭐ до 500⭐!<br>
-      • <b>Альбом 30 Подарков:</b> открой 4 разных подарка и продавай любые дубликаты за <b>85%</b> вместо 80%.
+      • <b>100% Web3 без sendGift-стикеров:</b> все NFT — настоящие коллекционные активы <b>TEP-62</b> на блокчейне TON.<br>
+      • <b>Вывод 2 способами:</b> забирай выигрыш реальным <b>NFT на кошелёк</b> либо сразу в монетах <b>TON</b>!<br>
+      • <b>Депозит NFT:</b> ненужные NFT-подарки с твоего кошелька можно внести за <b>85% стоимости в 💎</b> во вкладке «Депозит».<br>
+      • <b>Гарант:</b> минимум 1 актив каждые <b>${box.mini_pity||5}</b> круток, топ-NFT гарант на <b>${box.hard_pity}-й</b> крутке.
     </p>
     <button class="btn sec" style="width:100%" onclick="closeModal(true)">OK</button>`;
   document.getElementById('overlay').classList.add('open');
@@ -1969,8 +2111,7 @@ function openOddsModal(){
 function closeModal(force=false){
   if (MULTI_SPIN_ACTIVE && !force) { skipMultiSpin(); return; }
   clearMultiSpinTimers();
-  MULTI_SPIN_ACTIVE = false;
-  MULTI_FINISH_FN = null;
+  MULTI_SPIN_ACTIVE = false; MULTI_FINISH_FN = null;
   if (MODAL_LOTTIE) { try{MODAL_LOTTIE.destroy();}catch(e){} MODAL_LOTTIE = null; }
   document.getElementById('modalBody').classList.remove('multi10');
   document.getElementById('overlay').classList.remove('open');
@@ -1988,29 +2129,35 @@ async function salvageIds(ids, close=false, risk=false){
 async function salvageAll15(){
   if (!STATE || !STATE.inventory) return;
   const ids = STATE.inventory.filter(x=>x.status==='stored'&&x.stars===15).map(x=>x.id);
-  if (!ids.length) { showToast('Нет подарков за 15⭐'); return; }
+  if (!ids.length) { showToast('Нет капсул 0.15 TON'); return; }
   await salvageIds(ids, false, false);
 }
-async function claimGift(invId, close=false){
+async function claimGift(invId, close=false, mode='auto'){
+  if (!getUserWallet()) {
+    openWalletModal();
+    showToast('Сначала подключи или укажи свой TON-кошелёк!');
+    return;
+  }
   try {
-    const res = await apiCall('/api/claim_gift','POST',{inv_id:invId});
+    const res = await apiCall('/api/claim_gift','POST',{inv_id:invId, mode, wallet:getUserWallet()});
     STATE = res; renderAll();
     if (res.status === 'pending_approval') {
       try{ tg.HapticFeedback&&tg.HapticFeedback.notificationOccurred('success'); }catch(e){}
       if (MODAL_LOTTIE) { try{MODAL_LOTTIE.destroy();}catch(e){} MODAL_LOTTIE = null; }
       const m = document.getElementById('modalBody');
       m.classList.remove('multi10');
-      m.innerHTML = `<div style="font-size:52px;margin-bottom:6px">🎉</div>
-        <h3 style="margin:4px 0;color:#facc15">Крупный выигрыш оформлен!</h3>
-        <p style="font-size:13px;color:#e2e8f0;line-height:1.5;margin:8px 0 14px">${res.message_ru||'Подарок проходит быструю проверку безопасности и скоро придёт в твой профиль!'}</p>
-        <button class="btn" style="width:100%" onclick="closeModal(true)">Супер, жду!</button>`;
+      m.innerHTML = `<div style="font-size:52px;margin-bottom:6px">🎨</div>
+        <h3 style="margin:4px 0;color:#facc15">Заявка на Web3 вывод принята!</h3>
+        <p style="font-size:13px;color:#e2e8f0;line-height:1.5;margin:8px 0 14px">${res.message_ru||'Отправим актив на твой TON-кошелёк в ближайшее время!'}</p>
+        <button class="btn" style="width:100%" onclick="closeModal(true)">Отлично!</button>`;
       document.getElementById('overlay').classList.add('open');
       return;
     }
     if(close) closeModal(true);
-    showToast('🎁 Подарок отправлен в твой Telegram-профиль!');
+    showToast('🎉 Отправлено в блокчейне TON на твой кошелёк!');
   } catch(e){
-    showToast((LANG==='ru'?e.message_ru:e.message_en) || e.message || 'Claim unavailable');
+    if (e.code === 'need_wallet') openWalletModal();
+    showToast(e.message_ru || e.message || 'Вывод недоступен');
   }
 }
 async function runContract(tier){
@@ -2018,8 +2165,8 @@ async function runContract(tier){
     const res = await apiCall('/api/contract','POST',{tier_stars:tier});
     STATE = res; renderAll();
     const g = res.created[0];
-    showToast(`⚡ Крафт успешен: ${g.emoji} ${res.created.length>1?res.created.length+'× ':''}${LANG==='ru'?g.name_ru:g.name_en} (${g.stars}⭐)!`);
-  } catch(e){ showToast(e.message || 'Нужно 5 подарков этого тира'); }
+    showToast(`⚡ Крафт успешен: ${g.emoji} ${res.created.length>1?res.created.length+'× ':''}${g.name_ru} (${fmtTon(g.stars)})!`);
+  } catch(e){ showToast(e.message || 'Нужно 5 предметов этого тира'); }
 }
 async function exchangeShards(){
   try {
@@ -2033,7 +2180,7 @@ async function claimDaily(){
     STATE = res; renderAll();
     const u = res.user;
     if (u && u.paid_orders_count === 0 && res.reward.crystals === 0 && res.reward.shards === 0) {
-      showToast(`ℹ️ Потолок бесплатной копилки (${u.free_crystal_cap||50} 💎). Пополни Stars, чтобы снять лимит!`);
+      showToast(`ℹ️ Потолок бесплатной копилки (${u.free_crystal_cap||50} 💎). Сделай любое пополнение, чтобы снять лимит!`);
     } else showToast(`🎡 +${res.reward.crystals} 💎 · +${res.reward.shards} ✨!`);
   } catch(e){ showToast(e.message || 'Cooldown active'); }
 }
@@ -2062,7 +2209,7 @@ async function buyPack(packKey){
 function shareInvite(){
   const uid = STATE && STATE.user ? STATE.user.user_id : '';
   const bot = (CATALOG && CATALOG.bot_username) || 'StarsLootBoxBot';
-  const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(`https://t.me/${bot}?start=ref_${uid}`)}&text=${encodeURIComponent('🎁 30 официальных Подарков Telegram, 6 боксов и Звёздные Мины 5×5 — забери бесплатный спин!')}`;
+  const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(`https://t.me/${bot}?start=ref_${uid}`)}&text=${encodeURIComponent('🎨 Настоящие коллекционные TON NFT Подарки Telegram, кейсы и Звёздные Мины 5×5 — забери бесплатный спин!')}`;
   if (tg && tg.openTelegramLink) tg.openTelegramLink(shareUrl);
   else window.open(shareUrl, '_blank');
 }
@@ -2083,7 +2230,7 @@ async function claimChannelSub(){
     const res = await apiCall('/api/claim_channel_sub','POST',{});
     STATE = res; renderAll();
     showToast(`📢 +${res.reward.crystals} 💎 · +${res.reward.shards} ✨!`);
-  } catch(e){ showToast((LANG==='ru'?e.message_ru:e.message_en) || e.message || 'Subscribe first'); }
+  } catch(e){ showToast(e.message_ru || e.message || 'Subscribe first'); }
 }
 async function redeemPromo(){
   const inp = document.getElementById('promoInput');
@@ -2100,7 +2247,7 @@ async function joinGiveaway(){
     const res = await apiCall('/api/join_giveaway','POST',{});
     STATE = res; renderAll();
     showToast(`🎉 Ты в розыгрыше! Билетов: ${res.giveaway_entry.tickets}`);
-  } catch(e){ showToast((LANG==='ru'?e.message_ru:e.message_en) || e.message || 'Giveaway error'); }
+  } catch(e){ showToast(e.message_ru || e.message || 'Giveaway error'); }
 }
 
 setInterval(()=>{
