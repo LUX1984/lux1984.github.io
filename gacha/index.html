@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-  <title>GiftBox v6.5 • Рулетка Telegram NFT и Колесо Искр</title>
+  <title>GiftBox v7.0 • Рулетка Telegram NFT, Обмен в 💎 и Колесо Искр</title>
   <meta name="description" content="Рулетка настоящих коллекционных Telegram NFT (Fragment), 10× слот-стенка, Колесо Искр и Созвездия C0–C6!">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
@@ -245,7 +245,8 @@
     .fbtn{border:1px solid var(--border);background:var(--card2);color:var(--muted);border-radius:999px;padding:5px 10px;font-size:11px;font-weight:800;cursor:pointer;flex-shrink:0}
     .fbtn.active{background:rgba(56,189,248,.18);border-color:var(--accent);color:#fff}
     .shop-item,.nft-row,.quest-row,.lb-row{display:flex;justify-content:space-between;align-items:center;gap:9px;padding:9px 10px;background:var(--card2);border:1px solid var(--border);border-radius:14px;margin-bottom:8px}
-    .nft-row{border-color:rgba(192,132,252,.38)}
+    .nft-row{border-color:rgba(192,132,252,.38);flex-wrap:wrap}
+    .nft-actions{display:flex;gap:6px;align-items:center;margin-left:auto;flex-shrink:0}
     .bp-row{display:grid;grid-template-columns:42px 1fr 1fr;gap:6px;align-items:center;padding:7px;background:var(--card2);border:1px solid var(--border);border-radius:12px;margin-bottom:6px}
     .bp-cell{font-size:10.5px;padding:5px 6px;border-radius:9px;background:rgba(255,255,255,.04);display:flex;justify-content:space-between;align-items:center;gap:4px}
     .nav{
@@ -655,7 +656,7 @@ function renderWishes(){
       </div>` : ''}
 
     <div class="card">
-      <div class="sec-h"><h3>🎁 ${t('Призы в этой рулетке','Inside This Box')}</h3><span class="tag tag-green">${t('Без обратного выкупа','Keep / Claim NFT')}</span></div>
+      <div class="sec-h"><h3>🎁 ${t('Призы в этой рулетке','Inside This Box')}</h3><span class="tag tag-green">${t('Обмен на 💎 или вывод TON','Swap to 💎 / Claim TON')}</span></div>
       <div class="loot-strip">${prizeShowcase}</div>
     </div>`;
 }
@@ -792,23 +793,35 @@ function runMultiReelWall(results){
 }
 
 function showResultsModal(results){
+  const wonNfts = results.filter(r=>r.is_nft && r.nft_inv_id);
   const cardsHtml = results.map((r,idx)=>{
     const badge = r.is_nft ? `<span style="color:#6ee7b7">REAL NFT!</span>` : `<span style="color:#fde047">C${r.constellation} +${r.sparks_gained}✨</span>`;
+    const swapBtn = (r.is_nft && r.nft_inv_id)
+      ? `<button class="btn btn-green btn-sm btn-shine" id="res-rec-${r.nft_inv_id}" style="width:100%;margin-top:6px;padding:6px 6px;font-size:10.5px" onclick="recycleNft(${r.nft_inv_id}, true, 'res-rec-${r.nft_inv_id}')">💎 +${r.recycle_crystals} 💎 +${r.recycle_sparks}✨</button>`
+      : '';
     return `<div class="rev-card r${r.stars_rank}" style="animation-delay:${idx*0.035}s">
       <div style="display:flex;justify-content:space-between;font-size:9px;font-weight:900"><span>${starBadges(r.stars_rank)}</span>${badge}</div>
       <img src="${r.image_url}" alt="">
       <div style="font-size:11px;font-weight:800">${esc(lang()==='en'?r.name_en:r.name_ru)}</div>
-      ${r.is_nft ? `<div style="font-size:9px;color:#7dd3fc;font-weight:800">+${r.sparks_gained} ✨ · ${t('В Мои NFT','In My NFTs')}</div>`:''}
+      ${r.is_nft ? `<div style="font-size:9px;color:#7dd3fc;font-weight:800">+${r.sparks_gained} ✨ · ${t('Можно сразу в 💎','Instant 💎 swap')}</div>`:''}
       ${r.won_5050 ? `<div style="font-size:9px;color:#34d399;font-weight:900">50/50 WIN!</div>`:''}
       ${r.lost_5050 ? `<div style="font-size:9px;color:#fb7185;font-weight:900">${t('СЛЕД. 5★ ГАРАНТ!','NEXT 5★ GUARANTEED!')}</div>`:''}
+      ${swapBtn}
     </div>`;
   }).join('');
-  const anyNft = results.some(r=>r.is_nft);
+  const totRecC = wonNfts.reduce((s,x)=>s+(x.recycle_crystals||0), 0);
+  const totRecS = wonNfts.reduce((s,x)=>s+(x.recycle_sparks||0), 0);
+  const wonIdsJson = JSON.stringify(wonNfts.map(x=>x.nft_inv_id));
+  const batchBtn = wonNfts.length >= 2
+    ? `<button class="btn btn-green btn-shine" id="res-rec-all" style="width:100%;margin-top:8px" onclick='recycleBatchIds(${wonIdsJson}, true)'>♻️ ${t(`Обменять все ${wonNfts.length} NFT → +${totRecC} 💎 (+${totRecS} ✨)`,`Swap All ${wonNfts.length} NFTs → +${totRecC} 💎`)}</button>`
+    : '';
+  const anyNft = wonNfts.length > 0;
   openModal(`
     <h3 style="margin:0 0 6px;text-align:center">${t('Итоги рулетки','Spin Results')} (${results.length}×)</h3>
     <div class="reveal-grid" style="${results.length===1?'grid-template-columns:1fr':''}">${cardsHtml}</div>
-    ${anyNft?`<button class="btn btn-epic btn-shine" style="width:100%;margin-top:8px" onclick="closeModal();goTab('nfts')">🎨 ${t('Забрать NFT на кошелёк','Claim NFT in My NFTs')}</button>`:''}
-    <button class="btn btn-gold" style="width:100%;margin-top:8px" onclick="closeModal()">OK</button>`);
+    ${batchBtn}
+    ${anyNft?`<button class="btn btn-ghost" style="width:100%;margin-top:8px" onclick="closeModal();goTab('nfts')">📤 ${t('В Мои NFT (вывод на TON)','My NFTs (Withdraw to TON)')}</button>`:''}
+    <button class="btn btn-gold" style="width:100%;margin-top:8px" onclick="closeModal()">${t('Крутить дальше','Keep Spinning')}</button>`);
 }
 
 /* ── Neon Spark Wheel View & Physics ── */
@@ -911,11 +924,12 @@ async function spinSparkWheel(){
         if(w.kind==='nft'){
           FX.burst(130, true); SFX.win5(); haptic('success');
           openModal(`<div style="text-align:center">
-            <div class="tag tag-gold">🎉 ДЖЕКПОТ КОЛЕСА ИСКР!</div>
+            <div class="tag tag-gold">🎉 ${t('ДЖЕКПОТ КОЛЕСА ИСКР!','SPARK WHEEL JACKPOT!')}</div>
             <h2 style="margin:8px 0 4px">${esc(lang()==='en'?w.nft_name_en:w.nft_name_ru)}</h2>
             <img src="${w.image_url}" style="width:120px;height:120px;object-fit:contain">
-            <p style="font-size:12px;color:var(--muted)">Настоящий Telegram NFT добавлен в раздел «🎨 Мои NFT»!</p>
-            <button class="btn btn-gold" style="width:100%" onclick="closeModal();goTab('nfts')">🎨 Забрать NFT</button>
+            <p style="font-size:12px;color:var(--muted)">${t('Можно сразу обменять на Алмазы и крутить дальше или вывести на TON-кошелёк!','Swap instantly into Diamonds to keep spinning or withdraw to TON!')}</p>
+            ${w.nft_inv_id?`<button class="btn btn-green btn-shine" style="width:100%;margin-bottom:8px" onclick="recycleNft(${w.nft_inv_id}, true);closeModal()">💎 ${t(`Обменять на +${w.recycle_crystals} 💎 (+${w.recycle_sparks} ✨)`,`Swap for +${w.recycle_crystals} 💎 (+${w.recycle_sparks} ✨)`)}</button>`:''}
+            <button class="btn btn-gold" style="width:100%" onclick="closeModal();goTab('nfts')">📤 ${t('Оставить / Вывести NFT','Keep / Withdraw NFT')}</button>
           </div>`);
         } else {
           if(w.crystals >= 320){ FX.burst(80); SFX.win4(); haptic('success'); }
@@ -941,8 +955,8 @@ function showRatesModal(bKey){
       ${b.has_5050 ? `<div><b>Система 50/50:</b> первый 5★ с шансом 50% ивентовый (${esc(itemName(CATALOG.items[b.featured_5[0]]))}); иначе следующий 5★ — <b>100% ивентовый!</b></div>`:''}
     </div>
     <div style="font-size:11.5px;color:var(--muted);line-height:1.45;margin-bottom:12px">
-      ${t('<b>Белая гача-экономика:</b> 0 пустых спинов, 0 сгорающих ставок, 0 обратного выкупа NFT ботом. Выигранные Telegram NFT передаются на твой личный TON-кошелёк.',
-          '<b>White-Hat Gacha:</b> zero empty pulls, zero stake burning, zero NFT buyback. Won Telegram NFTs transfer to your personal TON wallet.')}
+      ${t('<b>Умная гача-экономика v7.0:</b> 0 пустых спинов. Каждый выигранный NFT можно <b>сразу обменять на 💎 Алмазы и ✨ Искры</b> чтобы крутить дальше, или вывести на личный TON-кошелёк (вывод на блокчейн открывается после покупок от 149 ⭐ — защита от мультиаккаунтов).',
+          '<b>Smart Gacha v7.0:</b> zero empty pulls. Every won NFT can be <b>instantly exchanged for 💎 Diamonds + ✨ Sparks</b> to keep spinning, or withdrawn to your personal TON wallet (blockchain withdrawal unlocks at 149 ⭐+ purchases for anti-sybil protection).')}
     </div>
     <button class="btn btn-blue" style="width:100%" onclick="closeModal()">OK</button>`);
 }
@@ -996,15 +1010,37 @@ async function claimBp(level, track){ try{ const r=await api('/api/bp/claim','PO
 
 function renderNftsAndAlbum(){
   const u=STATE.user; const nfts=STATE.nft_inventory||[];
+  const ready=nfts.filter(n=>n.status==='in_collection');
+  const ready4=ready.filter(n=>(CATALOG.items[n.item_key]?.stars_rank||4)<=4);
+  const totC=ready.reduce((s,n)=>s+(n.recycle_crystals||0),0);
+  const totS=ready.reduce((s,n)=>s+(n.recycle_sparks||0),0);
+  const tot4C=ready4.reduce((s,n)=>s+(n.recycle_crystals||0),0);
+  const tot4S=ready4.reduce((s,n)=>s+(n.recycle_sparks||0),0);
+
+  const batchBanner = ready.length ? `
+    <div style="background:linear-gradient(135deg,rgba(16,185,129,.18),rgba(250,204,21,.12));border:1px solid rgba(52,211,153,.45);border-radius:14px;padding:9px;margin-bottom:10px">
+      <div style="font-size:11.5px;font-weight:900;color:#6ee7b7;margin-bottom:6px">💎 ${t('Сначала крути дальше: мгновенный обмен NFT на Алмазы','Spin More First: Instant NFT → Diamonds Exchange')}</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <button class="btn btn-green btn-sm btn-shine" style="flex:1" onclick="recycleAllNfts(null)">♻️ ${t(`Обменять все (${ready.length}) → +${totC} 💎 (+${totS}✨)`,`Swap All (${ready.length}) → +${totC} 💎`)}</button>
+        ${(ready4.length>0 && ready4.length<ready.length)?`<button class="btn btn-ghost btn-sm" onclick="recycleAllNfts(4)">♻️ 4★ (${ready4.length}) → +${tot4C}💎</button>`:''}
+      </div>
+    </div>` : '';
+
   const nftListHtml = nfts.length ? nfts.map(n=>{
     const it=CATALOG.items[n.item_key];
-    const stTag = n.status==='in_collection' ? `<span class="tag tag-green">${t('Готов к выводу NFT','Ready to Claim')}</span>`
-                : (n.status==='pending_transfer' ? `<span class="tag tag-gold">⏳ ${t('Передаётся (1–24ч)','Pending')}</span>`
-                : `<span class="tag">✅ ${t('Отправлен','Transferred')}</span>`);
-    return `<div class="nft-row"><div style="display:flex;align-items:center;gap:9px"><img src="${it?it.image_url:''}" style="width:46px;height:46px;object-fit:contain">
-      <div><div style="font-weight:900;font-size:13px">${esc(it?itemName(it):n.item_key)}</div><div style="margin-top:3px">${stTag}</div></div></div>
-      ${n.status==='in_collection' ? `<button class="btn btn-gold btn-sm btn-shine" onclick="claimNft(${n.id})">📤 ${t('Забрать','Claim')}</button>` : ''}</div>`;
-  }).join('') : `<div class="sub" style="color:var(--muted)">${t('Выбивай 4★/5★ NFT в Рулетке или Колесе Искр — они появятся здесь для вывода на твой TON-кошелёк!','Win 4★/5★ NFTs in Roulette or Spark Wheel to transfer them to your TON wallet!')}</div>`;
+    const stTag = n.status==='in_collection' ? `<span class="tag tag-green">${t('В наличии · Обмен или вывод','Ready · Swap or Withdraw')}</span>`
+                : (n.status==='pending_transfer'||n.status==='sending_tx' ? `<span class="tag tag-gold">⏳ ${t('Передаётся в TON (1–24ч)','Pending TON Transfer')}</span>`
+                : (n.status==='recycled' ? `<span class="tag">♻️ ${t(`Обменян на +${n.recycled_crystals} 💎 (+${n.recycled_sparks} ✨)`,`Swapped for +${n.recycled_crystals} 💎`)}</span>`
+                : `<span class="tag tag-epic">✅ ${t('Отправлен на кошелёк','Transferred to TON')}</span>`));
+    const lockHint = (n.status==='in_collection' && !n.can_withdraw)
+      ? `<div class="sub" style="color:var(--gold);margin-top:3px;font-size:9.5px">${t(`Вывод на TON от ${n.withdraw_req_stars} ⭐ покупок · Обмен на 💎 доступен сразу!`,`TON unlock at ${n.withdraw_req_stars} ⭐ purchases · Instant 💎 swap ready!`)}</div>` : '';
+    const actions = n.status==='in_collection' ? `<div class="nft-actions">
+        <button class="btn btn-green btn-sm btn-shine" onclick="recycleNft(${n.id}, false)">💎 +${n.recycle_crystals} 💎</button>
+        <button class="btn btn-ghost btn-sm" onclick="claimNft(${n.id})">📤 ${t('Вывести','TON')}</button>
+      </div>` : '';
+    return `<div class="nft-row"><div style="display:flex;align-items:center;gap:9px;min-width:170px"><img src="${it?it.image_url:''}" style="width:44px;height:44px;object-fit:contain">
+      <div><div style="font-weight:900;font-size:13px">${esc(it?itemName(it):n.item_key)}</div><div style="margin-top:3px">${stTag}</div>${lockHint}</div></div>${actions}</div>`;
+  }).join('') : `<div class="sub" style="color:var(--muted)">${t('Выбивай 4★/5★ NFT в Рулетке или Колесе Искр — их можно сразу обменять в 💎 для новых круток или вывести на TON-кошелёк!','Win 4★/5★ NFTs in Roulette or Spark Wheel to swap into 💎 or withdraw to TON!')}</div>`;
 
   const owned=ownedMap();
   const msHtml=(CATALOG.milestones||[]).map(m=>{const done=u.milestones_claimed.includes(m.count);const can=!done&&u.unique_count>=m.count;
@@ -1019,8 +1055,9 @@ function renderNftsAndAlbum(){
 
   return `
     <div class="card" style="border-color:rgba(192,132,252,.45)">
-      <div class="sec-h"><h3>🎨 ${t('Мои реальные Telegram NFT','My Real Telegram NFTs')} (${nfts.length})</h3><span class="tag">${t('Без обратного выкупа','Keep / Transfer')}</span></div>
-      <div style="margin-bottom:10px"><div class="sub" style="margin-bottom:4px;color:var(--muted)">${t('TON-кошелёк для получения NFT (формат UQ... / EQ...):','Your TON receiving wallet (UQ... / EQ...):')}</div>
+      <div class="sec-h"><h3>🎨 ${t('Мои Telegram NFT','My Telegram NFTs')} (${ready.length}/${nfts.length})</h3><span class="tag tag-green">${t('💎 Обмен в 💎 / 📤 Вывод TON','💎 Swap to 💎 / 📤 TON')}</span></div>
+      ${batchBanner}
+      <div style="margin-bottom:10px"><div class="sub" style="margin-bottom:4px;color:var(--muted)">${t('TON-кошелёк для вывода NFT (UQ... / EQ...):','Your TON receiving wallet (UQ... / EQ...):')}</div>
       <div style="display:flex;gap:7px"><input class="input" id="tonAddrInp" value="${esc(u.ton_wallet||'')}" placeholder="UQ..."><button class="btn btn-blue btn-sm" onclick="saveWallet()">${t('Сохранить','Save')}</button></div></div>
       ${nftListHtml}
     </div>
@@ -1033,6 +1070,46 @@ function renderNftsAndAlbum(){
       <button class="fbtn ${ALBUM_FILTER==='owned'?'active':''}" onclick="ALBUM_FILTER='owned';renderAll()">${t('Открыты','Owned')}</button>
       <button class="fbtn ${ALBUM_FILTER==='missing'?'active':''}" onclick="ALBUM_FILTER='missing';renderAll()">${t('Нет','Missing')}</button>
     </div><div class="album-grid">${cards}</div>`;
+}
+
+async function recycleNft(invId, keepModal=false, btnId=''){
+  try{
+    SFX.ensure();
+    const res = await api('/api/nft/recycle','POST',{inv_id:invId});
+    STATE = res; const rec = res.recycled;
+    SFX.win4(); FX.burst(65); haptic('success');
+    renderTop();
+    if(!keepModal) renderAll();
+    else if(btnId){
+      const b=document.getElementById(btnId);
+      if(b){ b.disabled=true; b.className='btn btn-ghost btn-sm'; b.textContent=`✅ +${rec.crystals}💎`; }
+    }
+    toast(`💎 +${rec.crystals} 💎 и +${rec.sparks} ✨ зачислены!`);
+  }catch(e){ toast(e.message); }
+}
+
+async function recycleAllNfts(maxRank=null){
+  try{
+    SFX.ensure();
+    const body = maxRank ? {max_rank: maxRank} : {};
+    const res = await api('/api/nft/recycle_batch','POST',body);
+    STATE = res; const rec = res.recycled;
+    SFX.win5(); FX.burst(95, true); haptic('success');
+    renderAll();
+    toast(`♻️ Обменяно ${rec.count} NFT → +${rec.crystals} 💎 (+${rec.sparks} ✨)!`);
+  }catch(e){ toast(e.message); }
+}
+
+async function recycleBatchIds(invIds, closeAfter=false){
+  try{
+    SFX.ensure();
+    const res = await api('/api/nft/recycle_batch','POST',{inv_ids:invIds});
+    STATE = res; const rec = res.recycled;
+    SFX.win5(); FX.burst(100, true); haptic('success');
+    if(closeAfter) closeModal();
+    renderAll();
+    toast(`♻️ Обменяно ${rec.count} NFT → +${rec.crystals} 💎 (+${rec.sparks} ✨)!`);
+  }catch(e){ toast(e.message); }
 }
 
 async function saveWallet(){ const w=(document.getElementById('tonAddrInp')?.value||'').trim(); try{ STATE=await api('/api/wallet/set','POST',{wallet:w}); toast(t('TON-кошелёк сохранён!','Saved!')); renderAll(); }catch(e){toast(e.message)} }
@@ -1114,7 +1191,7 @@ function renderTopTab(){
   const ch=STATE.channel||{}; const gw=ch.giveaway;
   const shareUrl=`https://t.me/share/url?url=https://t.me/${CATALOG.bot_username}?start=ref_${u.user_id}&text=Крути%20рулетку%20Telegram%20NFT%20в%20GiftBox!`;
   return `
-    <div class="card"><div class="sec-h"><h3>👤 ${t('Профиль','Profile')}</h3><button class="btn btn-green btn-sm" onclick="shareInvite('${shareUrl}')">👥 ${t('Друг (+25✨/+80💎)','Invite')}</button></div>
+    <div class="card"><div class="sec-h"><h3>👤 ${t('Профиль','Profile')}</h3><button class="btn btn-green btn-sm" onclick="shareInvite('${shareUrl}')">👥 ${t('Друг (+15✨ / 5%💎)','Invite')}</button></div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px"><div><div class="sub">${t('Рамка','Frame')}</div>${frameSel}</div><div><div class="sub">${t('Титул','Title')}</div>${titleSel}</div></div>
       <div class="btn-row"><button class="btn ${u.can_daily_12h?'btn-blue':'btn-ghost'} btn-sm" ${u.can_daily_12h?'':'disabled'} onclick="claimDaily12()">${u.can_daily_12h?'🎁 +40💎 +20✨ (12ч)':`⏳ ${fmtLeft(u.next_daily_in_sec)}`}</button>
         <button class="btn ${u.can_streak?'btn-gold':'btn-ghost'} btn-sm" ${u.can_streak?'':'disabled'} onclick="claimStreak()">${u.can_streak?`🔥 ${t('День #'+(u.streak_day%7+1),'Streak Day')}`:`✅ ${t('Серия:','Streak:')} ${u.streak_day}/7`}</button></div>
